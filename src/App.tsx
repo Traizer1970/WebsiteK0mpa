@@ -1,0 +1,836 @@
+import React, { useEffect, useMemo, useState, createContext, useContext } from "react";
+import {
+  Search, ChevronRight, Gift, Store, Users, Tv,
+  TrendingUp, Youtube, Instagram, Twitch as TwitchIcon, Send, Coins, Percent, Copy,
+  Sparkles, Flame, Crown,
+} from "lucide-react";
+
+/* ---------- utils ---------- */
+function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
+function hexToRgb(hex: string) {
+  const c = hex.replace("#", "");
+  const n = parseInt(c.length === 3 ? c.split("").map(x=>x+x).join("") : c, 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+function rgba(hex: string, a: number) { const { r, g, b } = hexToRgb(hex); return `rgba(${r},${g},${b},${a})`; }
+
+/* Tema/accent */
+const TWITCH_PURPLE = "#9146FF";
+const SOCIAL_LINKS = {
+  youtube:  "https://youtube.com/@k0mpa",
+  instagram:"https://instagram.com/k0mpa",
+  twitch:   "https://twitch.tv/k0mpa",
+  telegram: "https://t.me/k0mpa",
+  discord:  "https://discord.gg/k0mpa",
+} as const;
+
+/* ---------- Twitch LIVE (sem API key) ---------- */
+const TWITCH_CHANNEL = "k0mpa";
+function useLiveAutoTwitch(channel: string, intervalMs = 60_000) {
+  const [isLive, setIsLive] = React.useState(false);
+  React.useEffect(() => {
+    let timer: number | undefined;
+    let cancelled = false;
+    const looksLive = (txt: string) => {
+      const s = (txt || "").toLowerCase().trim();
+      if (!s || s.includes("not live") || s.includes("offline") || s.includes("channel not found") || s.includes("user not found") || s.includes("no channel") || s.includes("could not") || s.includes("error")) return false;
+      const hasTimeWords = /(\d+h|\d+m|\d+s|hour|minute|second)/.test(s);
+      const hasDigits = /\d/.test(s);
+      return hasDigits && hasTimeWords;
+    };
+    const check = async () => {
+      try {
+        const url = `https://decapi.me/twitch/uptime/${encodeURIComponent(channel)}?t=${Date.now()}`;
+        const res = await fetch(url, { cache: "no-store" });
+        const txt = await res.text();
+        if (!cancelled) setIsLive(looksLive(txt));
+      } catch {}
+    };
+    check();
+    timer = window.setInterval(check, intervalMs);
+    return () => { cancelled = true; if (timer) window.clearInterval(timer); };
+  }, [channel, intervalMs]);
+  return isLive;
+}
+
+/* ---------- payments (logos via URL) ---------- */
+const PAYMENT_ICON_URLS = {
+  btc: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/2048px-Bitcoin.svg.png",
+  mbw: "https://play-lh.googleusercontent.com/nDKhDELMEjag8qJ9aKAjfTSzWZKVg3tY2OZ-eo8Jp8hxYDgifCFQoNOqxDwTaAW-O8o",
+  mb:  "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Multibanco.svg/1733px-Multibanco.svg.png",
+  visa:"https://download.logo.wine/logo/Visa_Inc./Visa_Inc.-Logo.wine.png",
+  mc:  "https://www.pngplay.com/wp-content/uploads/13/Mastercard-Logo-Free-PNG.png",
+} as const;
+
+type PaymentType = keyof typeof PAYMENT_ICON_URLS;
+function normalizePaymentType(t: string): PaymentType { return (t === "mbb" ? "mbw" : t) as PaymentType; }
+
+/* ---------- primitives ---------- */
+type DivProps = React.HTMLAttributes<HTMLDivElement>;
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
+export function Button({ className, children, ...rest }: ButtonProps) {
+  return (
+    <button
+      className={cn(
+        "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition",
+        "focus:outline-none focus-visible:outline-none",
+        "focus:ring-2 focus:ring-rose-400/60",
+        className
+      )}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
+}
+export function Card({ className, ...props }: DivProps) {
+  return <div className={cn("rounded-2xl bg-white shadow-sm", className)} {...props} />;
+}
+export function Badge({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
+  return <span className={cn("inline-flex items-center rounded-full px-3 py-1 text-xs font-bold", className)} {...props}/>;
+}
+export function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      className={cn(
+        "h-10 w-full rounded-full border pl-10 pr-3 text-sm",
+        "border-transparent bg-white/10 placeholder:text-white/55 hover:bg-white/15 focus:bg-white/15",
+        "focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+/* ---------- i18n ---------- */
+type Lang = "PT" | "EN";
+type Translations = {
+  brand: string;
+  search: string;
+  nav: {
+    menu: string; casinos: string; offers: string; betify: string; shop: string;
+    community: string; slots: string; stream: string; minigames: string; new: string;
+  };
+  promo: { lootbox: string; everyDep: string; bonus: string; giveaways: string; monthly: string; depcode: string; claim: string; };
+  card: {
+    min: string; bonus: string; cashback: string; spins: string; code: string;
+    terms: string; showMore: string; back: string; moreInfo: string; visit: string; go: string; copy: string;
+  };
+  social: { title: string; youtube: string; instagram: string; twitch: string; telegram: string; copyright: (y:number)=>string; };
+
+  /* NOVO: footer i18n */
+  footer: {
+    terms: string;
+    privacy: string;
+    cookies: string;
+    rg_paragraph: string;      // aviso de jogo responsável
+    rg_site: string;           // label do link (ex.: BeGambleAware.org)
+  };
+};
+
+const messages: Record<Lang, Translations> = {
+PT: {
+  brand: "K0MPA",
+  search: "Pesquisar…",
+  nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja",
+         community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
+  promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly",
+          depcode:"Dep. Code", claim:"Claim Bonus" },
+  card:{
+    min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:",
+    terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações",
+    visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar"
+  },
+  social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram",
+           copyright:(y)=>`Copyright © ${y} K0MPA` },
+
+  /* NOVO */
+  footer:{
+    terms: "Termos & Condições",
+    privacy: "Política de Privacidade",
+    cookies: "Política de Cookies",
+    rg_paragraph:
+      "18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
+    rg_site: "BeGambleAware.org"
+  }
+},
+
+EN: {
+  brand: "K0MPA",
+  search: "Search…",
+  nav: { menu:"Menu", casinos:"Casinos", offers:"Offers", betify:"Betify", shop:"Shop",
+         community:"Community", slots:"Slots", stream:"Stream", minigames:"Mini Games", new:"NEW" },
+  promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly",
+          depcode:"Dep. Code", claim:"Claim Bonus" },
+  card:{
+    min:"Min. Dep.", bonus:"Bonus", cashback:"Cashback", spins:"Free Spins", code:"Code:",
+    terms:"+18 | T&C apply", showMore:"More", back:"Back", moreInfo:"More information",
+    visit:"Visit brand", go:"CLAIM BONUS", copy:"Copy"
+  },
+  social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram",
+           copyright:(y)=>`Copyright © ${y} K0MPA` },
+
+  /* NEW */
+  footer:{
+    terms: "Terms & Conditions",
+    privacy: "Privacy Policy",
+    cookies: "Cookie Policy",
+    rg_paragraph:
+      "18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
+    rg_site: "BeGambleAware.org"
+  }
+}
+
+};
+const LangCtx = createContext<{lang:Lang; setLang:(l:Lang)=>void; t:Translations}>({lang:"PT", setLang:()=>{}, t:messages.PT});
+function useLang(){ return useContext(LangCtx); }
+
+/* ---------- Data ---------- */
+export type Brand = {
+  name: string; tag: "HOT" | "NEW" | "TOP"; logo: string; image: string;
+  imagePos?: React.CSSProperties["objectPosition"];
+  minDep: string; bonus: string; cashback: string; freeSpins: string; code: string; link: string;
+  theme?: { accent: string; shadow: string; ring?: string; };
+  payments?: Array<"btc"|"mb"|"mbb"|"visa"|"mc">;
+};
+
+const brands: Brand[] = [
+  { name:"Betify", tag:"HOT", logo:"", image:"https://betify.org/wp-content/uploads/2025/01/Betify-app.webp", imagePos:"left center",
+    minDep:"25€", bonus:"450%", cashback:"Até 35%", freeSpins:"Até 350FS", code:"K0MPA", link:"#",
+    theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
+    payments:["btc","mb","mbb","visa","mc"] },
+  { name:"1XBIT", tag:"NEW", logo:"", image:"https://thenewscrypto.com/wp-content/uploads/2022/01/IMG-20220110-WA0000.jpg", imagePos:"center",
+    minDep:"10€", bonus:"100%", cashback:"—", freeSpins:"125FS", code:"K0MPA", link:"#",
+    theme: { accent:"#d97706", shadow:"rgba(217,119,6,0.45)", ring:"rgba(217,119,6,.45)" },
+    payments:["btc"] }, // ← só BTC
+];
+
+/* ---------- header/sidebar ---------- */
+function TwitchBadge({ label = "Twitch" }: { label?: string }) {
+  return (
+    <span
+      className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold text-white ring-1 ring-white/20 shadow-sm"
+      style={{ background: TWITCH_PURPLE }}
+    >
+      <span className="relative flex h-2 w-2">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/80 opacity-75" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+      </span>
+      {label}
+    </span>
+  );
+}
+
+function HeaderBar({ isLive }: { isLive: boolean }) {
+  const { lang, setLang, t } = useLang();
+  const hdrRef = React.useRef<HTMLElement>(null);
+
+  React.useEffect(() => {
+    const update = () => {
+      const headerH = hdrRef.current?.offsetHeight ?? 56;
+      const sticky = headerH + 12 + 24; // espaço para sticky do sidebar
+      document.documentElement.style.setProperty("--sticky-top", `${sticky}px`);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return (
+    <header ref={hdrRef} className="sticky top-3 z-40">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
+        {/* ↓ mais fino: h-12, menos padding e raio menor */}
+        <div className="flex h-12 items-center gap-3 rounded-xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 px-4 sm:px-5 text-white/90 shadow-[0_8px_30px_rgba(0,0,0,.25)]">
+          {/* Marca + (Twitch só quando LIVE) */}
+<div className="mr-1.5 flex items-center gap-2.5">
+  <span className="text-white font-black tracking-tight text-[15px] leading-none">
+    {t.brand}
+  </span>
+
+  {isLive && (
+    <a
+      href={SOCIAL_LINKS.twitch}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Abrir Twitch (em direto)"
+      title="Live na Twitch"
+    >
+      <TwitchBadge />
+    </a>
+  )}
+</div>
+
+          {/* SEARCH — ultra clean, sem cor de fundo; só contorno no foco */}
+          <div className="relative hidden flex-1 md:flex">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60" />
+           <input
+  type="search"
+  placeholder={t.search}
+  className="
+    h-9 w-full rounded-lg bg-transparent pl-9 pr-3 text-sm text-white
+    placeholder:text-white/55
+    ring-1 ring-white/15 transition
+    focus:outline-none focus-visible:outline-none
+    /* foco a vermelho */
+    focus:ring-2 focus:ring-rose-500
+    /* tira o halo azul default de alguns browsers */
+    outline-none
+  "
+/>
+
+
+          </div>
+
+          {/* Só o seletor de idioma (sem sino) */}
+          <div className="ml-auto">
+            <LanguageToggle lang={lang} onChange={setLang} />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+
+function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
+  const { t, lang } = useLang();
+  const CARD_H = 400;
+
+  return (
+    <aside
+      className="hidden w-64 shrink-0 md:block self-start"
+      style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
+    >
+      <div
+        className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90
+                   ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
+        style={{ minHeight: `${CARD_H}px` }}
+      >
+        {/* Cabeçalho */}
+        <div className="mb-3 flex items-center justify-between rounded-xl px-2 py-1">
+          <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
+          <ChevronRight className="h-4 w-4 text-white/70" />
+        </div>
+
+        {/* Navegação */}
+        <nav className="space-y-2">
+          <a
+            href="#"
+            className="flex items-center justify-between rounded-xl px-3 py-2 text-sm
+                       hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+          >
+            <span className="flex items-center gap-2">
+              <Gift className="h-4 w-4" />
+              {t.nav.offers}
+            </span>
+            <Badge className="text-white" style={{ background: "#9146FF" }}>{t.nav.new}</Badge>
+          </a>
+
+          <div className="my-3 h-px bg-white/10" />
+
+          <div
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm
+                       text-white/45 pointer-events-none select-none"
+            aria-disabled="true"
+            title={lang === "PT" ? "Em breve" : "Coming soon"}
+          >
+            <Store className="h-4 w-4 opacity-70" />
+            <span>{t.nav.shop}</span>
+            <span className="ml-auto text-[10px] text-white/35">{lang === "PT" ? "em breve" : "coming soon"}</span>
+          </div>
+
+          <a
+            href={SOCIAL_LINKS.discord}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm
+                       hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            aria-label="Open Discord"
+          >
+            <Users className="h-4 w-4" />
+            <span>{t.nav.community}</span>
+          </a>
+
+          <button
+            type="button"
+            onClick={onOpenStream}
+            className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm
+                       hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+          >
+            <Tv className="h-4 w-4" />
+            <span>{t.nav.stream}</span>
+          </button>
+
+          {/* Redes */}
+          <div className="px-3 py-2">
+            <div className="mb-3 border-b border-white/10 pb-3 text-sm font-semibold text-white">{t.social.title}</div>
+            <ul className="grid grid-cols-2 gap-3 text-sm">
+              <li><a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline" aria-label="YouTube"><Youtube className="h-5 w-5" />{t.social.youtube}</a></li>
+              <li><a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline" aria-label="Instagram"><Instagram className="h-5 w-5" />{t.social.instagram}</a></li>
+              <li><a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline" aria-label="Twitch"><TwitchIcon className="h-5 w-5" />{t.social.twitch}</a></li>
+              <li><a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline" aria-label="Telegram"><Send className="h-5 w-5" />{t.social.telegram}</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        {/* rodapé lateral */}
+        <div className="mt-6 text-[12px] text-white/55 w-full text-center">
+          Copyright © {new Date().getFullYear()} K0MPA
+        </div>
+
+      </div>
+    </aside>
+  );
+}
+
+/* ---------- helpers ---------- */
+function tagVisual(tag: Brand["tag"]) {
+  switch (tag) { case "HOT": return { accent:"#ef4444" }; case "NEW": return { accent:"#8b5cf6" }; default: return { accent:"#10b981" }; }
+}
+function TagBadge({ tag, inline=false, className="", style, accent }: { tag: Brand["tag"]; inline?: boolean; className?: string; style?: React.CSSProperties; accent?: string; }) {
+  const Icon = (tag === "HOT" ? Flame : tag === "NEW" ? Sparkles : Crown) as React.ElementType;
+  const acc = accent ?? tagVisual(tag).accent;
+  return (
+    <div className={cn(inline ? "relative inline-flex" : "absolute left-3 top-3 z-20", className)} style={style}>
+      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white"
+            style={{ background: `linear-gradient(180deg, ${acc}, ${acc})`, boxShadow: "0 4px 14px rgba(0,0,0,.18)" }}>
+        <Icon className="h-3.5 w-3.5" />
+        <span className="uppercase tracking-wide">{tag}</span>
+      </span>
+    </div>
+  );
+}
+
+/* ---------- Payment logos ---------- */
+function PaymentIcon({ type }: { type: PaymentType }) {
+  const src = PAYMENT_ICON_URLS[type];
+  const alt = type === "btc" ? "Bitcoin" : type === "mbw" ? "MB WAY" : type === "mb" ? "Multibanco" : type === "visa" ? "VISA" : "Mastercard";
+  return <img src={src} alt={alt} loading="lazy" decoding="async" className="h-5 w-5 sm:h-6 sm:w-6 object-contain" draggable={false} />;
+}
+function PaymentBadge({ type }: { type: PaymentType }) {
+  return (<div className="h-10 w-11 sm:h-11 sm:w-12 rounded-xl bg-white ring-1 ring-black/10 shadow-sm flex items-center justify-center"><PaymentIcon type={type} /></div>);
+}
+function PaymentRibbon({ methods }: { methods: string[] }) {
+  return (
+    <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-30 flex gap-2 sm:gap-3">
+      {methods.map((m) => (<div key={m} className="pointer-events-auto"><PaymentBadge type={normalizePaymentType(m)} /></div>))}
+    </div>
+  );
+}
+function FancyCTA({ href, label, accent }: { href: string; label: string; accent: string; }) {
+  return (
+    <a
+      href={href} target="_blank" rel="noreferrer"
+      className="inline-flex h-12 w-full items-center justify-center rounded-2xl px-4 text-center text-sm font-extrabold text-white transition hover:brightness-110 ring-1 ring-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
+      style={{ background: `linear-gradient(180deg, ${accent}, ${rgba(accent, 0.85)})`, boxShadow: `0 8px 20px ${rgba(accent, 0.35)}` }}
+    >
+      {label}
+    </a>
+  );
+}
+
+/* ---------- Mini player (dock) ---------- */
+function buildTwitchEmbedUrl(channel: string) {
+  const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
+  const parents = new Set<string>([host, "localhost"]);
+  if (host.startsWith("www.")) parents.add(host.slice(4)); else parents.add(`www.${host}`);
+  const qsParents = Array.from(parents).map(p => `parent=${encodeURIComponent(p)}`).join("&");
+  return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&muted=1&autoplay=1&${qsParents}`;
+}
+
+function clamp(n: number, min: number, max: number) { return Math.max(min, Math.min(max, n)); }
+type Pos = { x: number; y: number };
+
+function useDockDrag(initial: Pos = { x: 16, y: 16 }, box = { w: 320, h: 240 }) {
+  const [pos, setPos] = React.useState<Pos>(() => {
+    try {
+      return JSON.parse(
+        localStorage.getItem("liveDockPos") || JSON.stringify(initial)
+      ) as Pos;
+    } catch {
+      return initial;
+    }
+  });
+
+  const dragRef = React.useRef<{ sx: number; sy: number; ox: number; oy: number } | null>(null);
+
+  const onDown = (e: React.PointerEvent) => {
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    dragRef.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y };
+  };
+
+  const onMove = (e: React.PointerEvent) => {
+    if (!dragRef.current) return;
+    const dx = e.clientX - dragRef.current.sx;
+    const dy = e.clientY - dragRef.current.sy;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    setPos({
+      x: clamp(dragRef.current.ox - dx, 0, vw - box.w),
+      y: clamp(dragRef.current.oy - dy, 0, vh - box.h),
+    });
+  };
+
+  const onUp = (e: React.PointerEvent) => {
+    try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+    const vw = window.innerWidth, vh = window.innerHeight, snap = 16;
+
+    setPos((p: Pos) => {
+      const snapped: Pos = {
+        x: (p.x <= snap) ? 0 : (p.x >= vw - box.w - snap) ? vw - box.w : p.x,
+        y: (p.y <= snap) ? 0 : (p.y >= vh - box.h - snap) ? vh - box.h : p.y,
+      };
+      try { localStorage.setItem("liveDockPos", JSON.stringify(snapped)); } catch {}
+      return snapped;
+    });
+
+    dragRef.current = null;
+  };
+
+  return { pos, setPos, onDown, onMove, onUp };
+}
+
+function LiveDock({ channel, onClose }: { channel: string; onClose: () => void }) {
+  const box = { w: 320, h: 240 };
+  const { pos, onDown, onMove, onUp } = useDockDrag({ x: 16, y: 16 }, box);
+  const playerSrc = buildTwitchEmbedUrl(channel);
+
+  return (
+    <div style={{ position: "fixed", right: pos.x, bottom: pos.y, zIndex: 50, touchAction: "none" }}>
+      <div className="rounded-2xl bg-black/70 backdrop-blur-md ring-1 ring-white/15 shadow-[0_10px_40px_rgba(0,0,0,.45)] overflow-hidden w-[320px] select-none">
+        {/* Arrasto APENAS no header → botão “Fechar” passa a funcionar */}
+        <div
+          data-dock="header"
+          className="flex items-center justify-between px-3 py-2 cursor-grab active:cursor-grabbing"
+          onPointerDown={onDown}
+          onPointerMove={onMove}
+          onPointerUp={onUp}
+        >
+          <div className="inline-flex items-center gap-2">
+            <TwitchBadge />
+            <span className="text-xs font-semibold text-white/90">/{channel}</span>
+          </div>
+          <button
+            onClick={(e) => { e.stopPropagation(); onClose(); }}
+            onPointerDown={(e) => e.stopPropagation()}
+            className="rounded-md px-2 py-1 text-xs font-semibold text-white/80 hover:bg-white/10"
+            aria-label="Fechar mini-player"
+          >
+            Fechar
+          </button>
+        </div>
+
+        <div className="bg-black w-[320px] h-[180px]">
+          <iframe
+            title={`twitch-${channel}`}
+            src={playerSrc}
+            width="320"
+            height="180"
+            frameBorder="0"
+            scrolling="no"
+            allow="autoplay; picture-in-picture; fullscreen; encrypted-media"
+            allowFullScreen
+            className="block w-[320px] h-[180px] border-0"
+          />
+        </div>
+
+        <div className="flex items-center justify-between px-3 py-2">
+          <a href={`https://twitch.tv/${channel}`} target="_blank" rel="noreferrer" className="text-[12px] font-semibold text-white/90 hover:underline">Ver na Twitch</a>
+          <span className="text-[11px] text-white/60">Som desligado</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Brand Card ---------- */
+function FancyStat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: React.ElementType; accent: string; }) {
+  return (
+    <div
+      className="relative overflow-hidden rounded-2xl px-3 py-2 text-white ring-1 backdrop-blur shadow-[0_6px_18px_rgba(0,0,0,.28)]"
+      style={{ minHeight: 74, background:"linear-gradient(180deg, rgba(15,23,42,.86) 0%, rgba(15,23,42,.78) 100%)", borderColor:"rgba(255,255,255,.08)" }}
+    >
+      <span aria-hidden className="absolute left-2 right-2 top-0 h-[3px] rounded-b-none rounded-t-xl" style={{ background:`linear-gradient(90deg, ${accent}, transparent)` }} />
+      <div className="flex h-full flex-col items-center justify-center gap-1 text-center leading-tight">
+        <Icon className="h-4 w-4 text-white/85" />
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-white/70">{label}</p>
+        <p className="text-sm font-extrabold text-white">{value}</p>
+      </div>
+    </div>
+  );
+}
+function StatTile({ icon: Icon, label, value, accent }: { icon: React.ElementType; label: string; value: string; accent: string; }) {
+  return (
+    <div
+      className="group relative overflow-hidden rounded-2xl p-3.5 transition bg-white/5 ring-1 ring-white/10 shadow-[0_2px_10px_rgba(15,23,42,0.06)] focus-within:ring-2 focus-within:ring-rose-400/60"
+      style={{ backgroundImage:"radial-gradient(120% 100% at 10% 0%, rgba(148,163,184,0.10) 0%, rgba(255,255,255,0) 60%)" }}
+    >
+      <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background:`linear-gradient(90deg, ${accent}, transparent)` }} />
+      <div className="flex items-center gap-2 text-white/70">
+        <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg ring-1 ring-white/10" style={{ background:`${accent}14` }}>
+          <Icon className="h-3.5 w-3.5 text-white/90" />
+        </span>
+        <span className="text-[10px] font-semibold uppercase tracking-wide">{label}</span>
+      </div>
+      <div className="mt-1.5 text-2xl font-extrabold leading-none text-white">{value}</div>
+    </div>
+  );
+}
+function BrandCard({ b }: { b: Brand }) {
+  const { t } = useLang();
+  const [flip, setFlip] = useState(false);
+  const CARD_H = 400;
+  const base = tagVisual(b.tag);
+  const acc  = b.theme?.accent ?? base.accent;
+  const shadow = b.theme?.shadow ?? rgba(acc, 0.35);
+
+  const methods = b.payments && b.payments.length ? b.payments : ["btc","mbw","mb","visa","mc"];
+
+  return (
+    <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height: CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
+      <div className="absolute inset-0 transition-transform duration-500" style={{ transformStyle:"preserve-3d", transform: flip ? "rotateY(180deg)" : "none" }}>
+        {/* FRONT */}
+        <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
+          <TagBadge tag={b.tag} accent={acc} />
+          <div className="absolute inset-0 overflow-hidden rounded-3xl">
+            <img src={b.image} alt={b.name} className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: b.imagePos ?? "center" }} />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/50" />
+            <div className="absolute right-4 top-4 z-10">
+              <button onClick={() => setFlip(true)} className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+                {t.card.showMore}
+              </button>
+            </div>
+
+            <div className="absolute inset-x-4 bottom-4">
+              <div className="relative rounded-2xl bg-black/35 p-3 backdrop-blur-md ring-1 ring-white/10 overflow-visible">
+                <PaymentRibbon methods={methods} />
+                <div className="pointer-events-none absolute left-6 right-6 -top-2 h-2 rounded-b-xl bg-gradient-to-b from-black/40 to-transparent" />
+                <div className="grid grid-cols-4 gap-2">
+                  <FancyStat icon={Coins}      label={t.card.min}      value={b.minDep}     accent={acc} />
+                  <FancyStat icon={Percent}    label={t.card.bonus}    value={b.bonus}      accent={acc} />
+                  <FancyStat icon={TrendingUp} label={t.card.cashback} value={b.cashback}   accent={acc} />
+                  <FancyStat icon={Sparkles}   label={t.card.spins}    value={b.freeSpins}  accent={acc} />
+                </div>
+                {/* Linha T&C acima do botão */}
+                <div className="pt-2 pb-1 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
+                <div className="pt-1"><FancyCTA href={b.link} label={t.card.go} accent={acc} /></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* BACK */}
+        <div className="absolute inset-0" style={{ backfaceVisibility:"hidden", transform:"rotateY(180deg)" }}>
+          <div className="relative flex h-full flex-col rounded-3xl bg-[linear-gradient(180deg,rgba(28,28,28,.85),rgba(28,28,28,.78))] p-5 overflow-hidden ring-1 ring-white/8" style={{ boxShadow:`0 16px 40px ${shadow}` }}>
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="text-base font-bold text-white">{t.card.moreInfo}</span>
+                <span className="h-1 w-14 rounded-full" style={{ background: acc }} />
+              </div>
+              <TagBadge tag={b.tag} inline accent={acc} />
+            </div>
+
+            <div className="space-y-3 text-white/90">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <StatTile icon={Coins} label="MIN. DEP." value={b.minDep} accent={acc} />
+                <StatTile icon={Percent} label="BÓNUS" value={b.bonus} accent={acc} />
+                <StatTile icon={TrendingUp} label="CASHBACK" value={b.cashback} accent={acc} />
+                <StatTile icon={Sparkles} label="FREE SPINS" value={b.freeSpins} accent={acc} />
+              </div>
+
+              <div className="grid grid-cols-[1fr,auto] items-center gap-3">
+                <div className="h-11 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 flex items-center text-sm text-white/90">
+                  <span className="text-white/60">{t.card.code}</span>
+                  <span className="ml-2 font-semibold tracking-wide">{b.code}</span>
+                </div>
+                <button
+                  onClick={async () => { try { await navigator.clipboard.writeText(b.code); } catch {} }}
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
+                >
+                  <Copy className="h-4 w-4" />
+                  {t.card.copy}
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <div className="grid grid-cols-2 items-stretch gap-3">
+                <Button className="h-11 rounded-2xl bg-white/8 ring-1 ring-white/12 hover:bg-white/12 text-sm text-white" onClick={() => setFlip(false)}>{t.card.back}</Button>
+                <a href={b.link} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center justify-center rounded-2xl px-4 text-sm font-semibold text-white transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background: `linear-gradient(135deg, ${acc}, ${rgba(acc, 0.85)})`, boxShadow: `0 8px 20px ${rgba(acc, 0.35)}` }}>
+                  {t.card.visit}
+                </a>
+              </div>
+            </div>
+
+            <div className="pointer-events-none absolute inset-0 -z-10 rounded-3xl opacity-60 blur-2xl" style={{ background:`radial-gradient(80% 60% at 10% 0%, ${rgba(acc,0.13)} 0%, transparent 60%)` }} />
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+/* ---------- Footer ---------- */
+function Footer() {
+  const { t } = useLang();
+  const year = new Date().getFullYear();
+
+  return (
+    <footer className="mx-auto w-full max-w-7xl px-6 sm:px-8 pb-8">
+      <div className="rounded-2xl bg-black/35 backdrop-blur-md ring-1 ring-white/10 text-white/80 px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,.28)]">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-extrabold tracking-tight text-white">{t.brand}</span>
+            <span className="text-xs text-white/60">© {year}</span>
+          </div>
+
+          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-semibold">
+  {/* desativados mas visíveis */}
+  <span
+    aria-disabled="true"
+    className="text-white/65 cursor-not-allowed select-none"
+  >
+    {t.footer?.terms ?? "Terms & Conditions"}
+  </span>
+  <span
+    aria-disabled="true"
+    className="text-white/65 cursor-not-allowed select-none"
+  >
+    {t.footer?.privacy ?? "Privacy Policy"}
+  </span>
+  <span
+    aria-disabled="true"
+    className="text-white/65 cursor-not-allowed select-none"
+  >
+    {t.footer?.cookies ?? "Cookie Policy"}
+  </span>
+</nav>
+
+
+          <a
+            href="https://www.begambleaware.org/"
+            target="_blank" rel="noreferrer"
+            className="inline-flex items-center gap-2 text-xs hover:text-white/90"
+            title={t.footer.rg_site}
+          >
+            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[11px] font-bold">
+              18+
+            </span>
+            {t.footer.rg_site}
+          </a>
+        </div>
+
+        <div className="my-3 h-px bg-white/10" />
+
+        <p className="text-[12px] leading-snug text-white/55">
+          {t.footer.rg_paragraph}
+        </p>
+      </div>
+    </footer>
+  );
+}
+function LanguageToggle({
+  lang,
+  onChange,
+}: {
+  lang: "PT" | "EN";
+  onChange: (l: "PT" | "EN") => void;
+}) {
+  const base = "text-sm font-semibold tracking-wide transition-colors";
+  const inactive = "text-white/70 hover:text-white/90";
+  const active = "text-white border-b-2 border-[#9146FF] pb-0.5";
+
+  return (
+    <div className="inline-flex items-center gap-3">
+      <button
+        type="button"
+        aria-selected={lang === "PT"}
+        onClick={() => onChange("PT")}
+        className={`${base} ${lang === "PT" ? active : inactive}`}
+      >
+        PT
+      </button>
+      <button
+        type="button"
+        aria-selected={lang === "EN"}
+        onClick={() => onChange("EN")}
+        className={`${base} ${lang === "EN" ? active : inactive}`}
+      >
+        EN
+      </button>
+    </div>
+  );
+}
+
+function BackgroundLayer() {
+  return (
+    <div
+      className="absolute inset-0 -z-10 pointer-events-none"
+      style={{
+        background:
+          "radial-gradient(120% 90% at 15% 0%, rgba(244,63,94,.35) 0%, rgba(244,63,94,.12) 35%, transparent 60%)," +
+          "radial-gradient(100% 85% at 85% 100%, rgba(244,63,94,.28) 0%, transparent 55%)," +
+          "linear-gradient(180deg, #150608 0%, #0f0406 40%, #090306 100%)",
+        WebkitMaskImage:
+          "radial-gradient(120% 100% at 50% 50%, #000 70%, transparent 100%)",
+        maskImage:
+          "radial-gradient(120% 100% at 50% 50%, #000 70%, transparent 100%)",
+      }}
+    />
+  );
+}
+
+
+/* ---------- Root ---------- */
+export default function CasinoPartnerHub() {
+  const [lang, setLang] = useState<Lang>("PT");
+  const t = useMemo(() => messages[lang], [lang]);
+  const isLive = useLiveAutoTwitch(TWITCH_CHANNEL, 60_000);
+
+  const [hideDock, setHideDock] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return sessionStorage.getItem("liveDockDismissed") === "1";
+  });
+  const closeDock = () => {
+    setHideDock(true);
+    if (typeof window !== "undefined") sessionStorage.setItem("liveDockDismissed", "1");
+  };
+  const reopenDock = () => {
+    setHideDock(false);
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("liveDockDismissed");
+    }
+  };
+
+  useEffect(() => {
+    if ((import.meta as any)?.env?.DEV && brands.length < 2) console.warn("[TEST] expected >=2 brands");
+  }, []);
+
+  return (
+   <LangCtx.Provider value={{ lang, setLang, t }}>
+    <div
+      className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-clip"
+      /* se a tua build não suportar clip, usa: overflow-x-hidden */
+    >
+      <BackgroundLayer />
+      <HeaderBar isLive={isLive} />
+        <div className="flex-1">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-8 sm:px-8 md:grid-cols-[280px,1fr] items-start">
+            <Sidebar onOpenStream={reopenDock} />
+            <main className="space-y-8">
+              <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
+                {brands.map((b, i) => (
+                  <React.Fragment key={b.name + i}>
+                    <BrandCard b={b} />
+                  </React.Fragment>
+                ))}
+              </div>
+            </main>
+          </div>
+        </div>
+        <Footer />
+        {!hideDock && <LiveDock channel={TWITCH_CHANNEL} onClose={closeDock} />}
+      </div>
+    </LangCtx.Provider>
+  );
+}
