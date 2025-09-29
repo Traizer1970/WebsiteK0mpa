@@ -213,138 +213,139 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
       className="hidden md:block w-[280px]"
       style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
     >
-      {/* sem minHeight; centrado verticalmente */}
+      {/* A caixa agora ocupa toda a altura disponível */}
       <div
         className="
-          flex flex-col justify-center gap-4
           rounded-2xl bg-white/10 backdrop-blur-md p-4
           text-white/90 ring-1 ring-white/10
           shadow-[0_8px_30px_rgba(0,0,0,.25)]
         "
+        style={{ minHeight: "calc(100vh - var(--sticky-top,112px) - 16px)" }}
       >
-        <div className="flex items-center justify-between rounded-xl px-2 py-1">
-          <span className="text-sm font-semibold text-white">
-            {t.nav?.menu ?? "Menu"}
-          </span>
-          <ChevronRight className="h-4 w-4 text-white/70" />
-        </div>
-
-        <nav className="space-y-2">
-          <a
-            href="#"
-            className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-          >
-            <span className="flex items-center gap-2">
-              <Gift className="h-4 w-4" />
-              {t.nav.offers}
-            </span>
-            <Badge className="text-white" style={{ background: "#9146FF" }}>
-              {t.nav.new}
-            </Badge>
-          </a>
-
-          <div className="my-3 h-px bg-white/10" />
-
-          <div
-            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/45 pointer-events-none select-none"
-            aria-disabled="true"
-            title={lang === "PT" ? "Em breve" : "Coming soon"}
-          >
-            <Store className="h-4 w-4 opacity-70" />
-            <span>{t.nav.shop}</span>
-            <span className="ml-auto text-[10px] text-white/35">
-              {lang === "PT" ? "em breve" : "coming soon"}
-            </span>
+        {/* Grid para ocupar tudo e distribuir (topo / conteúdo / rodapé) */}
+        <div className="h-full grid grid-rows-[auto,1fr,auto] gap-4">
+          {/* TOPO */}
+          <div className="flex items-center justify-between rounded-xl px-2 py-1">
+            <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
+            <ChevronRight className="h-4 w-4 text-white/70" />
           </div>
 
-          <a
-            href={SOCIAL_LINKS.discord}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-            aria-label="Open Discord"
-          >
-            <Users className="h-4 w-4" />
-            <span>{t.nav.community}</span>
-          </a>
+          {/* CONTEÚDO — distribuído uniformemente */}
+          <div className="flex flex-col gap-4 justify-evenly">
+            <a
+              href="#"
+              className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            >
+              <span className="flex items-center gap-2">
+                <Gift className="h-4 w-4" />
+                {t.nav.offers}
+              </span>
+              <Badge className="text-white" style={{ background: "#9146FF" }}>
+                {t.nav.new}
+              </Badge>
+            </a>
 
-          <button
-            type="button"
-            onClick={onOpenStream}
-            className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-          >
-            <Tv className="h-4 w-4" />
-            <span>{t.nav.stream}</span>
-          </button>
+            <div className="h-px bg-white/10" />
 
-          {/* Redes */}
-          <div className="px-3 py-2">
-            <div className="mb-3 border-b border-white/10 pb-3 text-sm font-semibold text-white">
-              {t.social.title}
+            <div
+              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/45 pointer-events-none select-none"
+              aria-disabled="true"
+              title={lang === "PT" ? "Em breve" : "Coming soon"}
+            >
+              <Store className="h-4 w-4 opacity-70" />
+              <span>{t.nav.shop}</span>
+              <span className="ml-auto text-[10px] text-white/35">
+                {lang === "PT" ? "em breve" : "coming soon"}
+              </span>
             </div>
-            <ul className="grid grid-cols-2 gap-3 text-sm">
-              <li>
-                <a
-                  href={SOCIAL_LINKS.youtube}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 hover:underline"
-                  aria-label="YouTube"
-                >
-                  <Youtube className="h-5 w-5" />
-                  {t.social.youtube}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={SOCIAL_LINKS.instagram}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 hover:underline"
-                  aria-label="Instagram"
-                >
-                  <Instagram className="h-5 w-5" />
-                  {t.social.instagram}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={SOCIAL_LINKS.twitch}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 hover:underline"
-                  aria-label="Twitch"
-                >
-                  <TwitchIcon className="h-5 w-5" />
-                  {t.social.twitch}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={SOCIAL_LINKS.telegram}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 hover:underline"
-                  aria-label="Telegram"
-                >
-                  <Send className="h-5 w-5" />
-                  {t.social.telegram}
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
 
-        {/* rodapé da caixa */}
-        <div className="pt-2 text-[12px] text-white/55 w-full text-center">
-          Copyright © {new Date().getFullYear()} K0MPA
+            <a
+              href={SOCIAL_LINKS.discord}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+              aria-label="Open Discord"
+            >
+              <Users className="h-4 w-4" />
+              <span>{t.nav.community}</span>
+            </a>
+
+            <button
+              type="button"
+              onClick={onOpenStream}
+              className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg白/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            >
+              <Tv className="h-4 w-4" />
+              <span>{t.nav.stream}</span>
+            </button>
+
+            {/* Redes */}
+            <div className="px-3">
+              <div className="mb-3 border-b border-white/10 pb-3 text-sm font-semibold text-white">
+                {t.social.title}
+              </div>
+              <ul className="grid grid-cols-2 gap-3 text-sm">
+                <li>
+                  <a
+                    href={SOCIAL_LINKS.youtube}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 hover:underline"
+                    aria-label="YouTube"
+                  >
+                    <Youtube className="h-5 w-5" />
+                    {t.social.youtube}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={SOCIAL_LINKS.instagram}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 hover:underline"
+                    aria-label="Instagram"
+                  >
+                    <Instagram className="h-5 w-5" />
+                    {t.social.instagram}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={SOCIAL_LINKS.twitch}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 hover:underline"
+                    aria-label="Twitch"
+                  >
+                    <TwitchIcon className="h-5 w-5" />
+                    {t.social.twitch}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={SOCIAL_LINKS.telegram}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 hover:underline"
+                    aria-label="Telegram"
+                  >
+                    <Send className="h-5 w-5" />
+                    {t.social.telegram}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* RODAPÉ (colado ao fundo) */}
+          <div className="pt-1 text-[12px] text-white/55 w-full text-center">
+            Copyright © {new Date().getFullYear()} K0MPA
+          </div>
         </div>
       </div>
     </aside>
   );
 }
-
-
 /* ---------- helpers ---------- */
 function tagVisual(tag: Brand["tag"]) {
   switch (tag) { case "HOT": return { accent:"#ef4444" }; case "NEW": return { accent:"#8b5cf6" }; default: return { accent:"#10b981" }; }
