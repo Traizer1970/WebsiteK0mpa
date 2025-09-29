@@ -11,7 +11,7 @@ const TWITCH_CHANNEL = "k0mpa";
 /* YouTube (UC…) — já preenchido para @k0mpa */
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 /* Discord server (Guild) ID — mete aqui o teu; se vazio, o widget não aparece */
-const DISCORD_SERVER_ID = ""; // ex.: "123456789012345678"
+const DISCORD_SERVER_ID = "1413544816176005123"; // ex.: "123456789012345678"
 
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
