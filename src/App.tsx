@@ -406,6 +406,30 @@ function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => v
   return mounted ? createPortal(content, document.body) : null;
 }
 
+/* ---------- Stream por cima dos cards (hero) ---------- */
+function StreamHero({ channel }: { channel: string }) {
+  const src = buildTwitchEmbedUrl(channel);
+  return (
+    <section>
+      <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
+        {/* 16:9 responsivo */}
+        <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+          <iframe
+            title={`twitch-${channel}-hero`}
+            src={src}
+            allow="autoplay; picture-in-picture; fullscreen; encrypted-media"
+            allowFullScreen
+            frameBorder="0"
+            scrolling="no"
+            className="absolute inset-0 h-full w-full border-0"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 /* ---------- YouTube GRID (sem API) ---------- */
 type YtItem = { id: string; title: string; published: string; thumb: string };
 function timeAgo(iso: string) {
@@ -416,68 +440,105 @@ function timeAgo(iso: string) {
   const m = Math.floor(d/30); if (m<12) return `${m}mês`;
   const y = Math.floor(m/12); return `${y}a`;
 }
-function YouTubeGrid({ channelId, limit=8 }: { channelId: string; limit?: number }) {
-  const [items, setItems] = useState<YtItem[]|null>(null);
+function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: number }) {
+  const [items, setItems] = useState<YtItem[] | null>(null);
+  const [failed, setFailed] = useState(false);
+
   useEffect(() => {
     if (!channelId) return;
     const url = `https://r.jina.ai/http://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`;
     (async () => {
       try {
-        const xml = await (await fetch(url, { cache: "no-store" })).text();
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(String(res.status));
+        const xml = await res.text();
         const doc = new DOMParser().parseFromString(xml, "text/xml");
         const entries = Array.from(doc.getElementsByTagName("entry"));
         const mapped = entries.slice(0, limit).map((e) => {
-          const id = e.getElementsByTagName("yt:videoId")[0]?.textContent || e.getElementsByTagName("videoId")[0]?.textContent || "";
+          const id =
+            e.getElementsByTagName("yt:videoId")[0]?.textContent ||
+            e.getElementsByTagName("videoId")[0]?.textContent ||
+            "";
           const title = e.getElementsByTagName("title")[0]?.textContent || "";
           const published = e.getElementsByTagName("published")[0]?.textContent || "";
           const thumb = (e.querySelector('media\\:thumbnail') as any)?.getAttribute("url") || "";
           return { id, title, published, thumb };
-        }).filter(x=>x.id);
+        }).filter(x => x.id);
         setItems(mapped);
-      } catch { setItems([]); }
+        setFailed(false);
+      } catch (err) {
+        console.warn("[YouTubeGrid] fallback iframe:", err);
+        setItems([]);
+        setFailed(true);
+      }
     })();
   }, [channelId, limit]);
-
-  if (!channelId || items===null) return (
-    <section className="space-y-3">
-      <h2 className="text-white/90 text-base font-bold">Últimos vídeos</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 opacity-60">
-        {Array.from({length:8}).map((_,i)=>(
-          <div key={i} className="aspect-video rounded-xl bg-white/10 animate-pulse" />
-        ))}
-      </div>
-    </section>
-  );
-
-  if (!items.length) return null;
 
   return (
     <section className="space-y-3">
       <h2 className="text-white/90 text-base font-bold">Últimos vídeos</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {items.map(v => (
-          <a
-            key={v.id}
-            href={`https://www.youtube.com/watch?v=${v.id}`}
-            target="_blank" rel="noreferrer"
-            className="group rounded-xl overflow-hidden ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition block"
-            title={v.title}
-          >
-            <div className="relative aspect-video bg-black">
-              {v.thumb ? (
-                <img src={v.thumb} alt={v.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
-              ) : null}
-            </div>
-            <div className="p-3">
-              <div className="line-clamp-2 text-sm font-semibold text-white/90 group-hover:text-white">{v.title}</div>
-              <div className="mt-1 text-[11px] text-white/60">{timeAgo(v.published)} • YouTube</div>
-            </div>
-          </a>
-        ))}
-      </div>
+
+      {/* Loading skeleton */}
+      {items === null && (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 opacity-60">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="aspect-video rounded-xl bg-white/10 animate-pulse" />
+          ))}
+        </div>
+      )}
+
+      {/* Grid normal */}
+      {!!items && items.length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {items.map((v) => (
+            <a
+              key={v.id}
+              href={`https://www.youtube.com/watch?v=${v.id}`}
+              target="_blank"
+              rel="noreferrer"
+              className="group rounded-xl overflow-hidden ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition block"
+              title={v.title}
+            >
+              <div className="relative aspect-video bg-black">
+                {v.thumb && (
+                  <img
+                    src={v.thumb}
+                    alt={v.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                )}
+              </div>
+              <div className="p-3">
+                <div className="line-clamp-2 text-sm font-semibold text-white/90 group-hover:text-white">
+                  {v.title}
+                </div>
+                <div className="mt-1 text-[11px] text-white/60">{timeAgo(v.published)} • YouTube</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+
+      {/* Fallback: playlist “Uploads” em iframe (UU + channelId.slice(2)) */}
+      {!!items && items.length === 0 && failed && (
+        <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
+          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+            <iframe
+              title="YouTube uploads"
+              src={`https://www.youtube.com/embed?listType=playlist&list=${"UU" + channelId.slice(2)}`}
+              className="absolute inset-0 h-full w-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              loading="lazy"
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
+
 
 /* ---------- Brand Card ---------- */
 function FancyStat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: React.ElementType; accent: string; }) {
@@ -681,6 +742,9 @@ export default function CasinoPartnerHub() {
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-8 sm:px-8 md:grid-cols-[280px,1fr] items-start">
             <Sidebar onOpenStream={() => setShowOverlay(true)} />
             <main className="space-y-10">
+              {/* Twitch por cima dos cards */}
+<StreamHero channel={TWITCH_CHANNEL} />
+
               {/* Cards */}
               <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
                 {brands.map((b, i) => (
