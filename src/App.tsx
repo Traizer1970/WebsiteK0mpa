@@ -444,35 +444,39 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
   const [items, setItems] = useState<YtItem[] | null>(null);
   const [failed, setFailed] = useState(false);
 
-  useEffect(() => {
-    if (!channelId) return;
-    const url = `https://r.jina.ai/http://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`;
-    (async () => {
-      try {
-        const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) throw new Error(String(res.status));
-        const xml = await res.text();
-        const doc = new DOMParser().parseFromString(xml, "text/xml");
-        const entries = Array.from(doc.getElementsByTagName("entry"));
-        const mapped = entries.slice(0, limit).map((e) => {
-          const id =
-            e.getElementsByTagName("yt:videoId")[0]?.textContent ||
-            e.getElementsByTagName("videoId")[0]?.textContent ||
-            "";
-          const title = e.getElementsByTagName("title")[0]?.textContent || "";
-          const published = e.getElementsByTagName("published")[0]?.textContent || "";
-          const thumb = (e.querySelector('media\\:thumbnail') as any)?.getAttribute("url") || "";
-          return { id, title, published, thumb };
-        }).filter(x => x.id);
-        setItems(mapped);
-        setFailed(false);
-      } catch (err) {
-        console.warn("[YouTubeGrid] fallback iframe:", err);
-        setItems([]);
-        setFailed(true);
-      }
-    })();
-  }, [channelId, limit]);
+useEffect(() => {
+  if (!channelId) return;
+  const url = `https://r.jina.ai/http://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`;
+
+  (async () => {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(String(res.status));
+
+      const xml = await res.text();
+      const doc = new DOMParser().parseFromString(xml, "text/xml");
+      const entries = Array.from(doc.getElementsByTagName("entry"));
+
+      const mapped = entries.slice(0, limit).map((e) => {
+        const id =
+          e.getElementsByTagName("yt:videoId")[0]?.textContent ||
+          e.getElementsByTagName("videoId")[0]?.textContent || "";
+        const title = e.getElementsByTagName("title")[0]?.textContent || "";
+        const published = e.getElementsByTagName("published")[0]?.textContent || "";
+        const thumb = (e.querySelector('media\\:thumbnail') as any)?.getAttribute("url") || "";
+        return { id, title, published, thumb };
+      }).filter(x => x.id);
+
+      setItems(mapped);
+      // <— SE vier vazio, activa fallback (iframe)
+      setFailed(mapped.length === 0);
+    } catch {
+      setItems([]);   // para esconder o skeleton
+      setFailed(true); // activa fallback (iframe)
+    }
+  })();
+}, [channelId, limit]);
+
 
   return (
     <section className="space-y-3">
@@ -521,20 +525,21 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
       )}
 
       {/* Fallback: playlist “Uploads” em iframe (UU + channelId.slice(2)) */}
-      {!!items && items.length === 0 && failed && (
-        <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
-          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-            <iframe
-              title="YouTube uploads"
-              src={`https://www.youtube.com/embed?listType=playlist&list=${"UU" + channelId.slice(2)}`}
-              className="absolute inset-0 h-full w-full border-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              loading="lazy"
-            />
-          </div>
-        </div>
-      )}
+{!!items && items.length === 0 && failed && (
+  <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
+    <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+      <iframe
+        title="YouTube uploads"
+        src={`https://www.youtube.com/embed?listType=playlist&list=${"UU" + channelId.slice(2)}`}
+        className="absolute inset-0 h-full w-full border-0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+        loading="lazy"
+      />
+    </div>
+  </div>
+)}
+
     </section>
   );
 }
