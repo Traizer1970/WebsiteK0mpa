@@ -251,18 +251,17 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
 
 function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   const { t, lang } = useLang();
-  const CARD_H = 400;
 
   return (
     <aside
-      /* centrado na coluna */
-      className="hidden md:block w-[280px] mx-auto"
+      className="hidden md:block w-[280px]"
       style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
     >
       <div
-        className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90
-                   ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
-        style={{ minHeight: `${CARD_H}px` }}
+        className="flex flex-col rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90
+                   ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
+        /* ocupa até ao fundo do ecrã (sem espaço morto) */
+        style={{ minHeight: "calc(100vh - var(--sticky-top,112px) - 16px)" }}
       >
         {/* Cabeçalho */}
         <div className="mb-3 flex items-center justify-between rounded-xl px-2 py-1">
@@ -270,8 +269,8 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
           <ChevronRight className="h-4 w-4 text-white/70" />
         </div>
 
-        {/* Navegação */}
-        <nav className="space-y-2">
+        {/* Navegação (cresce para empurrar o rodapé para baixo) */}
+        <nav className="space-y-2 flex-1">
           <a
             href="#"
             className="flex items-center justify-between rounded-xl px-3 py-2 text-sm
@@ -294,7 +293,9 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
           >
             <Store className="h-4 w-4 opacity-70" />
             <span>{t.nav.shop}</span>
-            <span className="ml-auto text-[10px] text-white/35">{lang === "PT" ? "em breve" : "coming soon"}</span>
+            <span className="ml-auto text-[10px] text-white/35">
+              {lang === "PT" ? "em breve" : "coming soon"}
+            </span>
           </div>
 
           <a
@@ -321,7 +322,9 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
 
           {/* Redes */}
           <div className="px-3 py-2">
-            <div className="mb-3 border-b border-white/10 pb-3 text-sm font-semibold text-white">{t.social.title}</div>
+            <div className="mb-3 border-b border-white/10 pb-3 text-sm font-semibold text-white">
+              {t.social.title}
+            </div>
             <ul className="grid grid-cols-2 gap-3 text-sm">
               <li><a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline" aria-label="YouTube"><Youtube className="h-5 w-5" />{t.social.youtube}</a></li>
               <li><a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline" aria-label="Instagram"><Instagram className="h-5 w-5" />{t.social.instagram}</a></li>
@@ -331,15 +334,15 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
           </div>
         </nav>
 
-        {/* rodapé lateral */}
-        <div className="mt-6 text-[12px] text-white/55 w-full text-center">
+        {/* rodapé colado em baixo */}
+        <div className="pt-3 text-[12px] text-white/55 w-full text-center">
           Copyright © {new Date().getFullYear()} K0MPA
         </div>
-
       </div>
     </aside>
   );
 }
+
 
 /* ---------- helpers ---------- */
 function tagVisual(tag: Brand["tag"]) {
