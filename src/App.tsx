@@ -215,74 +215,78 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
     >
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
-        style={{ minHeight: "calc(100vh - var(--sticky-top,112px) - 16px)" }}
+        // ⬇️ altura fixa: ocupa o espaço todo até ao fundo
+        style={{ height: "calc(100vh - var(--sticky-top,112px) - 16px)" }}
       >
-        {/* coluna inteira */}
-        <div className="h-full flex flex-col">
-          {/* topo / navegação */}
-          <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
-            <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
-            <ChevronRight className="h-4 w-4 text-white/70" />
-          </div>
-
-          <nav className="space-y-2">
-            <a
-              href="#"
-              className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-            >
-              <span className="flex items-center gap-2">
-                <Gift className="h-4 w-4" />
-                {t.nav.offers}
+        {/* 3 zonas: topo / spacer / rodapé */}
+        <div className="flex h-full flex-col">
+          {/* TOPO — Menu */}
+          <div>
+            <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
+              <span className="text-sm font-semibold text-white">
+                {t.nav?.menu ?? "Menu"}
               </span>
-              <Badge className="text-white" style={{ background: "#9146FF" }}>
-                {t.nav.new}
-              </Badge>
-            </a>
-
-            <div className="my-3 h-px bg-white/10" />
-
-            <div
-              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/45 pointer-events-none select-none"
-              aria-disabled="true"
-              title={lang === "PT" ? "Em breve" : "Coming soon"}
-            >
-              <Store className="h-4 w-4 opacity-70" />
-              <span>{t.nav.shop}</span>
-              <span className="ml-auto text-[10px] text-white/35">
-                {lang === "PT" ? "em breve" : "coming soon"}
-              </span>
+              <ChevronRight className="h-4 w-4 text-white/70" />
             </div>
 
-            <a
-              href={SOCIAL_LINKS.discord}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-            >
-              <Users className="h-4 w-4" />
-              <span>{t.nav.community}</span>
-            </a>
+            <nav className="space-y-2">
+              <a
+                href="#"
+                className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+              >
+                <span className="flex items-center gap-2">
+                  <Gift className="h-4 w-4" />
+                  {t.nav.offers}
+                </span>
+                <Badge className="text-white" style={{ background: "#9146FF" }}>
+                  {t.nav.new}
+                </Badge>
+              </a>
 
-            <button
-              type="button"
-              onClick={onOpenStream}
-              className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-            >
-              <Tv className="h-4 w-4" />
-              <span>{t.nav.stream}</span>
-            </button>
-          </nav>
+              <div className="my-3 h-px bg-white/10" />
 
-          {/* spacer empurra o footer para o fundo */}
+              <div
+                className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/45 pointer-events-none select-none"
+                aria-disabled="true"
+                title={lang === "PT" ? "Em breve" : "Coming soon"}
+              >
+                <Store className="h-4 w-4 opacity-70" />
+                <span>{t.nav.shop}</span>
+                <span className="ml-auto text-[10px] text-white/35">
+                  {lang === "PT" ? "em breve" : "coming soon"}
+                </span>
+              </div>
+
+              <a
+                href={SOCIAL_LINKS.discord}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+              >
+                <Users className="h-4 w-4" />
+                <span>{t.nav.community}</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={onOpenStream}
+                className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+              >
+                <Tv className="h-4 w-4" />
+                <span>{t.nav.stream}</span>
+              </button>
+            </nav>
+          </div>
+
+          {/* SPACER — empurra o rodapé para baixo */}
           <div className="flex-1" />
 
-          {/* footer com redes + copyright */}
-          <footer className="pt-3">
-            <div className="mb-3 h-px bg-white/10" />
+          {/* RODAPÉ — Redes + copyright colados ao fundo */}
+          <footer className="pt-4 border-t border-white/10">
             <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">
               {t.social.title}
             </div>
-            <ul className="grid grid-cols-2 gap-3 text-sm mb-3">
+            <ul className="grid grid-cols-2 gap-3 text-sm">
               <li>
                 <a
                   href={SOCIAL_LINKS.youtube}
@@ -329,7 +333,7 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
               </li>
             </ul>
 
-            <div className="text-center text-[12px] text-white/55">
+            <div className="mt-3 text-center text-[12px] text-white/55">
               Copyright © {new Date().getFullYear()} K0MPA
             </div>
           </footer>
@@ -338,7 +342,6 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
     </aside>
   );
 }
-
 /* ---------- helpers ---------- */
 function tagVisual(tag: Brand["tag"]) {
   switch (tag) { case "HOT": return { accent:"#ef4444" }; case "NEW": return { accent:"#8b5cf6" }; default: return { accent:"#10b981" }; }
