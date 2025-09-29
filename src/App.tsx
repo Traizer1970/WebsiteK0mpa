@@ -209,12 +209,9 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   const { t, lang } = useLang();
 
   return (
-    <aside
-      className="hidden md:block w-[280px]"
-      style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
-    >
+    <aside className="hidden md:block w-[240px] mx-auto" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
       <div
-        className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
+        className="rounded-2xl bg-white/10 backdrop-blur-md p-3 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
         // ⬇️ altura fixa: ocupa o espaço todo até ao fundo
         style={{ height: "calc(100vh - var(--sticky-top,112px) - 16px)" }}
       >
@@ -805,7 +802,7 @@ export default function CasinoPartnerHub() {
         <HeaderBar isLive={isLive} />
 
         <div className="flex-1">
-          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-8 sm:px-8 md:grid-cols-[280px,1fr] items-start">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-start">
             <Sidebar onOpenStream={() => setShowOverlay(true)} />
             <main className="space-y-10">
               {/* Twitch por cima dos cards */}
