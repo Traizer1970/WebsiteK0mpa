@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, createContext, useContext } from "react";
+import { createPortal } from "react-dom";
 import {
   Search, ChevronRight, Gift, Store, Users, Tv,
   TrendingUp, Youtube, Instagram, Twitch as TwitchIcon, Send, Coins, Percent, Copy,
@@ -124,8 +125,8 @@ type Translations = {
     terms: string;
     privacy: string;
     cookies: string;
-    rg_paragraph: string;      // aviso de jogo responsável
-    rg_site: string;           // label do link (ex.: BeGambleAware.org)
+    rg_paragraph: string;
+    rg_site: string;
   };
 };
 
@@ -543,6 +544,70 @@ function LiveDock({ channel, onClose }: { channel: string; onClose: () => void }
   );
 }
 
+/* ---------- Overlay de Stream (POR CIMA DE TUDO) ---------- */
+function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => void }) {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+
+    // bloquear scroll por baixo do overlay
+    const prev = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.documentElement.style.overflow = prev;
+    };
+  }, [onClose]);
+
+  const src = buildTwitchEmbedUrl(channel);
+
+  const content = (
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center"
+      aria-modal="true"
+      role="dialog"
+    >
+      {/* backdrop */}
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      {/* content */}
+      <div className="relative mx-4 w-full max-w-5xl rounded-2xl ring-1 ring-white/15 shadow-[0_20px_80px_rgba(0,0,0,.6)] overflow-hidden">
+        <div className="flex items-center justify-between bg-black/50 px-4 py-2 text-white">
+          <div className="flex items-center gap-2">
+            <TwitchBadge />
+            <span className="text-sm font-semibold">/{channel}</span>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-md px-3 py-1 text-sm font-semibold hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+          >
+            Fechar
+          </button>
+        </div>
+        {/* 16:9 responsivo */}
+        <div className="bg-black">
+          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+            <iframe
+              title={`twitch-${channel}-overlay`}
+              src={src}
+              allow="autoplay; picture-in-picture; fullscreen; encrypted-media"
+              allowFullScreen
+              frameBorder="0"
+              scrolling="no"
+              className="absolute inset-0 h-full w-full border-0"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return mounted ? createPortal(content, document.body) : null;
+}
+
 /* ---------- Brand Card ---------- */
 function FancyStat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: React.ElementType; accent: string; }) {
   return (
@@ -795,12 +860,9 @@ export default function CasinoPartnerHub() {
     setHideDock(true);
     if (typeof window !== "undefined") sessionStorage.setItem("liveDockDismissed", "1");
   };
-  const reopenDock = () => {
-    setHideDock(false);
-    if (typeof window !== "undefined") {
-      sessionStorage.removeItem("liveDockDismissed");
-    }
-  };
+
+  // Overlay state
+  const [showOverlay, setShowOverlay] = useState(false);
 
   useEffect(() => {
     if ((import.meta as any)?.env?.DEV && brands.length < 2) console.warn("[TEST] expected >=2 brands");
@@ -816,7 +878,7 @@ export default function CasinoPartnerHub() {
       <HeaderBar isLive={isLive} />
         <div className="flex-1">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-8 sm:px-8 md:grid-cols-[280px,1fr] items-start">
-            <Sidebar onOpenStream={reopenDock} />
+            <Sidebar onOpenStream={() => setShowOverlay(true)} />
             <main className="space-y-8">
               <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
                 {brands.map((b, i) => (
@@ -829,7 +891,17 @@ export default function CasinoPartnerHub() {
           </div>
         </div>
         <Footer />
+
+        {/* Mini-dock (opcional) */}
         {!hideDock && <LiveDock channel={TWITCH_CHANNEL} onClose={closeDock} />}
+
+        {/* Overlay por cima de tudo */}
+        {showOverlay && (
+          <StreamOverlay
+            channel={TWITCH_CHANNEL}
+            onClose={() => setShowOverlay(false)}
+          />
+        )}
       </div>
     </LangCtx.Provider>
   );
