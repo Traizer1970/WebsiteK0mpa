@@ -6,6 +6,13 @@ import {
   Sparkles, Flame, Crown,
 } from "lucide-react";
 
+/* ---------- CONFIG ---------- */
+const TWITCH_CHANNEL = "k0mpa";
+/* YouTube (UC…) — já preenchido para @k0mpa */
+const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
+/* Discord server (Guild) ID — mete aqui o teu; se vazio, o widget não aparece */
+const DISCORD_SERVER_ID = ""; // ex.: "123456789012345678"
+
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
 function hexToRgb(hex: string) {
@@ -14,8 +21,6 @@ function hexToRgb(hex: string) {
   return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
 }
 function rgba(hex: string, a: number) { const { r, g, b } = hexToRgb(hex); return `rgba(${r},${g},${b},${a})`; }
-
-/* Tema/accent */
 const TWITCH_PURPLE = "#9146FF";
 const SOCIAL_LINKS = {
   youtube:  "https://youtube.com/@k0mpa",
@@ -24,12 +29,6 @@ const SOCIAL_LINKS = {
   telegram: "https://t.me/k0mpa",
   discord:  "https://discord.gg/k0mpa",
 } as const;
-
-/* ---------- Twitch/YouTube config ---------- */
-const TWITCH_CHANNEL = "k0mpa";
-
-/** TROCA pelo ID do playlist de uploads do teu canal (começa por UU…) */
-const YT_UPLOADS_PLAYLIST = "UUwhhk8mIE-wGg_EWX2adH5Q";
 
 /* ---------- Twitch LIVE (sem API key) ---------- */
 function useLiveAutoTwitch(channel: string, intervalMs = 60_000) {
@@ -95,78 +94,37 @@ export function Card({ className, ...props }: DivProps) {
 export function Badge({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
   return <span className={cn("inline-flex items-center rounded-full px-3 py-1 text-xs font-bold", className)} {...props}/>;
 }
-export function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <input
-      className={cn(
-        "h-10 w-full rounded-full border pl-10 pr-3 text-sm",
-        "border-transparent bg-white/10 placeholder:text-white/55 hover:bg-white/15 focus:bg-white/15",
-        "focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60",
-        className
-      )}
-      {...props}
-    />
-  );
-}
 
 /* ---------- i18n ---------- */
 type Lang = "PT" | "EN";
 type Translations = {
-  brand: string;
-  search: string;
-  nav: {
-    menu: string; casinos: string; offers: string; betify: string; shop: string;
-    community: string; slots: string; stream: string; minigames: string; new: string;
-  };
+  brand: string; search: string;
+  nav: { menu: string; casinos: string; offers: string; betify: string; shop: string; community: string; slots: string; stream: string; minigames: string; new: string; };
   promo: { lootbox: string; everyDep: string; bonus: string; giveaways: string; monthly: string; depcode: string; claim: string; };
-  card: {
-    min: string; bonus: string; cashback: string; spins: string; code: string;
-    terms: string; showMore: string; back: string; moreInfo: string; visit: string; go: string; copy: string;
-  };
+  card: { min: string; bonus: string; cashback: string; spins: string; code: string; terms: string; showMore: string; back: string; moreInfo: string; visit: string; go: string; copy: string; };
   social: { title: string; youtube: string; instagram: string; twitch: string; telegram: string; copyright: (y:number)=>string; };
   footer: { terms: string; privacy: string; cookies: string; rg_paragraph: string; rg_site: string; };
 };
-
 const messages: Record<Lang, Translations> = {
 PT: {
-  brand: "K0MPA",
-  search: "Pesquisar…",
-  nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja",
-         community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
-  promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly",
-          depcode:"Dep. Code", claim:"Claim Bonus" },
-  card:{
-    min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:",
-    terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações",
-    visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar"
-  },
-  social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram",
-           copyright:(y)=>`Copyright © ${y} K0MPA` },
-  footer:{
-    terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
-    rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
-    rg_site:"BeGambleAware.org"
-  }
+  brand: "K0MPA", search: "Pesquisar…",
+  nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
+  promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
+  card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
+  social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", copyright:(y)=>`Copyright © ${y} K0MPA` },
+  footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
+           rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
+           rg_site:"BeGambleAware.org" }
 },
 EN: {
-  brand: "K0MPA",
-  search: "Search…",
-  nav: { menu:"Menu", casinos:"Casinos", offers:"Offers", betify:"Betify", shop:"Shop",
-         community:"Community", slots:"Slots", stream:"Stream", minigames:"Mini Games", new:"NEW" },
-  promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly",
-          depcode:"Dep. Code", claim:"Claim Bonus" },
-  card:{
-    min:"Min. Dep.", bonus:"Bonus", cashback:"Cashback", spins:"Free Spins", code:"Code:",
-    terms:"+18 | T&C apply", showMore:"More", back:"Back", moreInfo:"More information",
-    visit:"Visit brand", go:"CLAIM BONUS", copy:"Copy"
-  },
-  social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram",
-           copyright:(y)=>`Copyright © ${y} K0MPA` },
-  footer:{
-    terms:"Terms & Conditions", privacy:"Privacy Policy", cookies:"Cookie Policy",
-    rg_paragraph:"18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
-    rg_site:"BeGambleAware.org"
-  }
+  brand:"K0MPA", search:"Search…",
+  nav:{ menu:"Menu", casinos:"Casinos", offers:"Offers", betify:"Betify", shop:"Shop", community:"Community", slots:"Slots", stream:"Stream", minigames:"Mini Games", new:"NEW" },
+  promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
+  card:{ min:"Min. Dep.", bonus:"Bonus", cashback:"Cashback", spins:"Free Spins", code:"Code:", terms:"+18 | T&C apply", showMore:"More", back:"Back", moreInfo:"More information", visit:"Visit brand", go:"CLAIM BONUS", copy:"Copy" },
+  social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", copyright:(y)=>`Copyright © ${y} K0MPA` },
+  footer:{ terms:"Terms & Conditions", privacy:"Privacy Policy", cookies:"Cookie Policy",
+           rg_paragraph:"18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
+           rg_site:"BeGambleAware.org" }
 }
 };
 const LangCtx = createContext<{lang:Lang; setLang:(l:Lang)=>void; t:Translations}>({lang:"PT", setLang:()=>{}, t:messages.PT});
@@ -180,7 +138,6 @@ export type Brand = {
   theme?: { accent: string; shadow: string; ring?: string; };
   payments?: Array<"btc"|"mb"|"mbb"|"visa"|"mc">;
 };
-
 const brands: Brand[] = [
   { name:"Betify", tag:"HOT", logo:"", image:"https://betify.org/wp-content/uploads/2025/01/Betify-app.webp", imagePos:"left center",
     minDep:"25€", bonus:"450%", cashback:"Até 35%", freeSpins:"Até 350FS", code:"K0MPA", link:"#",
@@ -189,16 +146,13 @@ const brands: Brand[] = [
   { name:"1XBIT", tag:"NEW", logo:"", image:"https://thenewscrypto.com/wp-content/uploads/2022/01/IMG-20220110-WA0000.jpg", imagePos:"center",
     minDep:"10€", bonus:"100%", cashback:"—", freeSpins:"125FS", code:"K0MPA", link:"#",
     theme: { accent:"#d97706", shadow:"rgba(217,119,6,0.45)", ring:"rgba(217,119,6,.45)" },
-    payments:["btc"] }, // ← só BTC
+    payments:["btc"] },
 ];
 
-/* ---------- header/sidebar ---------- */
+/* ---------- header (AGORA FIXO) ---------- */
 function TwitchBadge({ label = "Twitch" }: { label?: string }) {
   return (
-    <span
-      className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold text-white ring-1 ring-white/20 shadow-sm"
-      style={{ background: TWITCH_PURPLE }}
-    >
+    <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold text-white ring-1 ring-white/20 shadow-sm" style={{ background: TWITCH_PURPLE }}>
       <span className="relative flex h-2 w-2">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/80 opacity-75" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
@@ -207,7 +161,6 @@ function TwitchBadge({ label = "Twitch" }: { label?: string }) {
     </span>
   );
 }
-
 function HeaderBar({ isLive }: { isLive: boolean }) {
   const { lang, setLang, t } = useLang();
   const hdrRef = React.useRef<HTMLElement>(null);
@@ -215,8 +168,10 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   React.useEffect(() => {
     const update = () => {
       const headerH = hdrRef.current?.offsetHeight ?? 56;
-      const sticky = headerH + 12 + 24;
-      document.documentElement.style.setProperty("--sticky-top", `${sticky}px`);
+      // header é FIXO → precisamos de reservar espaço por baixo para não “comer” conteúdo
+      const globalTopPad = headerH + 12; // gap visual
+      document.documentElement.style.setProperty("--sticky-top", `${globalTopPad + 24}px`); // para a sidebar
+      document.documentElement.style.setProperty("--hdr-offset", `${globalTopPad}px`);
     };
     update();
     window.addEventListener("resize", update);
@@ -224,13 +179,11 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   }, []);
 
   return (
-    <header ref={hdrRef} className="sticky top-3 z-40">
+    <header ref={hdrRef} className="fixed top-3 left-0 right-0 z-50">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         <div className="flex h-12 items-center gap-3 rounded-xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 px-4 sm:px-5 text-white/90 shadow-[0_8px_30px_rgba(0,0,0,.25)]">
           <div className="mr-1.5 flex items-center gap-2.5">
-            <span className="text-white font-black tracking-tight text-[15px] leading-none">
-              {t.brand}
-            </span>
+            <span className="text-white font-black tracking-tight text-[15px] leading-none">{t.brand}</span>
             {isLive && (
               <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" aria-label="Abrir Twitch (em direto)" title="Live na Twitch">
                 <TwitchBadge />
@@ -241,8 +194,7 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
           <div className="relative hidden flex-1 md:flex">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60" />
             <input
-              type="search"
-              placeholder={t.search}
+              type="search" placeholder={t.search}
               className="h-9 w-full rounded-lg bg-transparent pl-9 pr-3 text-sm text-white placeholder:text-white/55 ring-1 ring-white/15 transition focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-500 outline-none"
             />
           </div>
@@ -256,82 +208,48 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   );
 }
 
-/* ---------- Sidebar (coluna inteira, sem espaço morto) ---------- */
+/* ---------- Sidebar (coluna inteira + widget Discord) ---------- */
 function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   const { t, lang } = useLang();
 
   return (
-    <aside
-      className="hidden md:block w-[280px]"
-      style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
-    >
+    <aside className="hidden md:block w-[280px]" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
       <div
-        className="flex flex-col rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90
-                   ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
+        className="flex flex-col rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
         style={{ minHeight: "calc(100vh - var(--sticky-top,112px) - 16px)" }}
       >
-        {/* Cabeçalho */}
         <div className="mb-3 flex items-center justify-between rounded-xl px-2 py-1">
           <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
           <ChevronRight className="h-4 w-4 text-white/70" />
         </div>
 
-        {/* Navegação */}
-        <nav className="space-y-2 flex-1">
-          <a
-            href="#"
-            className="flex items-center justify-between rounded-xl px-3 py-2 text-sm
-                       hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-          >
-            <span className="flex items-center gap-2">
-              <Gift className="h-4 w-4" />
-              {t.nav.offers}
-            </span>
+        <nav className="space-y-2">
+          <a href="#" className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+            <span className="flex items-center gap-2"><Gift className="h-4 w-4" />{t.nav.offers}</span>
             <Badge className="text-white" style={{ background: "#9146FF" }}>{t.nav.new}</Badge>
           </a>
 
           <div className="my-3 h-px bg-white/10" />
 
-          <div
-            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm
-                       text-white/45 pointer-events-none select-none"
-            aria-disabled="true"
-            title={lang === "PT" ? "Em breve" : "Coming soon"}
-          >
+          <div className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/45 pointer-events-none select-none" aria-disabled="true" title={lang === "PT" ? "Em breve" : "Coming soon"}>
             <Store className="h-4 w-4 opacity-70" />
             <span>{t.nav.shop}</span>
-            <span className="ml-auto text-[10px] text-white/35">
-              {lang === "PT" ? "em breve" : "coming soon"}
-            </span>
+            <span className="ml-auto text-[10px] text-white/35">{lang === "PT" ? "em breve" : "coming soon"}</span>
           </div>
 
-          <a
-            href={SOCIAL_LINKS.discord}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm
-                       hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-            aria-label="Open Discord"
-          >
+          <a href={SOCIAL_LINKS.discord} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60" aria-label="Open Discord">
             <Users className="h-4 w-4" />
             <span>{t.nav.community}</span>
           </a>
 
-          <button
-            type="button"
-            onClick={onOpenStream}
-            className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm
-                       hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-          >
+          <button type="button" onClick={onOpenStream} className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
             <Tv className="h-4 w-4" />
             <span>{t.nav.stream}</span>
           </button>
 
           {/* Redes */}
           <div className="px-3 py-2">
-            <div className="mb-3 border-b border-white/10 pb-3 text-sm font-semibold text-white">
-              {t.social.title}
-            </div>
+            <div className="mb-3 border-b border-white/10 pb-3 text-sm font-semibold text-white">{t.social.title}</div>
             <ul className="grid grid-cols-2 gap-3 text-sm">
               <li><a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline" aria-label="YouTube"><Youtube className="h-5 w-5" />{t.social.youtube}</a></li>
               <li><a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline" aria-label="Instagram"><Instagram className="h-5 w-5" />{t.social.instagram}</a></li>
@@ -341,8 +259,22 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
           </div>
         </nav>
 
-        {/* rodapé colado em baixo */}
-        <div className="pt-3 text-[12px] text-white/55 w-full text-center">
+        {/* Discord widget ocupa o espaço vago */}
+        {!!DISCORD_SERVER_ID && (
+          <div className="mt-4 flex-1 rounded-xl ring-1 ring-white/10 overflow-hidden bg-black/30">
+            <iframe
+              title="Discord"
+              src={`https://discord.com/widget?id=${DISCORD_SERVER_ID}&theme=dark`}
+              width="100%"
+              height="100%"
+              allowTransparency
+              sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+              className="w-full h-full border-0"
+            />
+          </div>
+        )}
+
+        <div className="pt-3 text-[12px] text-white/55 w-full text-center mt-4">
           Copyright © {new Date().getFullYear()} K0MPA
         </div>
       </div>
@@ -359,8 +291,7 @@ function TagBadge({ tag, inline=false, className="", style, accent }: { tag: Bra
   const acc = accent ?? tagVisual(tag).accent;
   return (
     <div className={cn(inline ? "relative inline-flex" : "absolute left-3 top-3 z-20", className)} style={style}>
-      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white"
-            style={{ background: `linear-gradient(180deg, ${acc}, ${acc})`, boxShadow: "0 4px 14px rgba(0,0,0,.18)" }}>
+      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ background: `linear-gradient(180deg, ${acc}, ${acc})`, boxShadow: "0 4px 14px rgba(0,0,0,.18)" }}>
         <Icon className="h-3.5 w-3.5" />
         <span className="uppercase tracking-wide">{tag}</span>
       </span>
@@ -374,9 +305,7 @@ function PaymentIcon({ type }: { type: PaymentType }) {
   const alt = type === "btc" ? "Bitcoin" : type === "mbw" ? "MB WAY" : type === "mb" ? "Multibanco" : type === "visa" ? "VISA" : "Mastercard";
   return <img src={src} alt={alt} loading="lazy" decoding="async" className="h-5 w-5 sm:h-6 sm:w-6 object-contain" draggable={false} />;
 }
-function PaymentBadge({ type }: { type: PaymentType }) {
-  return (<div className="h-10 w-11 sm:h-11 sm:w-12 rounded-xl bg-white ring-1 ring-black/10 shadow-sm flex items-center justify-center"><PaymentIcon type={type} /></div>);
-}
+function PaymentBadge({ type }: { type: PaymentType }) { return (<div className="h-10 w-11 sm:h-11 sm:w-12 rounded-xl bg-white ring-1 ring-black/10 shadow-sm flex items-center justify-center"><PaymentIcon type={type} /></div>); }
 function PaymentRibbon({ methods }: { methods: string[] }) {
   return (
     <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-30 flex gap-2 sm:gap-3">
@@ -386,11 +315,7 @@ function PaymentRibbon({ methods }: { methods: string[] }) {
 }
 function FancyCTA({ href, label, accent }: { href: string; label: string; accent: string; }) {
   return (
-    <a
-      href={href} target="_blank" rel="noreferrer"
-      className="inline-flex h-12 w-full items-center justify-center rounded-2xl px-4 text-center text-sm font-extrabold text-white transition hover:brightness-110 ring-1 ring-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
-      style={{ background: `linear-gradient(180deg, ${accent}, ${rgba(accent, 0.85)})`, boxShadow: `0 8px 20px ${rgba(accent, 0.35)}` }}
-    >
+    <a href={href} target="_blank" rel="noreferrer" className="inline-flex h-12 w-full items-center justify-center rounded-2xl px-4 text-center text-sm font-extrabold text-white transition hover:brightness-110 ring-1 ring-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background: `linear-gradient(180deg, ${accent}, ${rgba(accent, 0.85)})`, boxShadow: `0 8px 20px ${rgba(accent, 0.35)}` }}>
       {label}
     </a>
   );
@@ -406,17 +331,15 @@ function buildTwitchEmbedUrl(channel: string) {
 }
 function clamp(n: number, min: number, max: number) { return Math.max(min, Math.min(max, n)); }
 type Pos = { x: number; y: number };
-
 function useDockDrag(initial: Pos = { x: 16, y: 16 }, box = { w: 320, h: 240 }) {
   const [pos, setPos] = React.useState<Pos>(() => {
-    try { return JSON.parse(localStorage.getItem("liveDockPos") || JSON.stringify(initial)) as Pos; }
-    catch { return initial; }
+    try { return JSON.parse(localStorage.getItem("liveDockPos") || JSON.stringify(initial)) as Pos; } catch { return initial; }
   });
   const dragRef = React.useRef<{ sx: number; sy: number; ox: number; oy: number } | null>(null);
   const onDown = (e: React.PointerEvent) => { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); dragRef.current = { sx:e.clientX, sy:e.clientY, ox:pos.x, oy:pos.y }; };
   const onMove = (e: React.PointerEvent) => {
     if (!dragRef.current) return;
-    const dx = e.clientX - dragRef.current.sx; const dy = e.clientY - dragRef.current.sy;
+    const dx = e.clientX - dragRef.current.sx, dy = e.clientY - dragRef.current.sy;
     const vw = window.innerWidth, vh = window.innerHeight;
     setPos({ x: clamp(dragRef.current.ox - dx, 0, vw - box.w), y: clamp(dragRef.current.oy - dy, 0, vh - box.h) });
   };
@@ -424,7 +347,7 @@ function useDockDrag(initial: Pos = { x: 16, y: 16 }, box = { w: 320, h: 240 }) 
     try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
     const vw = window.innerWidth, vh = window.innerHeight, snap = 16;
     setPos((p) => {
-      const snapped = { x: (p.x <= snap) ? 0 : (p.x >= vw - box.w - snap) ? vw - box.w : p.x, y: (p.y <= snap) ? 0 : (p.y >= vh - box.h - snap) ? vh - box.h : p.y };
+      const snapped = { x:(p.x<=snap)?0:(p.x>=vw-box.w-snap)?vw-box.w:p.x, y:(p.y<=snap)?0:(p.y>=vh-box.h-snap)?vh-box.h:p.y };
       try { localStorage.setItem("liveDockPos", JSON.stringify(snapped)); } catch {}
       return snapped;
     });
@@ -432,27 +355,20 @@ function useDockDrag(initial: Pos = { x: 16, y: 16 }, box = { w: 320, h: 240 }) 
   };
   return { pos, setPos, onDown, onMove, onUp };
 }
-
 function LiveDock({ channel, onClose }: { channel: string; onClose: () => void }) {
   const box = { w: 320, h: 240 };
   const { pos, onDown, onMove, onUp } = useDockDrag({ x: 16, y: 16 }, box);
   const playerSrc = buildTwitchEmbedUrl(channel);
-
   return (
     <div style={{ position:"fixed", right:pos.x, bottom:pos.y, zIndex:50, touchAction:"none" }}>
       <div className="rounded-2xl bg-black/70 backdrop-blur-md ring-1 ring-white/15 shadow-[0_10px_40px_rgba(0,0,0,.45)] overflow-hidden w-[320px] select-none">
         <div data-dock="header" className="flex items-center justify-between px-3 py-2 cursor-grab active:cursor-grabbing" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}>
-          <div className="inline-flex items-center gap-2">
-            <TwitchBadge />
-            <span className="text-xs font-semibold text-white/90">/{channel}</span>
-          </div>
+          <div className="inline-flex items-center gap-2"><TwitchBadge /><span className="text-xs font-semibold text-white/90">/{channel}</span></div>
           <button onClick={(e)=>{ e.stopPropagation(); onClose(); }} onPointerDown={(e)=>e.stopPropagation()} className="rounded-md px-2 py-1 text-xs font-semibold text-white/80 hover:bg-white/10" aria-label="Fechar mini-player">Fechar</button>
         </div>
-
         <div className="bg-black w-[320px] h-[180px]">
           <iframe title={`twitch-${channel}`} src={playerSrc} width="320" height="180" frameBorder="0" scrolling="no" allow="autoplay; picture-in-picture; fullscreen; encrypted-media" allowFullScreen className="block w-[320px] h-[180px] border-0" />
         </div>
-
         <div className="flex items-center justify-between px-3 py-2">
           <a href={`https://twitch.tv/${channel}`} target="_blank" rel="noreferrer" className="text-[12px] font-semibold text-white/90 hover:underline">Ver na Twitch</a>
           <span className="text-[11px] text-white/60">Som desligado</span>
@@ -461,8 +377,6 @@ function LiveDock({ channel, onClose }: { channel: string; onClose: () => void }
     </div>
   );
 }
-
-/* ---------- Overlay ---------- */
 function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => void }) {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
@@ -473,7 +387,6 @@ function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => v
     document.documentElement.style.overflow = "hidden";
     return () => { document.removeEventListener("keydown", onKey); document.documentElement.style.overflow = prev; };
   }, [onClose]);
-
   const src = buildTwitchEmbedUrl(channel);
   const content = (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center" aria-modal="true" role="dialog">
@@ -494,46 +407,88 @@ function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => v
   return mounted ? createPortal(content, document.body) : null;
 }
 
-/* ---------- Stream por cima dos cards (sem cabeçalho) ---------- */
+/* ---------- Stream por cima dos cards ---------- */
 function StreamHero({ channel }: { channel: string }) {
   const src = buildTwitchEmbedUrl(channel);
   return (
     <section>
       <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
         <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-          <iframe
-            title={`twitch-${channel}-hero`}
-            src={src}
-            allow="autoplay; picture-in-picture; fullscreen; encrypted-media"
-            allowFullScreen
-            frameBorder="0"
-            scrolling="no"
-            className="absolute inset-0 h-full w-full border-0"
-          />
+          <iframe title={`twitch-${channel}-hero`} src={src} allow="autoplay; picture-in-picture; fullscreen; encrypted-media" allowFullScreen frameBorder="0" scrolling="no" className="absolute inset-0 h-full w-full border-0" />
         </div>
       </div>
     </section>
   );
 }
 
-/* ---------- NOVO: Últimos vídeos do YouTube (sem API) ---------- */
-function YouTubeLatest({ playlistId }: { playlistId: string }) {
-  if (!playlistId || playlistId.startsWith("UU_REPLACE")) return null;
-  const src = `https://www.youtube.com/embed/videoseries?list=${encodeURIComponent(playlistId)}&rel=0`;
+/* ---------- NOVO: YouTube GRID (sem API) ---------- */
+type YtItem = { id: string; title: string; published: string; thumb: string };
+function timeAgo(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff/60000); if (mins<60) return `${mins}m`;
+  const hrs = Math.floor(mins/60); if (hrs<24) return `${hrs}h`;
+  const d = Math.floor(hrs/24); if (d<30) return `${d}d`;
+  const m = Math.floor(d/30); if (m<12) return `${m}mês`;
+  const y = Math.floor(m/12); return `${y}a`;
+}
+function YouTubeGrid({ channelId, limit=8 }: { channelId: string; limit?: number }) {
+  const [items, setItems] = useState<YtItem[]|null>(null);
+  useEffect(() => {
+    if (!channelId) return;
+    const url = `https://r.jina.ai/http://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`;
+    (async () => {
+      try {
+        const xml = await (await fetch(url, { cache: "no-store" })).text();
+        const doc = new DOMParser().parseFromString(xml, "text/xml");
+        const entries = Array.from(doc.getElementsByTagName("entry"));
+        const mapped = entries.slice(0, limit).map((e) => {
+          const id = e.getElementsByTagName("yt:videoId")[0]?.textContent || e.getElementsByTagName("videoId")[0]?.textContent || "";
+          const title = e.getElementsByTagName("title")[0]?.textContent || "";
+          const published = e.getElementsByTagName("published")[0]?.textContent || "";
+          const thumb = (e.querySelector('media\\:thumbnail') as any)?.getAttribute("url") || "";
+          return { id, title, published, thumb };
+        }).filter(x=>x.id);
+        setItems(mapped);
+      } catch { setItems([]); }
+    })();
+  }, [channelId, limit]);
+
+  if (!channelId || items===null) return (
+    <section className="space-y-3">
+      <h2 className="text-white/90 text-base font-bold">Últimos vídeos</h2>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 opacity-60">
+        {Array.from({length:8}).map((_,i)=>(
+          <div key={i} className="aspect-video rounded-xl bg-white/10 animate-pulse" />
+        ))}
+      </div>
+    </section>
+  );
+
+  if (!items.length) return null;
+
   return (
     <section className="space-y-3">
       <h2 className="text-white/90 text-base font-bold">Últimos vídeos</h2>
-      <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black shadow-[0_12px_40px_rgba(0,0,0,.25)]">
-        <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-          <iframe
-            title="youtube-latest"
-            src={src}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            frameBorder="0"
-            className="absolute inset-0 h-full w-full border-0"
-          />
-        </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {items.map(v => (
+          <a
+            key={v.id}
+            href={`https://www.youtube.com/watch?v=${v.id}`}
+            target="_blank" rel="noreferrer"
+            className="group rounded-xl overflow-hidden ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition block"
+            title={v.title}
+          >
+            <div className="relative aspect-video bg-black">
+              {v.thumb ? (
+                <img src={v.thumb} alt={v.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+              ) : null}
+            </div>
+            <div className="p-3">
+              <div className="line-clamp-2 text-sm font-semibold text-white/90 group-hover:text-white">{v.title}</div>
+              <div className="mt-1 text-[11px] text-white/60">{timeAgo(v.published)} • YouTube</div>
+            </div>
+          </a>
+        ))}
       </div>
     </section>
   );
@@ -659,30 +614,26 @@ function BrandCard({ b }: { b: Brand }) {
 function Footer() {
   const { t } = useLang();
   const year = new Date().getFullYear();
-
   return (
     <footer className="mx-auto w-full max-w-7xl px-6 sm:px-8 pb-8">
       <div className="rounded-2xl bg-black/35 backdrop-blur-md ring-1 ring-white/10 text-white/80 px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,.28)]">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-extrabold tracking-tight text-white">{t.brand}</span>
+            <span className="text-sm font-extrabold tracking-tight text-white">K0MPA</span>
             <span className="text-xs text-white/60">© {year}</span>
           </div>
-
           <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-semibold">
-            <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">{t.footer?.terms ?? "Terms & Conditions"}</span>
-            <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">{t.footer?.privacy ?? "Privacy Policy"}</span>
-            <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">{t.footer?.cookies ?? "Cookie Policy"}</span>
+            <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Termos & Condições</span>
+            <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Política de Privacidade</span>
+            <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Política de Cookies</span>
           </nav>
-
-          <a href="https://www.begambleaware.org/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs hover:text-white/90" title={t.footer.rg_site}>
+          <a href="https://www.begambleaware.org/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs hover:text-white/90" title="BeGambleAware.org">
             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[11px] font-bold">18+</span>
-            {t.footer.rg_site}
+            BeGambleAware.org
           </a>
         </div>
-
         <div className="my-3 h-px bg-white/10" />
-        <p className="text-[12px] leading-snug text-white/55">{t.footer.rg_paragraph}</p>
+        <p className="text-[12px] leading-snug text-white/55">18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.</p>
       </div>
     </footer>
   );
@@ -698,7 +649,6 @@ function LanguageToggle({ lang, onChange }: { lang:"PT"|"EN"; onChange:(l:"PT"|"
     </div>
   );
 }
-
 function BackgroundLayer() {
   return (
     <div className="absolute inset-0 -z-10 pointer-events-none" style={{
@@ -736,7 +686,12 @@ export default function CasinoPartnerHub() {
     <LangCtx.Provider value={{ lang, setLang, t }}>
       <div className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-clip">
         <BackgroundLayer />
+
+        {/* header fixo → criamos espaçador no topo */}
+        <div style={{ height: "var(--hdr-offset, 68px)" }} aria-hidden />
+
         <HeaderBar isLive={isLive} />
+
         <div className="flex-1">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-8 sm:px-8 md:grid-cols-[280px,1fr] items-start">
             <Sidebar onOpenStream={() => setShowOverlay(true)} />
@@ -753,11 +708,12 @@ export default function CasinoPartnerHub() {
                 ))}
               </div>
 
-              {/* NOVO: Últimos vídeos do YouTube */}
-              <YouTubeLatest playlistId={YT_UPLOADS_PLAYLIST} />
+              {/* NOVO: Grelha YouTube */}
+              <YouTubeGrid channelId={YT_CHANNEL_ID} limit={8} />
             </main>
           </div>
         </div>
+
         <Footer />
 
         {!hideDock && <LiveDock channel={TWITCH_CHANNEL} onClose={closeDock} />}
