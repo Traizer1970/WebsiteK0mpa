@@ -8,10 +8,10 @@ import {
 
 /* ---------- CONFIG ---------- */
 const TWITCH_CHANNEL = "k0mpa";
-/* YouTube (UC…) — já preenchido para @k0mpa */
+/* YouTube (UC…) — @k0mpa */
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
-/* Discord server (Guild) ID — mete aqui o teu; se vazio, o widget não aparece */
-const DISCORD_SERVER_ID = "1413544816176005123"; // ex.: "123456789012345678"
+/* Discord server (Guild) ID */
+const DISCORD_SERVER_ID = "1413544816176005123";
 
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
@@ -149,7 +149,7 @@ const brands: Brand[] = [
     payments:["btc"] },
 ];
 
-/* ---------- header (AGORA FIXO) ---------- */
+/* ---------- header (FIXO) ---------- */
 function TwitchBadge({ label = "Twitch" }: { label?: string }) {
   return (
     <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold text-white ring-1 ring-white/20 shadow-sm" style={{ background: TWITCH_PURPLE }}>
@@ -168,9 +168,8 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   React.useEffect(() => {
     const update = () => {
       const headerH = hdrRef.current?.offsetHeight ?? 56;
-      // header é FIXO → precisamos de reservar espaço por baixo para não “comer” conteúdo
-      const globalTopPad = headerH + 12; // gap visual
-      document.documentElement.style.setProperty("--sticky-top", `${globalTopPad + 24}px`); // para a sidebar
+      const globalTopPad = headerH + 12;
+      document.documentElement.style.setProperty("--sticky-top", `${globalTopPad + 24}px`);
       document.documentElement.style.setProperty("--hdr-offset", `${globalTopPad}px`);
     };
     update();
@@ -208,7 +207,7 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   );
 }
 
-/* ---------- Sidebar (coluna inteira + widget Discord) ---------- */
+/* ---------- Sidebar com Discord ---------- */
 function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   const { t, lang } = useLang();
 
@@ -321,7 +320,7 @@ function FancyCTA({ href, label, accent }: { href: string; label: string; accent
   );
 }
 
-/* ---------- Twitch mini/overlay ---------- */
+/* ---------- Twitch mini/overlay (opcional) ---------- */
 function buildTwitchEmbedUrl(channel: string) {
   const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
   const parents = new Set<string>([host, "localhost"]);
@@ -407,21 +406,7 @@ function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => v
   return mounted ? createPortal(content, document.body) : null;
 }
 
-/* ---------- Stream por cima dos cards ---------- */
-function StreamHero({ channel }: { channel: string }) {
-  const src = buildTwitchEmbedUrl(channel);
-  return (
-    <section>
-      <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
-        <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-          <iframe title={`twitch-${channel}-hero`} src={src} allow="autoplay; picture-in-picture; fullscreen; encrypted-media" allowFullScreen frameBorder="0" scrolling="no" className="absolute inset-0 h-full w-full border-0" />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- NOVO: YouTube GRID (sem API) ---------- */
+/* ---------- YouTube GRID (sem API) ---------- */
 type YtItem = { id: string; title: string; published: string; thumb: string };
 function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -687,7 +672,7 @@ export default function CasinoPartnerHub() {
       <div className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-clip">
         <BackgroundLayer />
 
-        {/* header fixo → criamos espaçador no topo */}
+        {/* espaçador do header fixo */}
         <div style={{ height: "var(--hdr-offset, 68px)" }} aria-hidden />
 
         <HeaderBar isLive={isLive} />
@@ -696,9 +681,6 @@ export default function CasinoPartnerHub() {
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-8 sm:px-8 md:grid-cols-[280px,1fr] items-start">
             <Sidebar onOpenStream={() => setShowOverlay(true)} />
             <main className="space-y-10">
-              {/* Twitch por cima dos cards */}
-              <StreamHero channel={TWITCH_CHANNEL} />
-
               {/* Cards */}
               <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
                 {brands.map((b, i) => (
@@ -708,7 +690,7 @@ export default function CasinoPartnerHub() {
                 ))}
               </div>
 
-              {/* NOVO: Grelha YouTube */}
+              {/* Grelha YouTube */}
               <YouTubeGrid channelId={YT_CHANNEL_ID} limit={8} />
             </main>
           </div>
