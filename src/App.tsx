@@ -119,15 +119,7 @@ type Translations = {
     terms: string; showMore: string; back: string; moreInfo: string; visit: string; go: string; copy: string;
   };
   social: { title: string; youtube: string; instagram: string; twitch: string; telegram: string; copyright: (y:number)=>string; };
-
-  /* NOVO: footer i18n */
-  footer: {
-    terms: string;
-    privacy: string;
-    cookies: string;
-    rg_paragraph: string;
-    rg_site: string;
-  };
+  footer: { terms: string; privacy: string; cookies: string; rg_paragraph: string; rg_site: string; };
 };
 
 const messages: Record<Lang, Translations> = {
@@ -145,18 +137,12 @@ PT: {
   },
   social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram",
            copyright:(y)=>`Copyright © ${y} K0MPA` },
-
-  /* NOVO */
   footer:{
-    terms: "Termos & Condições",
-    privacy: "Política de Privacidade",
-    cookies: "Política de Cookies",
-    rg_paragraph:
-      "18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
-    rg_site: "BeGambleAware.org"
+    terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
+    rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
+    rg_site:"BeGambleAware.org"
   }
 },
-
 EN: {
   brand: "K0MPA",
   search: "Search…",
@@ -171,18 +157,12 @@ EN: {
   },
   social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram",
            copyright:(y)=>`Copyright © ${y} K0MPA` },
-
-  /* NEW */
   footer:{
-    terms: "Terms & Conditions",
-    privacy: "Privacy Policy",
-    cookies: "Cookie Policy",
-    rg_paragraph:
-      "18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
-    rg_site: "BeGambleAware.org"
+    terms:"Terms & Conditions", privacy:"Privacy Policy", cookies:"Cookie Policy",
+    rg_paragraph:"18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
+    rg_site:"BeGambleAware.org"
   }
 }
-
 };
 const LangCtx = createContext<{lang:Lang; setLang:(l:Lang)=>void; t:Translations}>({lang:"PT", setLang:()=>{}, t:messages.PT});
 function useLang(){ return useContext(LangCtx); }
@@ -230,7 +210,7 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   React.useEffect(() => {
     const update = () => {
       const headerH = hdrRef.current?.offsetHeight ?? 56;
-      const sticky = headerH + 12 + 24; // espaço para sticky do sidebar
+      const sticky = headerH + 12 + 24;
       document.documentElement.style.setProperty("--sticky-top", `${sticky}px`);
     };
     update();
@@ -241,49 +221,27 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   return (
     <header ref={hdrRef} className="sticky top-3 z-40">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
-        {/* ↓ mais fino: h-12, menos padding e raio menor */}
         <div className="flex h-12 items-center gap-3 rounded-xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 px-4 sm:px-5 text-white/90 shadow-[0_8px_30px_rgba(0,0,0,.25)]">
-          {/* Marca + (Twitch só quando LIVE) */}
-<div className="mr-1.5 flex items-center gap-2.5">
-  <span className="text-white font-black tracking-tight text-[15px] leading-none">
-    {t.brand}
-  </span>
-
-  {isLive && (
-    <a
-      href={SOCIAL_LINKS.twitch}
-      target="_blank"
-      rel="noreferrer"
-      aria-label="Abrir Twitch (em direto)"
-      title="Live na Twitch"
-    >
-      <TwitchBadge />
-    </a>
-  )}
-</div>
-
-          {/* SEARCH — ultra clean, sem cor de fundo; só contorno no foco */}
-          <div className="relative hidden flex-1 md:flex">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60" />
-           <input
-  type="search"
-  placeholder={t.search}
-  className="
-    h-9 w-full rounded-lg bg-transparent pl-9 pr-3 text-sm text-white
-    placeholder:text-white/55
-    ring-1 ring-white/15 transition
-    focus:outline-none focus-visible:outline-none
-    /* foco a vermelho */
-    focus:ring-2 focus:ring-rose-500
-    /* tira o halo azul default de alguns browsers */
-    outline-none
-  "
-/>
-
-
+          <div className="mr-1.5 flex items-center gap-2.5">
+            <span className="text-white font-black tracking-tight text-[15px] leading-none">
+              {t.brand}
+            </span>
+            {isLive && (
+              <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" aria-label="Abrir Twitch (em direto)" title="Live na Twitch">
+                <TwitchBadge />
+              </a>
+            )}
           </div>
 
-          {/* Só o seletor de idioma (sem sino) */}
+          <div className="relative hidden flex-1 md:flex">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60" />
+            <input
+              type="search"
+              placeholder={t.search}
+              className="h-9 w-full rounded-lg bg-transparent pl-9 pr-3 text-sm text-white placeholder:text-white/55 ring-1 ring-white/15 transition focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-500 outline-none"
+            />
+          </div>
+
           <div className="ml-auto">
             <LanguageToggle lang={lang} onChange={setLang} />
           </div>
@@ -293,77 +251,45 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   );
 }
 
-
 function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   const { t, lang } = useLang();
   const CARD_H = 400;
 
   return (
-    <aside
-      className="hidden w-64 shrink-0 md:block self-start"
-      style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
-    >
-      <div
-        className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90
-                   ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
-        style={{ minHeight: `${CARD_H}px` }}
-      >
-        {/* Cabeçalho */}
+    <aside className="hidden w-64 shrink-0 md:block self-start" style={{ position:"sticky", top:"var(--sticky-top,112px)" }}>
+      <div className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col" style={{ minHeight:`${CARD_H}px` }}>
         <div className="mb-3 flex items-center justify-between rounded-xl px-2 py-1">
           <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
           <ChevronRight className="h-4 w-4 text-white/70" />
         </div>
 
-        {/* Navegação */}
         <nav className="space-y-2">
-          <a
-            href="#"
-            className="flex items-center justify-between rounded-xl px-3 py-2 text-sm
-                       hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-          >
+          <a href="#" className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
             <span className="flex items-center gap-2">
               <Gift className="h-4 w-4" />
               {t.nav.offers}
             </span>
-            <Badge className="text-white" style={{ background: "#9146FF" }}>{t.nav.new}</Badge>
+            <Badge className="text-white" style={{ background:"#9146FF" }}>{t.nav.new}</Badge>
           </a>
 
           <div className="my-3 h-px bg-white/10" />
 
-          <div
-            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm
-                       text-white/45 pointer-events-none select-none"
-            aria-disabled="true"
-            title={lang === "PT" ? "Em breve" : "Coming soon"}
-          >
+          <div className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/45 pointer-events-none select-none" aria-disabled="true" title={lang === "PT" ? "Em breve" : "Coming soon"}>
             <Store className="h-4 w-4 opacity-70" />
             <span>{t.nav.shop}</span>
             <span className="ml-auto text-[10px] text-white/35">{lang === "PT" ? "em breve" : "coming soon"}</span>
           </div>
 
-          <a
-            href={SOCIAL_LINKS.discord}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm
-                       hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-            aria-label="Open Discord"
-          >
+          <a href={SOCIAL_LINKS.discord} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60" aria-label="Open Discord">
             <Users className="h-4 w-4" />
             <span>{t.nav.community}</span>
           </a>
 
-          <button
-            type="button"
-            onClick={onOpenStream}
-            className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm
-                       hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-          >
+          <button type="button" onClick={onOpenStream} className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
             <Tv className="h-4 w-4" />
             <span>{t.nav.stream}</span>
           </button>
 
-          {/* Redes */}
           <div className="px-3 py-2">
             <div className="mb-3 border-b border-white/10 pb-3 text-sm font-semibold text-white">{t.social.title}</div>
             <ul className="grid grid-cols-2 gap-3 text-sm">
@@ -375,11 +301,9 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
           </div>
         </nav>
 
-        {/* rodapé lateral */}
         <div className="mt-6 text-[12px] text-white/55 w-full text-center">
           Copyright © {new Date().getFullYear()} K0MPA
         </div>
-
       </div>
     </aside>
   );
@@ -394,8 +318,7 @@ function TagBadge({ tag, inline=false, className="", style, accent }: { tag: Bra
   const acc = accent ?? tagVisual(tag).accent;
   return (
     <div className={cn(inline ? "relative inline-flex" : "absolute left-3 top-3 z-20", className)} style={style}>
-      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white"
-            style={{ background: `linear-gradient(180deg, ${acc}, ${acc})`, boxShadow: "0 4px 14px rgba(0,0,0,.18)" }}>
+      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ background:`linear-gradient(180deg, ${acc}, ${acc})`, boxShadow:"0 4px 14px rgba(0,0,0,.18)" }}>
         <Icon className="h-3.5 w-3.5" />
         <span className="uppercase tracking-wide">{tag}</span>
       </span>
@@ -424,7 +347,7 @@ function FancyCTA({ href, label, accent }: { href: string; label: string; accent
     <a
       href={href} target="_blank" rel="noreferrer"
       className="inline-flex h-12 w-full items-center justify-center rounded-2xl px-4 text-center text-sm font-extrabold text-white transition hover:brightness-110 ring-1 ring-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
-      style={{ background: `linear-gradient(180deg, ${accent}, ${rgba(accent, 0.85)})`, boxShadow: `0 8px 20px ${rgba(accent, 0.35)}` }}
+      style={{ background:`linear-gradient(180deg, ${accent}, ${rgba(accent,0.85)})`, boxShadow:`0 8px 20px ${rgba(accent,0.35)}` }}
     >
       {label}
     </a>
@@ -446,48 +369,35 @@ type Pos = { x: number; y: number };
 function useDockDrag(initial: Pos = { x: 16, y: 16 }, box = { w: 320, h: 240 }) {
   const [pos, setPos] = React.useState<Pos>(() => {
     try {
-      return JSON.parse(
-        localStorage.getItem("liveDockPos") || JSON.stringify(initial)
-      ) as Pos;
-    } catch {
-      return initial;
-    }
+      return JSON.parse(localStorage.getItem("liveDockPos") || JSON.stringify(initial)) as Pos;
+    } catch { return initial; }
   });
-
   const dragRef = React.useRef<{ sx: number; sy: number; ox: number; oy: number } | null>(null);
 
   const onDown = (e: React.PointerEvent) => {
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     dragRef.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y };
   };
-
   const onMove = (e: React.PointerEvent) => {
     if (!dragRef.current) return;
     const dx = e.clientX - dragRef.current.sx;
     const dy = e.clientY - dragRef.current.sy;
     const vw = window.innerWidth, vh = window.innerHeight;
-    setPos({
-      x: clamp(dragRef.current.ox - dx, 0, vw - box.w),
-      y: clamp(dragRef.current.oy - dy, 0, vh - box.h),
-    });
+    setPos({ x: clamp(dragRef.current.ox - dx, 0, vw - box.w), y: clamp(dragRef.current.oy - dy, 0, vh - box.h) });
   };
-
   const onUp = (e: React.PointerEvent) => {
     try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
     const vw = window.innerWidth, vh = window.innerHeight, snap = 16;
-
-    setPos((p: Pos) => {
-      const snapped: Pos = {
+    setPos((p) => {
+      const snapped = {
         x: (p.x <= snap) ? 0 : (p.x >= vw - box.w - snap) ? vw - box.w : p.x,
         y: (p.y <= snap) ? 0 : (p.y >= vh - box.h - snap) ? vh - box.h : p.y,
       };
       try { localStorage.setItem("liveDockPos", JSON.stringify(snapped)); } catch {}
       return snapped;
     });
-
     dragRef.current = null;
   };
-
   return { pos, setPos, onDown, onMove, onUp };
 }
 
@@ -497,42 +407,18 @@ function LiveDock({ channel, onClose }: { channel: string; onClose: () => void }
   const playerSrc = buildTwitchEmbedUrl(channel);
 
   return (
-    <div style={{ position: "fixed", right: pos.x, bottom: pos.y, zIndex: 50, touchAction: "none" }}>
+    <div style={{ position:"fixed", right:pos.x, bottom:pos.y, zIndex:50, touchAction:"none" }}>
       <div className="rounded-2xl bg-black/70 backdrop-blur-md ring-1 ring-white/15 shadow-[0_10px_40px_rgba(0,0,0,.45)] overflow-hidden w-[320px] select-none">
-        {/* Arrasto APENAS no header → botão “Fechar” passa a funcionar */}
-        <div
-          data-dock="header"
-          className="flex items-center justify-between px-3 py-2 cursor-grab active:cursor-grabbing"
-          onPointerDown={onDown}
-          onPointerMove={onMove}
-          onPointerUp={onUp}
-        >
+        <div data-dock="header" className="flex items-center justify-between px-3 py-2 cursor-grab active:cursor-grabbing" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}>
           <div className="inline-flex items-center gap-2">
             <TwitchBadge />
             <span className="text-xs font-semibold text-white/90">/{channel}</span>
           </div>
-          <button
-            onClick={(e) => { e.stopPropagation(); onClose(); }}
-            onPointerDown={(e) => e.stopPropagation()}
-            className="rounded-md px-2 py-1 text-xs font-semibold text-white/80 hover:bg-white/10"
-            aria-label="Fechar mini-player"
-          >
-            Fechar
-          </button>
+          <button onClick={(e)=>{ e.stopPropagation(); onClose(); }} onPointerDown={(e)=>e.stopPropagation()} className="rounded-md px-2 py-1 text-xs font-semibold text-white/80 hover:bg-white/10" aria-label="Fechar mini-player">Fechar</button>
         </div>
 
         <div className="bg-black w-[320px] h-[180px]">
-          <iframe
-            title={`twitch-${channel}`}
-            src={playerSrc}
-            width="320"
-            height="180"
-            frameBorder="0"
-            scrolling="no"
-            allow="autoplay; picture-in-picture; fullscreen; encrypted-media"
-            allowFullScreen
-            className="block w-[320px] h-[180px] border-0"
-          />
+          <iframe title={`twitch-${channel}`} src={playerSrc} width="320" height="180" frameBorder="0" scrolling="no" allow="autoplay; picture-in-picture; fullscreen; encrypted-media" allowFullScreen className="block w-[320px] h-[180px] border-0" />
         </div>
 
         <div className="flex items-center justify-between px-3 py-2">
@@ -547,74 +433,70 @@ function LiveDock({ channel, onClose }: { channel: string; onClose: () => void }
 /* ---------- Overlay de Stream (POR CIMA DE TUDO) ---------- */
 function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => void }) {
   const [mounted, setMounted] = React.useState(false);
-
   React.useEffect(() => {
     setMounted(true);
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
-
-    // bloquear scroll por baixo do overlay
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.documentElement.style.overflow = prev;
-    };
+    return () => { document.removeEventListener("keydown", onKey); document.documentElement.style.overflow = prev; };
   }, [onClose]);
 
   const src = buildTwitchEmbedUrl(channel);
-
   const content = (
-    <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center"
-      aria-modal="true"
-      role="dialog"
-    >
-      {/* backdrop */}
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center" aria-modal="true" role="dialog">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      {/* content */}
       <div className="relative mx-4 w-full max-w-5xl rounded-2xl ring-1 ring-white/15 shadow-[0_20px_80px_rgba(0,0,0,.6)] overflow-hidden">
         <div className="flex items-center justify-between bg-black/50 px-4 py-2 text-white">
           <div className="flex items-center gap-2">
             <TwitchBadge />
             <span className="text-sm font-semibold">/{channel}</span>
           </div>
-          <button
-            onClick={onClose}
-            className="rounded-md px-3 py-1 text-sm font-semibold hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-          >
-            Fechar
-          </button>
+          <button onClick={onClose} className="rounded-md px-3 py-1 text-sm font-semibold hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">Fechar</button>
         </div>
-        {/* 16:9 responsivo */}
         <div className="bg-black">
-          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-            <iframe
-              title={`twitch-${channel}-overlay`}
-              src={src}
-              allow="autoplay; picture-in-picture; fullscreen; encrypted-media"
-              allowFullScreen
-              frameBorder="0"
-              scrolling="no"
-              className="absolute inset-0 h-full w-full border-0"
-            />
+          <div className="relative w-full" style={{ paddingTop:"56.25%" }}>
+            <iframe title={`twitch-${channel}-overlay`} src={src} allow="autoplay; picture-in-picture; fullscreen; encrypted-media" allowFullScreen frameBorder="0" scrolling="no" className="absolute inset-0 h-full w-full border-0" />
           </div>
         </div>
       </div>
     </div>
   );
-
   return mounted ? createPortal(content, document.body) : null;
+}
+
+/* ---------- NOVO: Stream por cima dos cards (no main) ---------- */
+function StreamHero({ channel, isLive }: { channel: string; isLive: boolean }) {
+  const src = buildTwitchEmbedUrl(channel);
+  return (
+    <section className="space-y-3">
+      <div className="flex items-center gap-2">
+        <TwitchBadge label={isLive ? "Twitch • AO VIVO" : "Twitch"} />
+        <span className="text-sm font-semibold text-white/85">/{channel}</span>
+      </div>
+
+      <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
+        {/* 16:9 responsivo */}
+        <div className="relative w-full" style={{ paddingTop:"56.25%" }}>
+          <iframe
+            title={`twitch-${channel}-hero`}
+            src={src}
+            allow="autoplay; picture-in-picture; fullscreen; encrypted-media"
+            allowFullScreen
+            frameBorder="0"
+            scrolling="no"
+            className="absolute inset-0 h-full w-full border-0"
+          />
+        </div>
+      </div>
+    </section>
+  );
 }
 
 /* ---------- Brand Card ---------- */
 function FancyStat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: React.ElementType; accent: string; }) {
   return (
-    <div
-      className="relative overflow-hidden rounded-2xl px-3 py-2 text-white ring-1 backdrop-blur shadow-[0_6px_18px_rgba(0,0,0,.28)]"
-      style={{ minHeight: 74, background:"linear-gradient(180deg, rgba(15,23,42,.86) 0%, rgba(15,23,42,.78) 100%)", borderColor:"rgba(255,255,255,.08)" }}
-    >
+    <div className="relative overflow-hidden rounded-2xl px-3 py-2 text-white ring-1 backdrop-blur shadow-[0_6px_18px_rgba(0,0,0,.28)]" style={{ minHeight:74, background:"linear-gradient(180deg, rgba(15,23,42,.86) 0%, rgba(15,23,42,.78) 100%)", borderColor:"rgba(255,255,255,.08)" }}>
       <span aria-hidden className="absolute left-2 right-2 top-0 h-[3px] rounded-b-none rounded-t-xl" style={{ background:`linear-gradient(90deg, ${accent}, transparent)` }} />
       <div className="flex h-full flex-col items-center justify-center gap-1 text-center leading-tight">
         <Icon className="h-4 w-4 text-white/85" />
@@ -626,10 +508,7 @@ function FancyStat({ label, value, icon: Icon, accent }: { label: string; value:
 }
 function StatTile({ icon: Icon, label, value, accent }: { icon: React.ElementType; label: string; value: string; accent: string; }) {
   return (
-    <div
-      className="group relative overflow-hidden rounded-2xl p-3.5 transition bg-white/5 ring-1 ring-white/10 shadow-[0_2px_10px_rgba(15,23,42,0.06)] focus-within:ring-2 focus-within:ring-rose-400/60"
-      style={{ backgroundImage:"radial-gradient(120% 100% at 10% 0%, rgba(148,163,184,0.10) 0%, rgba(255,255,255,0) 60%)" }}
-    >
+    <div className="group relative overflow-hidden rounded-2xl p-3.5 transition bg-white/5 ring-1 ring-white/10 shadow-[0_2px_10px_rgba(15,23,42,0.06)] focus-within:ring-2 focus-within:ring-rose-400/60" style={{ backgroundImage:"radial-gradient(120% 100% at 10% 0%, rgba(148,163,184,0.10) 0%, rgba(255,255,255,0) 60%)" }}>
       <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background:`linear-gradient(90deg, ${accent}, transparent)` }} />
       <div className="flex items-center gap-2 text-white/70">
         <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg ring-1 ring-white/10" style={{ background:`${accent}14` }}>
@@ -648,20 +527,19 @@ function BrandCard({ b }: { b: Brand }) {
   const base = tagVisual(b.tag);
   const acc  = b.theme?.accent ?? base.accent;
   const shadow = b.theme?.shadow ?? rgba(acc, 0.35);
-
   const methods = b.payments && b.payments.length ? b.payments : ["btc","mbw","mb","visa","mc"];
 
   return (
-    <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height: CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
+    <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height:CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
       <div className="absolute inset-0 transition-transform duration-500" style={{ transformStyle:"preserve-3d", transform: flip ? "rotateY(180deg)" : "none" }}>
         {/* FRONT */}
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
           <TagBadge tag={b.tag} accent={acc} />
           <div className="absolute inset-0 overflow-hidden rounded-3xl">
-            <img src={b.image} alt={b.name} className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: b.imagePos ?? "center" }} />
+            <img src={b.image} alt={b.name} className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition:b.imagePos ?? "center" }} />
             <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/50" />
             <div className="absolute right-4 top-4 z-10">
-              <button onClick={() => setFlip(true)} className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+              <button onClick={()=>setFlip(true)} className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60">
                 {t.card.showMore}
               </button>
             </div>
@@ -671,12 +549,11 @@ function BrandCard({ b }: { b: Brand }) {
                 <PaymentRibbon methods={methods} />
                 <div className="pointer-events-none absolute left-6 right-6 -top-2 h-2 rounded-b-xl bg-gradient-to-b from-black/40 to-transparent" />
                 <div className="grid grid-cols-4 gap-2">
-                  <FancyStat icon={Coins}      label={t.card.min}      value={b.minDep}     accent={acc} />
-                  <FancyStat icon={Percent}    label={t.card.bonus}    value={b.bonus}      accent={acc} />
-                  <FancyStat icon={TrendingUp} label={t.card.cashback} value={b.cashback}   accent={acc} />
-                  <FancyStat icon={Sparkles}   label={t.card.spins}    value={b.freeSpins}  accent={acc} />
+                  <FancyStat icon={Coins} label={t.card.min} value={b.minDep} accent={acc} />
+                  <FancyStat icon={Percent} label={t.card.bonus} value={b.bonus} accent={acc} />
+                  <FancyStat icon={TrendingUp} label={t.card.cashback} value={b.cashback} accent={acc} />
+                  <FancyStat icon={Sparkles} label={t.card.spins} value={b.freeSpins} accent={acc} />
                 </div>
-                {/* Linha T&C acima do botão */}
                 <div className="pt-2 pb-1 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
                 <div className="pt-1"><FancyCTA href={b.link} label={t.card.go} accent={acc} /></div>
               </div>
@@ -690,7 +567,7 @@ function BrandCard({ b }: { b: Brand }) {
             <div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="text-base font-bold text-white">{t.card.moreInfo}</span>
-                <span className="h-1 w-14 rounded-full" style={{ background: acc }} />
+                <span className="h-1 w-14 rounded-full" style={{ background:acc }} />
               </div>
               <TagBadge tag={b.tag} inline accent={acc} />
             </div>
@@ -708,10 +585,7 @@ function BrandCard({ b }: { b: Brand }) {
                   <span className="text-white/60">{t.card.code}</span>
                   <span className="ml-2 font-semibold tracking-wide">{b.code}</span>
                 </div>
-                <button
-                  onClick={async () => { try { await navigator.clipboard.writeText(b.code); } catch {} }}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
-                >
+                <button onClick={async()=>{ try{ await navigator.clipboard.writeText(b.code);}catch{} }} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60">
                   <Copy className="h-4 w-4" />
                   {t.card.copy}
                 </button>
@@ -720,8 +594,8 @@ function BrandCard({ b }: { b: Brand }) {
 
             <div className="mt-4">
               <div className="grid grid-cols-2 items-stretch gap-3">
-                <Button className="h-11 rounded-2xl bg-white/8 ring-1 ring-white/12 hover:bg-white/12 text-sm text-white" onClick={() => setFlip(false)}>{t.card.back}</Button>
-                <a href={b.link} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center justify-center rounded-2xl px-4 text-sm font-semibold text-white transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background: `linear-gradient(135deg, ${acc}, ${rgba(acc, 0.85)})`, boxShadow: `0 8px 20px ${rgba(acc, 0.35)}` }}>
+                <Button className="h-11 rounded-2xl bg-white/8 ring-1 ring-white/12 hover:bg-white/12 text-sm text-white" onClick={()=>setFlip(false)}>{t.card.back}</Button>
+                <a href={b.link} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center justify-center rounded-2xl px-4 text-sm font-semibold text-white transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background:`linear-gradient(135deg, ${acc}, ${rgba(acc,0.85)})`, boxShadow:`0 8px 20px ${rgba(acc,0.35)}` }}>
                   {t.card.visit}
                 </a>
               </div>
@@ -750,101 +624,47 @@ function Footer() {
           </div>
 
           <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-semibold">
-  {/* desativados mas visíveis */}
-  <span
-    aria-disabled="true"
-    className="text-white/65 cursor-not-allowed select-none"
-  >
-    {t.footer?.terms ?? "Terms & Conditions"}
-  </span>
-  <span
-    aria-disabled="true"
-    className="text-white/65 cursor-not-allowed select-none"
-  >
-    {t.footer?.privacy ?? "Privacy Policy"}
-  </span>
-  <span
-    aria-disabled="true"
-    className="text-white/65 cursor-not-allowed select-none"
-  >
-    {t.footer?.cookies ?? "Cookie Policy"}
-  </span>
-</nav>
+            <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">{t.footer?.terms ?? "Terms & Conditions"}</span>
+            <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">{t.footer?.privacy ?? "Privacy Policy"}</span>
+            <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">{t.footer?.cookies ?? "Cookie Policy"}</span>
+          </nav>
 
-
-          <a
-            href="https://www.begambleaware.org/"
-            target="_blank" rel="noreferrer"
-            className="inline-flex items-center gap-2 text-xs hover:text-white/90"
-            title={t.footer.rg_site}
-          >
-            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[11px] font-bold">
-              18+
-            </span>
+          <a href="https://www.begambleaware.org/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs hover:text-white/90" title={t.footer.rg_site}>
+            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[11px] font-bold">18+</span>
             {t.footer.rg_site}
           </a>
         </div>
 
         <div className="my-3 h-px bg-white/10" />
-
-        <p className="text-[12px] leading-snug text-white/55">
-          {t.footer.rg_paragraph}
-        </p>
+        <p className="text-[12px] leading-snug text-white/55">{t.footer.rg_paragraph}</p>
       </div>
     </footer>
   );
 }
-function LanguageToggle({
-  lang,
-  onChange,
-}: {
-  lang: "PT" | "EN";
-  onChange: (l: "PT" | "EN") => void;
-}) {
+function LanguageToggle({ lang, onChange }: { lang:"PT"|"EN"; onChange:(l:"PT"|"EN")=>void; }) {
   const base = "text-sm font-semibold tracking-wide transition-colors";
   const inactive = "text-white/70 hover:text-white/90";
   const active = "text-white border-b-2 border-[#9146FF] pb-0.5";
-
   return (
     <div className="inline-flex items-center gap-3">
-      <button
-        type="button"
-        aria-selected={lang === "PT"}
-        onClick={() => onChange("PT")}
-        className={`${base} ${lang === "PT" ? active : inactive}`}
-      >
-        PT
-      </button>
-      <button
-        type="button"
-        aria-selected={lang === "EN"}
-        onClick={() => onChange("EN")}
-        className={`${base} ${lang === "EN" ? active : inactive}`}
-      >
-        EN
-      </button>
+      <button type="button" aria-selected={lang==="PT"} onClick={()=>onChange("PT")} className={`${base} ${lang==="PT"?active:inactive}`}>PT</button>
+      <button type="button" aria-selected={lang==="EN"} onClick={()=>onChange("EN")} className={`${base} ${lang==="EN"?active:inactive}`}>EN</button>
     </div>
   );
 }
 
 function BackgroundLayer() {
   return (
-    <div
-      className="absolute inset-0 -z-10 pointer-events-none"
-      style={{
-        background:
-          "radial-gradient(120% 90% at 15% 0%, rgba(244,63,94,.35) 0%, rgba(244,63,94,.12) 35%, transparent 60%)," +
-          "radial-gradient(100% 85% at 85% 100%, rgba(244,63,94,.28) 0%, transparent 55%)," +
-          "linear-gradient(180deg, #150608 0%, #0f0406 40%, #090306 100%)",
-        WebkitMaskImage:
-          "radial-gradient(120% 100% at 50% 50%, #000 70%, transparent 100%)",
-        maskImage:
-          "radial-gradient(120% 100% at 50% 50%, #000 70%, transparent 100%)",
-      }}
-    />
+    <div className="absolute inset-0 -z-10 pointer-events-none" style={{
+      background:
+        "radial-gradient(120% 90% at 15% 0%, rgba(244,63,94,.35) 0%, rgba(244,63,94,.12) 35%, transparent 60%)," +
+        "radial-gradient(100% 85% at 85% 100%, rgba(244,63,94,.28) 0%, transparent 55%)," +
+        "linear-gradient(180deg, #150608 0%, #0f0406 40%, #090306 100%)",
+      WebkitMaskImage:"radial-gradient(120% 100% at 50% 50%, #000 70%, transparent 100%)",
+      maskImage:"radial-gradient(120% 100% at 50% 50%, #000 70%, transparent 100%)",
+    }} />
   );
 }
-
 
 /* ---------- Root ---------- */
 export default function CasinoPartnerHub() {
@@ -861,7 +681,6 @@ export default function CasinoPartnerHub() {
     if (typeof window !== "undefined") sessionStorage.setItem("liveDockDismissed", "1");
   };
 
-  // Overlay state
   const [showOverlay, setShowOverlay] = useState(false);
 
   useEffect(() => {
@@ -869,17 +688,17 @@ export default function CasinoPartnerHub() {
   }, []);
 
   return (
-   <LangCtx.Provider value={{ lang, setLang, t }}>
-    <div
-      className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-clip"
-      /* se a tua build não suportar clip, usa: overflow-x-hidden */
-    >
-      <BackgroundLayer />
-      <HeaderBar isLive={isLive} />
+    <LangCtx.Provider value={{ lang, setLang, t }}>
+      <div className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-clip">
+        <BackgroundLayer />
+        <HeaderBar isLive={isLive} />
         <div className="flex-1">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-8 sm:px-8 md:grid-cols-[280px,1fr] items-start">
             <Sidebar onOpenStream={() => setShowOverlay(true)} />
             <main className="space-y-8">
+              {/* AQUI: EMBED DA TWITCH POR CIMA DOS CARDS */}
+              <StreamHero channel={TWITCH_CHANNEL} isLive={isLive} />
+
               <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
                 {brands.map((b, i) => (
                   <React.Fragment key={b.name + i}>
@@ -895,13 +714,8 @@ export default function CasinoPartnerHub() {
         {/* Mini-dock (opcional) */}
         {!hideDock && <LiveDock channel={TWITCH_CHANNEL} onClose={closeDock} />}
 
-        {/* Overlay por cima de tudo */}
-        {showOverlay && (
-          <StreamOverlay
-            channel={TWITCH_CHANNEL}
-            onClose={() => setShowOverlay(false)}
-          />
-        )}
+        {/* Overlay por cima de tudo (opcional ao clicar na sidebar) */}
+        {showOverlay && <StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />}
       </div>
     </LangCtx.Provider>
   );
