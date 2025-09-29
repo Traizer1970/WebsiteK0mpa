@@ -10,9 +10,6 @@ import {
 const TWITCH_CHANNEL = "k0mpa";
 /* YouTube (UC…) — @k0mpa */
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
-/* Discord server (Guild) ID */
-const DISCORD_SERVER_ID = "1413544816176005123";
-
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
 function hexToRgb(hex: string) {
@@ -212,74 +209,141 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   const { t, lang } = useLang();
 
   return (
-    <aside className="hidden md:block w-[280px]" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
+    <aside
+      className="hidden md:block w-[280px]"
+      style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
+    >
+      {/* sem minHeight; centrado verticalmente */}
       <div
-        className="flex flex-col rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
-        style={{ minHeight: "calc(100vh - var(--sticky-top,112px) - 16px)" }}
+        className="
+          flex flex-col justify-center gap-4
+          rounded-2xl bg-white/10 backdrop-blur-md p-4
+          text-white/90 ring-1 ring-white/10
+          shadow-[0_8px_30px_rgba(0,0,0,.25)]
+        "
       >
-        <div className="mb-3 flex items-center justify-between rounded-xl px-2 py-1">
-          <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
+        <div className="flex items-center justify-between rounded-xl px-2 py-1">
+          <span className="text-sm font-semibold text-white">
+            {t.nav?.menu ?? "Menu"}
+          </span>
           <ChevronRight className="h-4 w-4 text-white/70" />
         </div>
 
         <nav className="space-y-2">
-          <a href="#" className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
-            <span className="flex items-center gap-2"><Gift className="h-4 w-4" />{t.nav.offers}</span>
-            <Badge className="text-white" style={{ background: "#9146FF" }}>{t.nav.new}</Badge>
+          <a
+            href="#"
+            className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+          >
+            <span className="flex items-center gap-2">
+              <Gift className="h-4 w-4" />
+              {t.nav.offers}
+            </span>
+            <Badge className="text-white" style={{ background: "#9146FF" }}>
+              {t.nav.new}
+            </Badge>
           </a>
 
           <div className="my-3 h-px bg-white/10" />
 
-          <div className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/45 pointer-events-none select-none" aria-disabled="true" title={lang === "PT" ? "Em breve" : "Coming soon"}>
+          <div
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/45 pointer-events-none select-none"
+            aria-disabled="true"
+            title={lang === "PT" ? "Em breve" : "Coming soon"}
+          >
             <Store className="h-4 w-4 opacity-70" />
             <span>{t.nav.shop}</span>
-            <span className="ml-auto text-[10px] text-white/35">{lang === "PT" ? "em breve" : "coming soon"}</span>
+            <span className="ml-auto text-[10px] text-white/35">
+              {lang === "PT" ? "em breve" : "coming soon"}
+            </span>
           </div>
 
-          <a href={SOCIAL_LINKS.discord} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60" aria-label="Open Discord">
+          <a
+            href={SOCIAL_LINKS.discord}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            aria-label="Open Discord"
+          >
             <Users className="h-4 w-4" />
             <span>{t.nav.community}</span>
           </a>
 
-          <button type="button" onClick={onOpenStream} className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+          <button
+            type="button"
+            onClick={onOpenStream}
+            className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+          >
             <Tv className="h-4 w-4" />
             <span>{t.nav.stream}</span>
           </button>
 
           {/* Redes */}
           <div className="px-3 py-2">
-            <div className="mb-3 border-b border-white/10 pb-3 text-sm font-semibold text-white">{t.social.title}</div>
+            <div className="mb-3 border-b border-white/10 pb-3 text-sm font-semibold text-white">
+              {t.social.title}
+            </div>
             <ul className="grid grid-cols-2 gap-3 text-sm">
-              <li><a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline" aria-label="YouTube"><Youtube className="h-5 w-5" />{t.social.youtube}</a></li>
-              <li><a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline" aria-label="Instagram"><Instagram className="h-5 w-5" />{t.social.instagram}</a></li>
-              <li><a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline" aria-label="Twitch"><TwitchIcon className="h-5 w-5" />{t.social.twitch}</a></li>
-              <li><a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline" aria-label="Telegram"><Send className="h-5 w-5" />{t.social.telegram}</a></li>
+              <li>
+                <a
+                  href={SOCIAL_LINKS.youtube}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-2 hover:underline"
+                  aria-label="YouTube"
+                >
+                  <Youtube className="h-5 w-5" />
+                  {t.social.youtube}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={SOCIAL_LINKS.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-2 hover:underline"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="h-5 w-5" />
+                  {t.social.instagram}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={SOCIAL_LINKS.twitch}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-2 hover:underline"
+                  aria-label="Twitch"
+                >
+                  <TwitchIcon className="h-5 w-5" />
+                  {t.social.twitch}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={SOCIAL_LINKS.telegram}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-2 hover:underline"
+                  aria-label="Telegram"
+                >
+                  <Send className="h-5 w-5" />
+                  {t.social.telegram}
+                </a>
+              </li>
             </ul>
           </div>
         </nav>
 
-        {/* Discord widget ocupa o espaço vago */}
-        {!!DISCORD_SERVER_ID && (
-          <div className="mt-4 flex-1 rounded-xl ring-1 ring-white/10 overflow-hidden bg-black/30">
-            <iframe
-              title="Discord"
-              src={`https://discord.com/widget?id=${DISCORD_SERVER_ID}&theme=dark`}
-              width="100%"
-              height="100%"
-              allowTransparency
-              sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-              className="w-full h-full border-0"
-            />
-          </div>
-        )}
-
-        <div className="pt-3 text-[12px] text-white/55 w-full text-center mt-4">
+        {/* rodapé da caixa */}
+        <div className="pt-2 text-[12px] text-white/55 w-full text-center">
           Copyright © {new Date().getFullYear()} K0MPA
         </div>
       </div>
     </aside>
   );
 }
+
 
 /* ---------- helpers ---------- */
 function tagVisual(tag: Brand["tag"]) {
