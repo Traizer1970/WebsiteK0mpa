@@ -207,16 +207,16 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
 /* ---------- Sidebar com Discord ---------- */
 function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   const { t, lang } = useLang();
+  const HEIGHT = 520; // ajusta aqui: 480/500/540...
 
   return (
-    <aside className="hidden md:block w-[240px] mx-auto" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
-      <div
-        className="rounded-2xl bg-white/10 backdrop-blur-md p-3 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
-        // ⬇️ altura fixa: ocupa o espaço todo até ao fundo
-        style={{ height: "calc(100vh - var(--sticky-top,112px) - 16px)" }}
-      >
-        {/* 3 zonas: topo / spacer / rodapé */}
-        <div className="flex h-full flex-col">
+    <aside className="hidden md:block w-[240px] mx-auto">
+      {/* Wrapper sticky que posiciona a caixa ao centro vertical do viewport */}
+      <div className="sticky" style={{ top: `calc((100vh - ${HEIGHT}px)/2)` }}>
+        <div
+          className="flex flex-col rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
+          style={{ height: `${HEIGHT}px`, overflow: "auto" }}
+        >
           {/* TOPO — Menu */}
           <div>
             <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
@@ -339,6 +339,7 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
     </aside>
   );
 }
+
 /* ---------- helpers ---------- */
 function tagVisual(tag: Brand["tag"]) {
   switch (tag) { case "HOT": return { accent:"#ef4444" }; case "NEW": return { accent:"#8b5cf6" }; default: return { accent:"#10b981" }; }
