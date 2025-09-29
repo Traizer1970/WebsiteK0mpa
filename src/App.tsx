@@ -25,8 +25,13 @@ const SOCIAL_LINKS = {
   discord:  "https://discord.gg/k0mpa",
 } as const;
 
-/* ---------- Twitch LIVE (sem API key) ---------- */
+/* ---------- Twitch/YouTube config ---------- */
 const TWITCH_CHANNEL = "k0mpa";
+
+/** TROCA pelo ID do playlist de uploads do teu canal (começa por UU…) */
+const YT_UPLOADS_PLAYLIST = "UUwhhk8mIE-wGg_EWX2adH5Q";
+
+/* ---------- Twitch LIVE (sem API key) ---------- */
 function useLiveAutoTwitch(channel: string, intervalMs = 60_000) {
   const [isLive, setIsLive] = React.useState(false);
   React.useEffect(() => {
@@ -144,15 +149,17 @@ PT: {
   }
 },
 EN: {
-  brand:"K0MPA",
-  search:"Search…",
-  nav:{ menu:"Menu", casinos:"Casinos", offers:"Offers", betify:"Betify", shop:"Shop",
-        community:"Community", slots:"Slots", stream:"Stream", minigames:"Mini Games", new:"NEW" },
+  brand: "K0MPA",
+  search: "Search…",
+  nav: { menu:"Menu", casinos:"Casinos", offers:"Offers", betify:"Betify", shop:"Shop",
+         community:"Community", slots:"Slots", stream:"Stream", minigames:"Mini Games", new:"NEW" },
   promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly",
           depcode:"Dep. Code", claim:"Claim Bonus" },
-  card:{ min:"Min. Dep.", bonus:"Bonus", cashback:"Cashback", spins:"Free Spins", code:"Code:",
-         terms:"+18 | T&C apply", showMore:"More", back:"Back", moreInfo:"More information",
-         visit:"Visit brand", go:"CLAIM BONUS", copy:"Copy" },
+  card:{
+    min:"Min. Dep.", bonus:"Bonus", cashback:"Cashback", spins:"Free Spins", code:"Code:",
+    terms:"+18 | T&C apply", showMore:"More", back:"Back", moreInfo:"More information",
+    visit:"Visit brand", go:"CLAIM BONUS", copy:"Copy"
+  },
   social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram",
            copyright:(y)=>`Copyright © ${y} K0MPA` },
   footer:{
@@ -177,12 +184,12 @@ export type Brand = {
 const brands: Brand[] = [
   { name:"Betify", tag:"HOT", logo:"", image:"https://betify.org/wp-content/uploads/2025/01/Betify-app.webp", imagePos:"left center",
     minDep:"25€", bonus:"450%", cashback:"Até 35%", freeSpins:"Até 350FS", code:"K0MPA", link:"#",
-    theme:{ accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
+    theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
     payments:["btc","mb","mbb","visa","mc"] },
   { name:"1XBIT", tag:"NEW", logo:"", image:"https://thenewscrypto.com/wp-content/uploads/2022/01/IMG-20220110-WA0000.jpg", imagePos:"center",
     minDep:"10€", bonus:"100%", cashback:"—", freeSpins:"125FS", code:"K0MPA", link:"#",
-    theme:{ accent:"#d97706", shadow:"rgba(217,119,6,0.45)", ring:"rgba(217,119,6,.45)" },
-    payments:["btc"] },
+    theme: { accent:"#d97706", shadow:"rgba(217,119,6,0.45)", ring:"rgba(217,119,6,.45)" },
+    payments:["btc"] }, // ← só BTC
 ];
 
 /* ---------- header/sidebar ---------- */
@@ -249,6 +256,7 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   );
 }
 
+/* ---------- Sidebar (coluna inteira, sem espaço morto) ---------- */
 function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   const { t, lang } = useLang();
 
@@ -260,7 +268,6 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
       <div
         className="flex flex-col rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90
                    ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
-        /* ocupa até ao fundo do ecrã (sem espaço morto) */
         style={{ minHeight: "calc(100vh - var(--sticky-top,112px) - 16px)" }}
       >
         {/* Cabeçalho */}
@@ -269,7 +276,7 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
           <ChevronRight className="h-4 w-4 text-white/70" />
         </div>
 
-        {/* Navegação (cresce para empurrar o rodapé para baixo) */}
+        {/* Navegação */}
         <nav className="space-y-2 flex-1">
           <a
             href="#"
@@ -343,7 +350,6 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   );
 }
 
-
 /* ---------- helpers ---------- */
 function tagVisual(tag: Brand["tag"]) {
   switch (tag) { case "HOT": return { accent:"#ef4444" }; case "NEW": return { accent:"#8b5cf6" }; default: return { accent:"#10b981" }; }
@@ -390,7 +396,7 @@ function FancyCTA({ href, label, accent }: { href: string; label: string; accent
   );
 }
 
-/* ---------- Mini player (dock) ---------- */
+/* ---------- Twitch mini/overlay ---------- */
 function buildTwitchEmbedUrl(channel: string) {
   const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
   const parents = new Set<string>([host, "localhost"]);
@@ -398,55 +404,32 @@ function buildTwitchEmbedUrl(channel: string) {
   const qsParents = Array.from(parents).map(p => `parent=${encodeURIComponent(p)}`).join("&");
   return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&muted=1&autoplay=1&${qsParents}`;
 }
-
 function clamp(n: number, min: number, max: number) { return Math.max(min, Math.min(max, n)); }
 type Pos = { x: number; y: number };
 
 function useDockDrag(initial: Pos = { x: 16, y: 16 }, box = { w: 320, h: 240 }) {
   const [pos, setPos] = React.useState<Pos>(() => {
-    try {
-      return JSON.parse(
-        localStorage.getItem("liveDockPos") || JSON.stringify(initial)
-      ) as Pos;
-    } catch {
-      return initial;
-    }
+    try { return JSON.parse(localStorage.getItem("liveDockPos") || JSON.stringify(initial)) as Pos; }
+    catch { return initial; }
   });
-
   const dragRef = React.useRef<{ sx: number; sy: number; ox: number; oy: number } | null>(null);
-
-  const onDown = (e: React.PointerEvent) => {
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    dragRef.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y };
-  };
-
+  const onDown = (e: React.PointerEvent) => { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); dragRef.current = { sx:e.clientX, sy:e.clientY, ox:pos.x, oy:pos.y }; };
   const onMove = (e: React.PointerEvent) => {
     if (!dragRef.current) return;
-    const dx = e.clientX - dragRef.current.sx;
-    const dy = e.clientY - dragRef.current.sy;
+    const dx = e.clientX - dragRef.current.sx; const dy = e.clientY - dragRef.current.sy;
     const vw = window.innerWidth, vh = window.innerHeight;
-    setPos({
-      x: clamp(dragRef.current.ox - dx, 0, vw - box.w),
-      y: clamp(dragRef.current.oy - dy, 0, vh - box.h),
-    });
+    setPos({ x: clamp(dragRef.current.ox - dx, 0, vw - box.w), y: clamp(dragRef.current.oy - dy, 0, vh - box.h) });
   };
-
   const onUp = (e: React.PointerEvent) => {
     try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
     const vw = window.innerWidth, vh = window.innerHeight, snap = 16;
-
-    setPos((p: Pos) => {
-      const snapped: Pos = {
-        x: (p.x <= snap) ? 0 : (p.x >= vw - box.w - snap) ? vw - box.w : p.x,
-        y: (p.y <= snap) ? 0 : (p.y >= vh - box.h - snap) ? vh - box.h : p.y,
-      };
+    setPos((p) => {
+      const snapped = { x: (p.x <= snap) ? 0 : (p.x >= vw - box.w - snap) ? vw - box.w : p.x, y: (p.y <= snap) ? 0 : (p.y >= vh - box.h - snap) ? vh - box.h : p.y };
       try { localStorage.setItem("liveDockPos", JSON.stringify(snapped)); } catch {}
       return snapped;
     });
-
     dragRef.current = null;
   };
-
   return { pos, setPos, onDown, onMove, onUp };
 }
 
@@ -456,41 +439,18 @@ function LiveDock({ channel, onClose }: { channel: string; onClose: () => void }
   const playerSrc = buildTwitchEmbedUrl(channel);
 
   return (
-    <div style={{ position: "fixed", right: pos.x, bottom: pos.y, zIndex: 50, touchAction: "none" }}>
+    <div style={{ position:"fixed", right:pos.x, bottom:pos.y, zIndex:50, touchAction:"none" }}>
       <div className="rounded-2xl bg-black/70 backdrop-blur-md ring-1 ring-white/15 shadow-[0_10px_40px_rgba(0,0,0,.45)] overflow-hidden w-[320px] select-none">
-        <div
-          data-dock="header"
-          className="flex items-center justify-between px-3 py-2 cursor-grab active:cursor-grabbing"
-          onPointerDown={onDown}
-          onPointerMove={onMove}
-          onPointerUp={onUp}
-        >
+        <div data-dock="header" className="flex items-center justify-between px-3 py-2 cursor-grab active:cursor-grabbing" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}>
           <div className="inline-flex items-center gap-2">
             <TwitchBadge />
             <span className="text-xs font-semibold text-white/90">/{channel}</span>
           </div>
-          <button
-            onClick={(e) => { e.stopPropagation(); onClose(); }}
-            onPointerDown={(e) => e.stopPropagation()}
-            className="rounded-md px-2 py-1 text-xs font-semibold text-white/80 hover:bg-white/10"
-            aria-label="Fechar mini-player"
-          >
-            Fechar
-          </button>
+          <button onClick={(e)=>{ e.stopPropagation(); onClose(); }} onPointerDown={(e)=>e.stopPropagation()} className="rounded-md px-2 py-1 text-xs font-semibold text-white/80 hover:bg-white/10" aria-label="Fechar mini-player">Fechar</button>
         </div>
 
         <div className="bg-black w-[320px] h-[180px]">
-          <iframe
-            title={`twitch-${channel}`}
-            src={playerSrc}
-            width="320"
-            height="180"
-            frameBorder="0"
-            scrolling="no"
-            allow="autoplay; picture-in-picture; fullscreen; encrypted-media"
-            allowFullScreen
-            className="block w-[320px] h-[180px] border-0"
-          />
+          <iframe title={`twitch-${channel}`} src={playerSrc} width="320" height="180" frameBorder="0" scrolling="no" allow="autoplay; picture-in-picture; fullscreen; encrypted-media" allowFullScreen className="block w-[320px] h-[180px] border-0" />
         </div>
 
         <div className="flex items-center justify-between px-3 py-2">
@@ -502,67 +462,39 @@ function LiveDock({ channel, onClose }: { channel: string; onClose: () => void }
   );
 }
 
-/* ---------- Overlay de Stream (POR CIMA DE TUDO) ---------- */
+/* ---------- Overlay ---------- */
 function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => void }) {
   const [mounted, setMounted] = React.useState(false);
-
   React.useEffect(() => {
     setMounted(true);
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
-
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.documentElement.style.overflow = prev;
-    };
+    return () => { document.removeEventListener("keydown", onKey); document.documentElement.style.overflow = prev; };
   }, [onClose]);
 
   const src = buildTwitchEmbedUrl(channel);
-
   const content = (
-    <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center"
-      aria-modal="true"
-      role="dialog"
-    >
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center" aria-modal="true" role="dialog">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <div className="relative mx-4 w-full max-w-5xl rounded-2xl ring-1 ring-white/15 shadow-[0_20px_80px_rgba(0,0,0,.6)] overflow-hidden">
         <div className="flex items-center justify-between bg-black/50 px-4 py-2 text-white">
-          <div className="flex items-center gap-2">
-            <TwitchBadge />
-            <span className="text-sm font-semibold">/{channel}</span>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-md px-3 py-1 text-sm font-semibold hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-          >
-            Fechar
-          </button>
+          <div className="flex items-center gap-2"><TwitchBadge /><span className="text-sm font-semibold">/{channel}</span></div>
+          <button onClick={onClose} className="rounded-md px-3 py-1 text-sm font-semibold hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">Fechar</button>
         </div>
         <div className="bg-black">
-          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-            <iframe
-              title={`twitch-${channel}-overlay`}
-              src={src}
-              allow="autoplay; picture-in-picture; fullscreen; encrypted-media"
-              allowFullScreen
-              frameBorder="0"
-              scrolling="no"
-              className="absolute inset-0 h-full w-full border-0"
-            />
+          <div className="relative w-full" style={{ paddingTop:"56.25%" }}>
+            <iframe title={`twitch-${channel}-overlay`} src={src} allow="autoplay; picture-in-picture; fullscreen; encrypted-media" allowFullScreen frameBorder="0" scrolling="no" className="absolute inset-0 h-full w-full border-0" />
           </div>
         </div>
       </div>
     </div>
   );
-
   return mounted ? createPortal(content, document.body) : null;
 }
 
-/* ---------- Stream por cima dos cards (sem cabeçalho Twitch/ /k0mpa) ---------- */
+/* ---------- Stream por cima dos cards (sem cabeçalho) ---------- */
 function StreamHero({ channel }: { channel: string }) {
   const src = buildTwitchEmbedUrl(channel);
   return (
@@ -584,14 +516,34 @@ function StreamHero({ channel }: { channel: string }) {
   );
 }
 
+/* ---------- NOVO: Últimos vídeos do YouTube (sem API) ---------- */
+function YouTubeLatest({ playlistId }: { playlistId: string }) {
+  if (!playlistId || playlistId.startsWith("UU_REPLACE")) return null;
+  const src = `https://www.youtube.com/embed/videoseries?list=${encodeURIComponent(playlistId)}&rel=0`;
+  return (
+    <section className="space-y-3">
+      <h2 className="text-white/90 text-base font-bold">Últimos vídeos</h2>
+      <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black shadow-[0_12px_40px_rgba(0,0,0,.25)]">
+        <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+          <iframe
+            title="youtube-latest"
+            src={src}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            frameBorder="0"
+            className="absolute inset-0 h-full w-full border-0"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ---------- Brand Card ---------- */
 function FancyStat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: React.ElementType; accent: string; }) {
   return (
-    <div
-      className="relative overflow-hidden rounded-2xl px-3 py-2 text-white ring-1 backdrop-blur shadow-[0_6px_18px_rgba(0,0,0,.28)]"
-      style={{ minHeight: 74, background:"linear-gradient(180deg, rgba(15,23,42,.86) 0%, rgba(15,23,42,.78) 100%)", borderColor:"rgba(255,255,255,.08)" }}
-    >
-      <span aria-hidden className="absolute left-2 right-2 top-0 h-[3px] rounded-b-none rounded-t-xl" style={{ background:`linear-gradient(90deg, ${accent}, transparent)` }} />
+    <div className="relative overflow-hidden rounded-2xl px-3 py-2 text-white ring-1 backdrop-blur shadow-[0_6px_18px_rgba(0,0,0,.28)]" style={{ minHeight:74, background:"linear-gradient(180deg, rgba(15,23,42,.86) 0%, rgba(15,23,42,.78) 100%)", borderColor:"rgba(255,255,255,.08)" }}>
+      <span aria-hidden className="absolute left-2 right-2 top-0 h-[3px]" style={{ background:`linear-gradient(90deg, ${accent}, transparent)` }} />
       <div className="flex h-full flex-col items-center justify-center gap-1 text-center leading-tight">
         <Icon className="h-4 w-4 text-white/85" />
         <p className="text-[10px] font-semibold uppercase tracking-wide text-white/70">{label}</p>
@@ -602,10 +554,7 @@ function FancyStat({ label, value, icon: Icon, accent }: { label: string; value:
 }
 function StatTile({ icon: Icon, label, value, accent }: { icon: React.ElementType; label: string; value: string; accent: string; }) {
   return (
-    <div
-      className="group relative overflow-hidden rounded-2xl p-3.5 transition bg-white/5 ring-1 ring-white/10 shadow-[0_2px_10px_rgba(15,23,42,0.06)] focus-within:ring-2 focus-within:ring-rose-400/60"
-      style={{ backgroundImage:"radial-gradient(120% 100% at 10% 0%, rgba(148,163,184,0.10) 0%, rgba(255,255,255,0) 60%)" }}
-    >
+    <div className="group relative overflow-hidden rounded-2xl p-3.5 transition bg-white/5 ring-1 ring-white/10 shadow-[0_2px_10px_rgba(15,23,42,0.06)] focus-within:ring-2 focus-within:ring-rose-400/60" style={{ backgroundImage:"radial-gradient(120% 100% at 10% 0%, rgba(148,163,184,0.10) 0%, rgba(255,255,255,0) 60%)" }}>
       <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background:`linear-gradient(90deg, ${accent}, transparent)` }} />
       <div className="flex items-center gap-2 text-white/70">
         <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg ring-1 ring-white/10" style={{ background:`${accent}14` }}>
@@ -624,11 +573,10 @@ function BrandCard({ b }: { b: Brand }) {
   const base = tagVisual(b.tag);
   const acc  = b.theme?.accent ?? base.accent;
   const shadow = b.theme?.shadow ?? rgba(acc, 0.35);
-
   const methods = b.payments && b.payments.length ? b.payments : ["btc","mbw","mb","visa","mc"];
 
   return (
-    <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height: CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
+    <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height:CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
       <div className="absolute inset-0 transition-transform duration-500" style={{ transformStyle:"preserve-3d", transform: flip ? "rotateY(180deg)" : "none" }}>
         {/* FRONT */}
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
@@ -637,7 +585,7 @@ function BrandCard({ b }: { b: Brand }) {
             <img src={b.image} alt={b.name} className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: b.imagePos ?? "center" }} />
             <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/50" />
             <div className="absolute right-4 top-4 z-10">
-              <button onClick={() => setFlip(true)} className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+              <button onClick={()=>setFlip(true)} className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60">
                 {t.card.showMore}
               </button>
             </div>
@@ -647,10 +595,10 @@ function BrandCard({ b }: { b: Brand }) {
                 <PaymentRibbon methods={methods} />
                 <div className="pointer-events-none absolute left-6 right-6 -top-2 h-2 rounded-b-xl bg-gradient-to-b from-black/40 to-transparent" />
                 <div className="grid grid-cols-4 gap-2">
-                  <FancyStat icon={Coins}      label={t.card.min}      value={b.minDep}     accent={acc} />
-                  <FancyStat icon={Percent}    label={t.card.bonus}    value={b.bonus}      accent={acc} />
-                  <FancyStat icon={TrendingUp} label={t.card.cashback} value={b.cashback}   accent={acc} />
-                  <FancyStat icon={Sparkles}   label={t.card.spins}    value={b.freeSpins}  accent={acc} />
+                  <FancyStat icon={Coins} label={t.card.min} value={b.minDep} accent={acc} />
+                  <FancyStat icon={Percent} label={t.card.bonus} value={b.bonus} accent={acc} />
+                  <FancyStat icon={TrendingUp} label={t.card.cashback} value={b.cashback} accent={acc} />
+                  <FancyStat icon={Sparkles} label={t.card.spins} value={b.freeSpins} accent={acc} />
                 </div>
                 <div className="pt-2 pb-1 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
                 <div className="pt-1"><FancyCTA href={b.link} label={t.card.go} accent={acc} /></div>
@@ -665,7 +613,7 @@ function BrandCard({ b }: { b: Brand }) {
             <div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="text-base font-bold text-white">{t.card.moreInfo}</span>
-                <span className="h-1 w-14 rounded-full" style={{ background: acc }} />
+                <span className="h-1 w-14 rounded-full" style={{ background:acc }} />
               </div>
               <TagBadge tag={b.tag} inline accent={acc} />
             </div>
@@ -683,10 +631,7 @@ function BrandCard({ b }: { b: Brand }) {
                   <span className="text-white/60">{t.card.code}</span>
                   <span className="ml-2 font-semibold tracking-wide">{b.code}</span>
                 </div>
-                <button
-                  onClick={async () => { try { await navigator.clipboard.writeText(b.code); } catch {} }}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
-                >
+                <button onClick={async()=>{ try{ await navigator.clipboard.writeText(b.code);}catch{} }} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60">
                   <Copy className="h-4 w-4" />
                   {t.card.copy}
                 </button>
@@ -695,8 +640,8 @@ function BrandCard({ b }: { b: Brand }) {
 
             <div className="mt-4">
               <div className="grid grid-cols-2 items-stretch gap-3">
-                <Button className="h-11 rounded-2xl bg-white/8 ring-1 ring-white/12 hover:bg-white/12 text-sm text-white" onClick={() => setFlip(false)}>{t.card.back}</Button>
-                <a href={b.link} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center justify-center rounded-2xl px-4 text-sm font-semibold text-white transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background: `linear-gradient(135deg, ${acc}, ${rgba(acc, 0.85)})`, boxShadow: `0 8px 20px ${rgba(acc, 0.35)}` }}>
+                <Button className="h-11 rounded-2xl bg-white/8 ring-1 ring-white/12 hover:bg-white/12 text-sm text-white" onClick={()=>setFlip(false)}>{t.card.back}</Button>
+                <a href={b.link} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center justify-center rounded-2xl px-4 text-sm font-semibold text-white transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background:`linear-gradient(135deg, ${acc}, ${rgba(acc,0.85)})`, boxShadow:`0 8px 20px ${rgba(acc,0.35)}` }}>
                   {t.card.visit}
                 </a>
               </div>
@@ -730,79 +675,42 @@ function Footer() {
             <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">{t.footer?.cookies ?? "Cookie Policy"}</span>
           </nav>
 
-          <a
-            href="https://www.begambleaware.org/"
-            target="_blank" rel="noreferrer"
-            className="inline-flex items-center gap-2 text-xs hover:text-white/90"
-            title={t.footer.rg_site}
-          >
-            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[11px] font-bold">
-              18+
-            </span>
+          <a href="https://www.begambleaware.org/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs hover:text-white/90" title={t.footer.rg_site}>
+            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[11px] font-bold">18+</span>
             {t.footer.rg_site}
           </a>
         </div>
 
         <div className="my-3 h-px bg-white/10" />
-
-        <p className="text-[12px] leading-snug text-white/55">
-          {t.footer.rg_paragraph}
-        </p>
+        <p className="text-[12px] leading-snug text-white/55">{t.footer.rg_paragraph}</p>
       </div>
     </footer>
   );
 }
-function LanguageToggle({
-  lang,
-  onChange,
-}: {
-  lang: "PT" | "EN";
-  onChange: (l: "PT" | "EN") => void;
-}) {
+function LanguageToggle({ lang, onChange }: { lang:"PT"|"EN"; onChange:(l:"PT"|"EN")=>void; }) {
   const base = "text-sm font-semibold tracking-wide transition-colors";
   const inactive = "text-white/70 hover:text-white/90";
   const active = "text-white border-b-2 border-[#9146FF] pb-0.5";
-
   return (
     <div className="inline-flex items-center gap-3">
-      <button
-        type="button"
-        aria-selected={lang === "PT"}
-        onClick={() => onChange("PT")}
-        className={`${base} ${lang === "PT" ? active : inactive}`}
-      >
-        PT
-      </button>
-      <button
-        type="button"
-        aria-selected={lang === "EN"}
-        onClick={() => onChange("EN")}
-        className={`${base} ${lang === "EN" ? active : inactive}`}
-      >
-        EN
-      </button>
+      <button type="button" aria-selected={lang==="PT"} onClick={()=>onChange("PT")} className={`${base} ${lang==="PT"?active:inactive}`}>PT</button>
+      <button type="button" aria-selected={lang==="EN"} onClick={()=>onChange("EN")} className={`${base} ${lang==="EN"?active:inactive}`}>EN</button>
     </div>
   );
 }
 
 function BackgroundLayer() {
   return (
-    <div
-      className="absolute inset-0 -z-10 pointer-events-none"
-      style={{
-        background:
-          "radial-gradient(120% 90% at 15% 0%, rgba(244,63,94,.35) 0%, rgba(244,63,94,.12) 35%, transparent 60%)," +
-          "radial-gradient(100% 85% at 85% 100%, rgba(244,63,94,.28) 0%, transparent 55%)," +
-          "linear-gradient(180deg, #150608 0%, #0f0406 40%, #090306 100%)",
-        WebkitMaskImage:
-          "radial-gradient(120% 100% at 50% 50%, #000 70%, transparent 100%)",
-        maskImage:
-          "radial-gradient(120% 100% at 50% 50%, #000 70%, transparent 100%)",
-      }}
-    />
+    <div className="absolute inset-0 -z-10 pointer-events-none" style={{
+      background:
+        "radial-gradient(120% 90% at 15% 0%, rgba(244,63,94,.35) 0%, rgba(244,63,94,.12) 35%, transparent 60%)," +
+        "radial-gradient(100% 85% at 85% 100%, rgba(244,63,94,.28) 0%, transparent 55%)," +
+        "linear-gradient(180deg, #150608 0%, #0f0406 40%, #090306 100%)",
+      WebkitMaskImage:"radial-gradient(120% 100% at 50% 50%, #000 70%, transparent 100%)",
+      maskImage:"radial-gradient(120% 100% at 50% 50%, #000 70%, transparent 100%)",
+    }} />
   );
 }
-
 
 /* ---------- Root ---------- */
 export default function CasinoPartnerHub() {
@@ -818,7 +726,6 @@ export default function CasinoPartnerHub() {
     setHideDock(true);
     if (typeof window !== "undefined") sessionStorage.setItem("liveDockDismissed", "1");
   };
-
   const [showOverlay, setShowOverlay] = useState(false);
 
   useEffect(() => {
@@ -826,19 +733,18 @@ export default function CasinoPartnerHub() {
   }, []);
 
   return (
-   <LangCtx.Provider value={{ lang, setLang, t }}>
-    <div
-      className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-clip"
-    >
-      <BackgroundLayer />
-      <HeaderBar isLive={isLive} />
+    <LangCtx.Provider value={{ lang, setLang, t }}>
+      <div className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-clip">
+        <BackgroundLayer />
+        <HeaderBar isLive={isLive} />
         <div className="flex-1">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-8 sm:px-8 md:grid-cols-[280px,1fr] items-start">
             <Sidebar onOpenStream={() => setShowOverlay(true)} />
-            <main className="space-y-8">
-              {/* embed por cima dos cards, sem cabeçalho */}
+            <main className="space-y-10">
+              {/* Twitch por cima dos cards */}
               <StreamHero channel={TWITCH_CHANNEL} />
 
+              {/* Cards */}
               <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
                 {brands.map((b, i) => (
                   <React.Fragment key={b.name + i}>
@@ -846,21 +752,16 @@ export default function CasinoPartnerHub() {
                   </React.Fragment>
                 ))}
               </div>
+
+              {/* NOVO: Últimos vídeos do YouTube */}
+              <YouTubeLatest playlistId={YT_UPLOADS_PLAYLIST} />
             </main>
           </div>
         </div>
         <Footer />
 
-        {/* Mini-dock (opcional) */}
         {!hideDock && <LiveDock channel={TWITCH_CHANNEL} onClose={closeDock} />}
-
-        {/* Overlay por cima de tudo (opcional) */}
-        {showOverlay && (
-          <StreamOverlay
-            channel={TWITCH_CHANNEL}
-            onClose={() => setShowOverlay(false)}
-          />
-        )}
+        {showOverlay && <StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />}
       </div>
     </LangCtx.Provider>
   );
