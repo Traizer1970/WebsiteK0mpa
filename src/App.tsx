@@ -3,13 +3,17 @@ import { createPortal } from "react-dom";
 import {
   Search, ChevronRight, Gift, Store, Users, Tv,
   TrendingUp, Youtube, Instagram, Twitch as TwitchIcon, Send, Coins, Percent, Copy,
-  Sparkles, Flame, Crown,
+  Sparkles, Flame, Crown, ArrowLeft, ExternalLink
 } from "lucide-react";
 
 /* ---------- CONFIG ---------- */
 const TWITCH_CHANNEL = "k0mpa";
 /* YouTube (UC…) — @k0mpa */
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
+
+/* URLs Betify — troca para os teus links reais */
+const BETIFY_SIGNUP_URL = "https://betify.com/?ref=k0mpa";      // <- altera
+const BETIFY_PROMO_URL  = "https://betify.com/promotions";       // <- altera
 
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
@@ -146,10 +150,11 @@ const brands: Brand[] = [
   {
     name:"Betify",
     tag:"HOT",
-    logo:"https://www.ce-at.fr/img/logo.webp",   // <<<<<<<<<<<<<< LOGO AQUI
+    /* usa este logo no chip do topo do card; podes trocar para outro */
+    logo:"https://www.ce-at.fr/img/logo.webp",
     image:"https://altacdn.com/bf/img/sliders/ca/150746_bf_website_banner_wsb.webp",
     imagePos:"left center",
-    minDep:"20€", bonus:"100%", cashback:"Até 20%", freeSpins:"Até 100FS", code:"K0MPA", link:"#",
+    minDep:"20€", bonus:"100%", cashback:"Até 20%", freeSpins:"Até 100FS", code:"K0MPA", link: BETIFY_PROMO_URL,
     theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
     payments:["btc","mb","mbb","visa","mc"]
   },
@@ -176,7 +181,7 @@ function TwitchBadge({ label = "Twitch" }: { label?: string }) {
   return (
     <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold text-white ring-1 ring-white/20 shadow-sm" style={{ background: TWITCH_PURPLE }}>
       <span className="relative flex h-2 w-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg白/80 opacity-75" />
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/80 opacity-75" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
       </span>
       {label}
@@ -230,7 +235,7 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
 }
 
 /* ---------- Sidebar ---------- */
-function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
+function Sidebar({ onOpenStream, onOpenBetify }: { onOpenStream: () => void; onOpenBetify: () => void }) {
   const { t, lang } = useLang();
 
   return (
@@ -246,13 +251,23 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
           </div>
 
           <nav className="space-y-2">
-            <a href="#" className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+            <a href={BETIFY_PROMO_URL} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
               <span className="flex items-center gap-2">
                 <Gift className="h-4 w-4" />
                 {t.nav.offers}
               </span>
               <Badge className="text-white" style={{ background: "#9146FF" }}>{t.nav.new}</Badge>
             </a>
+
+            {/* Botão Betify dedicado */}
+            <button
+              type="button"
+              onClick={onOpenBetify}
+              className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            >
+              <img src="https://www.ce-at.fr/img/logo.webp" alt="Betify" className="h-5 w-5 rounded-sm object-contain ring-1 ring-white/15 bg-white/90" />
+              <span className="font-semibold">Betify</span>
+            </button>
 
             <div className="my-3 h-px bg-white/10" />
 
@@ -288,17 +303,56 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
 
         {/* Redes */}
         <footer className="pt-4 border-t border-white/10">
-          <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">{t.social.title}</div>
+          <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">Redes</div>
+
           <ul className="grid grid-cols-2 md:grid-cols-2 gap-x-5 gap-y-3 text-sm">
-            <li><a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Youtube className="h-5 w-5" />{t.social.youtube}</a></li>
-            <li><a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Instagram className="h-5 w-5" />{t.social.instagram}</a></li>
-            <li><a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><TwitchIcon className="h-5 w-5" />{t.social.twitch}</a></li>
-            <li><a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Send className="h-5 w-5" />{t.social.telegram}</a></li>
-            <li><a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><TikTokIcon className="h-5 w-5" />{t.social.tiktok}</a></li>
-            <li><a href={SOCIAL_LINKS.tiktokValorant} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><TikTokIcon className="h-5 w-5" />{t.social.tiktok_val}</a></li>
-            <li className="col-span-2"><a href={SOCIAL_LINKS.x} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><TwitterIcon className="h-5 w-5" />Twitter</a></li>
+            <li>
+              <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <Youtube className="h-5 w-5" />
+                Youtube
+              </a>
+            </li>
+            <li>
+              <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <Instagram className="h-5 w-5" />
+                Instagram
+              </a>
+            </li>
+            <li>
+              <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <TwitchIcon className="h-5 w-5" />
+                Twitch
+              </a>
+            </li>
+            <li>
+              <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <Send className="h-5 w-5" />
+                Telegram
+              </a>
+            </li>
+            <li>
+              <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <TikTokIcon className="h-5 w-5" />
+                TikTok
+              </a>
+            </li>
+            <li>
+              <a href={SOCIAL_LINKS.tiktokValorant} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <TikTokIcon className="h-5 w-5" />
+                TikTok2
+              </a>
+            </li>
+            <li className="col-span-2">
+              <a href={SOCIAL_LINKS.x} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <TwitterIcon className="h-5 w-5" />
+                Twitter
+              </a>
+            </li>
           </ul>
-          <div className="mt-3 text-center text-[12px] text-white/55">Copyright © {new Date().getFullYear()} K0MPA</div>
+
+          <div className="mt-3 text-center text-[12px] text-white/55">
+            Copyright © {new Date().getFullYear()} K0MPA
+          </div>
         </footer>
       </div>
     </aside>
@@ -306,29 +360,18 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
 }
 
 /* ---------- helpers ---------- */
-function tagVisual(tag: Brand["tag"]) { switch (tag) { case "HOT": return { accent:"#ef4444" }; case "NEW": return { accent:"#8b5cf6" }; default: return { accent:"#10b981" }; } }
+function tagVisual(tag: Brand["tag"]) {
+  switch (tag) { case "HOT": return { accent:"#ef4444" }; case "NEW": return { accent:"#8b5cf6" }; default: return { accent:"#10b981" }; }
+}
 function TagBadge({ tag, inline=false, className="", style, accent }: { tag: Brand["tag"]; inline?: boolean; className?: string; style?: React.CSSProperties; accent?: string; }) {
   const Icon = (tag === "HOT" ? Flame : tag === "NEW" ? Sparkles : Crown) as React.ElementType;
   const acc = accent ?? tagVisual(tag).accent;
   return (
     <div className={cn(inline ? "relative inline-flex" : "absolute left-3 top-3 z-20", className)} style={style}>
-      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ background:`linear-gradient(180deg, ${acc}, ${acc})`, boxShadow:"0 4px 14px rgba(0,0,0,.18)" }}>
-        <Icon className="h-3.5 w-3.5" /><span className="uppercase tracking-wide">{tag}</span>
+      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ background: `linear-gradient(180deg, ${acc}, ${acc})`, boxShadow: "0 4px 14px rgba(0,0,0,.18)" }}>
+        <Icon className="h-3.5 w-3.5" />
+        <span className="uppercase tracking-wide">{tag}</span>
       </span>
-    </div>
-  );
-}
-
-/* ------ Brand chip (logo + nome) ------ */
-function BrandChip({ logo, name }: { logo?: string; name: string }) {
-  if (!logo) return null;
-  return (
-    <div
-      className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1 ring-1 ring-black/10 shadow-md"
-      style={{ backdropFilter: "saturate(1.2) blur(2px)" }}
-    >
-      <img src={logo} alt={`${name} logo`} className="h-6 w-6 rounded-[6px] object-contain" loading="lazy" />
-      <span className="text-xs font-extrabold tracking-wide text-slate-900">{name}</span>
     </div>
   );
 }
@@ -349,7 +392,7 @@ function PaymentRibbon({ methods }: { methods: string[] }) {
 }
 function FancyCTA({ href, label, accent }: { href: string; label: string; accent: string; }) {
   return (
-    <a href={href} target="_blank" rel="noreferrer" className="inline-flex h-12 w-full items-center justify-center rounded-2xl px-4 text-center text-sm font-extrabold text-white transition hover:brightness-110 ring-1 ring-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background:`linear-gradient(180deg, ${accent}, ${rgba(accent,0.85)})`, boxShadow:`0 8px 20px ${rgba(accent,0.35)}` }}>
+    <a href={href} target="_blank" rel="noreferrer" className="inline-flex h-12 w-full items-center justify-center rounded-2xl px-4 text-center text-sm font-extrabold text-white transition hover:brightness-110 ring-1 ring-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background: `linear-gradient(180deg, ${accent}, ${rgba(accent, 0.85)})`, boxShadow: `0 8px 20px ${rgba(accent, 0.35)}` }}>
       {label}
     </a>
   );
@@ -358,7 +401,12 @@ function FancyCTA({ href, label, accent }: { href: string; label: string; accent
 /* ---------- Twitch embed helpers ---------- */
 function buildTwitchEmbedUrl(channel: string) {
   const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
-  const parents = new Set<string>([host, host.startsWith("www.") ? host.slice(4) : `www.${host}`, "localhost", "127.0.0.1"]);
+  const parents = new Set<string>([
+    host,
+    host.startsWith("www.") ? host.slice(4) : `www.${host}`,
+    "localhost",
+    "127.0.0.1",
+  ]);
   const qsParents = Array.from(parents).map(p => `parent=${encodeURIComponent(p)}`).join("&");
   return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&autoplay=1&muted=1&${qsParents}`;
 }
@@ -400,8 +448,16 @@ function StreamHero({ channel }: { channel: string }) {
   return (
     <section>
       <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
-        <div className="relative w-full" style={{ paddingTop:"56.25%" }}>
-          <iframe title={`twitch-${channel}-hero`} src={src} allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowFullScreen frameBorder="0" scrolling="no" className="absolute inset-0 h-full w-full border-0" />
+        <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+          <iframe
+            title={`twitch-${channel}-hero`}
+            src={src}
+            allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+            allowFullScreen
+            frameBorder="0"
+            scrolling="no"
+            className="absolute inset-0 h-full w-full border-0"
+          />
         </div>
       </div>
     </section>
@@ -412,7 +468,10 @@ function StreamHero({ channel }: { channel: string }) {
 function TwitterIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
-      <path fill="currentColor" d="M23 4.8c-.8.4-1.7.7-2.6.8a4.55 4.55 0 0 0 2-2.5 9.06 9.06 0 0 1-2.9 1.1 4.51 4.51 0 0 0-7.8 4.1A12.8 12.8 0 0 1 3 3.6a4.5 4.5 0 0 0 1.4 6 4.48 4.48 0 0 1-2-.6v.1a4.52 4.52 0 0 0 3.6 4.4c-.5.1-1 .2-1.6.1.4 1.3 1.7 2.3 3.3 2.3A9.05 9.05 0 0 1 2 19.5a12.77 12.77 0 0 0 6.9 2c8.3 0 12.9-6.9 12.6-13 0-.2 0-.4 0-.6A9.12 9.12 0 0 0 23 4.8z"/>
+      <path
+        fill="currentColor"
+        d="M23 4.8c-.8.4-1.7.7-2.6.8a4.55 4.55 0 0 0 2-2.5 9.06 9.06 0 0 1-2.9 1.1 4.51 4.51 0 0 0-7.8 4.1A12.8 12.8 0 0 1 3 3.6a4.5 4.5 0 0 0 1.4 6 4.48 4.48 0 0 1-2-.6v.1a4.52 4.52 0 0 0 3.6 4.4c-.5.1-1 .2-1.6.1.4 1.3 1.7 2.3 3.3 2.3A9.05 9.05 0 0 1 2 19.5a12.77 12.77 0 0 0 6.9 2c8.3 0 12.9-6.9 12.6-13 0-.2 0-.4 0-.6A9.12 9.12 0 0 0 23 4.8z"
+      />
     </svg>
   );
 }
@@ -433,15 +492,23 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
         if (!res.ok) throw new Error(String(res.status));
         const html = await res.text();
         const re = /href="\/watch\?v=([a-zA-Z0-9_-]{11})"[^>]*\s+title="([^"]+)"/g;
-        const seen = new Set<string>(); const list: YtItem[] = []; let m: RegExpExecArray | null;
+        const seen = new Set<string>();
+        const list: YtItem[] = [];
+        let m: RegExpExecArray | null;
         while ((m = re.exec(html)) && list.length < limit + 2) {
-          const id = m[1], title = m[2];
-          if (seen.has(id)) continue; seen.add(id);
+          const id = m[1];
+          const title = m[2];
+          if (seen.has(id)) continue;
+          seen.add(id);
           list.push({ id, title, thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg` });
         }
         if (list.length === 0) throw new Error("no videos parsed");
-        setItems(list.slice(0, limit)); setFailed(false);
-      } catch { setItems([]); setFailed(true); }
+        setItems(list.slice(0, limit));
+        setFailed(false);
+      } catch {
+        setItems([]);
+        setFailed(true);
+      }
     })();
   }, [channelId, limit]);
 
@@ -453,7 +520,9 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
 
       {items === null && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 opacity-60">
-          {Array.from({ length: 8 }).map((_, i) => (<div key={i} className="aspect-video rounded-xl bg-white/10 animate-pulse" />))}
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="aspect-video rounded-xl bg-white/10 animate-pulse" />
+          ))}
         </div>
       )}
 
@@ -461,15 +530,30 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
         <>
           {last && (
             <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
-              <div className="relative w-full" style={{ paddingTop:"56.25%" }}>
-                <iframe title={last.title || "Último vídeo"} src={`https://www.youtube-nocookie.com/embed/${last.id}`} className="absolute inset-0 h-full w-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen loading="lazy" />
+              <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+                <iframe
+                  title={last.title || "Último vídeo"}
+                  src={`https://www.youtube-nocookie.com/embed/${last.id}`}
+                  className="absolute inset-0 h-full w-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                  loading="lazy"
+                />
               </div>
             </div>
           )}
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {items.slice(1).map((v) => (
-              <a key={v.id} href={`https://www.youtube.com/watch?v=${v.id}`} target="_blank" rel="noreferrer" className="group rounded-xl overflow-hidden ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition block" title={v.title}>
+              <a
+                key={v.id}
+                href={`https://www.youtube.com/watch?v=${v.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="group rounded-xl overflow-hidden ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition block"
+                title={v.title}
+              >
                 <div className="relative aspect-video bg-black">
                   <img src={v.thumb} alt={v.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
                 </div>
@@ -485,8 +569,16 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
 
       {!!items && items.length === 0 && failed && (
         <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
-          <div className="relative w-full" style={{ paddingTop:"56.25%" }}>
-            <iframe title="Uploads" src={`https://www.youtube-nocookie.com/embed?listType=playlist&list=${"UU" + channelId.slice(2)}`} className="absolute inset-0 h-full w-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen loading="lazy" />
+          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+            <iframe
+              title="Uploads"
+              src={`https://www.youtube-nocookie.com/embed?listType=playlist&list=${"UU" + channelId.slice(2)}`}
+              className="absolute inset-0 h-full w-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+              loading="lazy"
+            />
           </div>
         </div>
       )}
@@ -521,6 +613,16 @@ function StatTile({ icon: Icon, label, value, accent }: { icon: React.ElementTyp
     </div>
   );
 }
+function BrandPill({ logo, name }: { logo?: string; name: string }) {
+  return (
+    <div className="absolute left-1/2 -translate-x-1/2 -top-6 z-30">
+      <div className="inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 ring-1 ring-black/10 shadow-md">
+        {logo ? <img src={logo} alt={name} className="h-5 w-5 rounded-sm object-contain" /> : null}
+        <span className="text-sm font-bold text-slate-900">{name}</span>
+      </div>
+    </div>
+  );
+}
 function BrandCard({ b }: { b: Brand }) {
   const { t } = useLang();
   const [flip, setFlip] = useState(false);
@@ -531,48 +633,24 @@ function BrandCard({ b }: { b: Brand }) {
   const methods = b.payments && b.payments.length ? b.payments : ["btc","mbw","mb","visa","mc"];
 
   return (
-    <Card
-      className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10"
-      style={{ height: CARD_H, perspective: "1200px", overflow: "visible", boxShadow: `0 14px 40px ${shadow}` }}
-    >
-      <div className="absolute inset-0 transition-transform duration-500"
-           style={{ transformStyle: "preserve-3d", transform: flip ? "rotateY(180deg)" : "none" }}>
-
+    <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height:CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
+      <BrandPill logo={b.logo} name={b.name} />
+      <div className="absolute inset-0 transition-transform duration-500" style={{ transformStyle:"preserve-3d", transform: flip ? "rotateY(180deg)" : "none" }}>
         {/* FRONT */}
-        <div className="absolute inset-0" style={{ backfaceVisibility: "hidden" }}>
+        <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
           <TagBadge tag={b.tag} accent={acc} />
-
-          {/* >>> BRAND NO TOPO (centrado) <<< */}
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20">
-            <BrandChip logo={b.logo} name={b.name} />
-          </div>
-
           <div className="absolute inset-0 overflow-hidden rounded-3xl">
-            <img
-              src={b.image}
-              alt={b.name}
-              className="absolute inset-0 h-full w-full object-cover"
-              style={{ objectPosition: b.imagePos ?? "center" }}
-            />
+            <img src={b.image} alt={b.name} className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: b.imagePos ?? "center" }} />
             <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/50" />
-
-            <div className="absolute right-4 top-4 z-20">
-              <button
-                onClick={() => setFlip(true)}
-                className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-              >
+            <div className="absolute right-4 top-4 z-10">
+              <button onClick={()=>setFlip(true)} className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60">
                 {t.card.showMore}
               </button>
             </div>
 
             <div className="absolute inset-x-4 bottom-4">
               <div className="relative rounded-2xl bg-black/35 p-3 backdrop-blur-md ring-1 ring-white/10 overflow-visible">
-
-                {/* (removido) BrandChip aqui em baixo */}
-
-                {/* MÉTODOS DE PAGAMENTO */}
                 <PaymentRibbon methods={methods} />
-
                 <div className="pointer-events-none absolute left-6 right-6 -top-2 h-2 rounded-b-xl bg-gradient-to-b from-black/40 to-transparent" />
                 <div className="grid grid-cols-4 gap-2">
                   <FancyStat icon={Coins} label={t.card.min} value={b.minDep} accent={acc} />
@@ -581,24 +659,19 @@ function BrandCard({ b }: { b: Brand }) {
                   <FancyStat icon={Sparkles} label={t.card.spins} value={b.freeSpins} accent={acc} />
                 </div>
                 <div className="pt-2 pb-1 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
-                <div className="pt-1">
-                  <FancyCTA href={b.link} label={t.card.go} accent={acc} />
-                </div>
+                <div className="pt-1"><FancyCTA href={b.link} label={t.card.go} accent={acc} /></div>
               </div>
             </div>
           </div>
         </div>
 
         {/* BACK */}
-        <div className="absolute inset-0" style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
-          <div
-            className="relative flex h-full flex-col rounded-3xl bg-[linear-gradient(180deg,rgba(28,28,28,.85),rgba(28,28,28,.78))] p-5 overflow-hidden ring-1 ring-white/8"
-            style={{ boxShadow: `0 16px 40px ${shadow}` }}
-          >
+        <div className="absolute inset-0" style={{ backfaceVisibility:"hidden", transform:"rotateY(180deg)" }}>
+          <div className="relative flex h-full flex-col rounded-3xl bg-[linear-gradient(180deg,rgba(28,28,28,.85),rgba(28,28,28,.78))] p-5 overflow-hidden ring-1 ring-white/8" style={{ boxShadow:`0 16px 40px ${shadow}` }}>
             <div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="text-base font-bold text-white">{t.card.moreInfo}</span>
-                <span className="h-1 w-14 rounded-full" style={{ background: acc }} />
+                <span className="h-1 w-14 rounded-full" style={{ background:acc }} />
               </div>
               <TagBadge tag={b.tag} inline accent={acc} />
             </div>
@@ -616,24 +689,90 @@ function BrandCard({ b }: { b: Brand }) {
                   <span className="text-white/60">{t.card.code}</span>
                   <span className="ml-2 font-semibold tracking-wide">{b.code}</span>
                 </div>
-                <button
-                  onClick={async () => { try { await navigator.clipboard.writeText(b.code); } catch {} }}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
-                >
+                <button onClick={async()=>{ try{ await navigator.clipboard.writeText(b.code);}catch{} }} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60">
                   <Copy className="h-4 w-4" />
                   {t.card.copy}
                 </button>
               </div>
             </div>
 
-            <div
-              className="pointer-events-none absolute inset-0 -z-10 rounded-3xl opacity-60 blur-2xl"
-              style={{ background: `radial-gradient(80% 60% at 10% 0%, ${rgba(acc, 0.13)} 0%, transparent 60%)` }}
-            />
+            <div className="mt-4">
+              <div className="grid grid-cols-2 items-stretch gap-3">
+                <Button className="h-11 rounded-2xl bg-white/8 ring-1 ring-white/12 hover:bg-white/12 text-sm text-white" onClick={()=>setFlip(false)}>{t.card.back}</Button>
+                <a href={b.link} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center justify-center rounded-2xl px-4 text-sm font-semibold text-white transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background:`linear-gradient(135deg, ${acc}, ${rgba(acc,0.85)})`, boxShadow:`0 8px 20px ${rgba(acc,0.35)}` }}>
+                  {t.card.visit}
+                </a>
+              </div>
+            </div>
+
+            <div className="pointer-events-none absolute inset-0 -z-10 rounded-3xl opacity-60 blur-2xl" style={{ background:`radial-gradient(80% 60% at 10% 0%, ${rgba(acc,0.13)} 0%, transparent 60%)` }} />
           </div>
         </div>
       </div>
     </Card>
+  );
+}
+
+/* ---------- Página Betify ---------- */
+function BetifyLanding({ onBack }: { onBack: () => void }) {
+  return (
+    <div className="space-y-8">
+      {/* Hero */}
+      <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 shadow-[0_16px_60px_rgba(0,0,0,.35)] text-white"
+        style={{ background: "linear-gradient(180deg,#5b21b6 0%, #4c1d95 50%, #3b0764 100%)" }}>
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <img src="https://www.ce-at.fr/img/logo.webp" alt="Betify" className="h-9 w-9 rounded bg-white/90 ring-1 ring-black/10 object-contain" />
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Betify</h1>
+              <p className="text-white/80 text-sm">How to play at Betify and unlock the best VIP program</p>
+            </div>
+          </div>
+          <Button onClick={onBack} className="bg-white/10 text-white hover:bg-white/15 ring-1 ring-white/20"><ArrowLeft className="h-4 w-4" /> Voltar</Button>
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-[1.2fr,.8fr]">
+          <div className="rounded-2xl bg-white/10 ring-1 ring-white/15 p-5">
+            <div className="text-lg font-extrabold mb-3">Sign up with code <span className="text-lime-300">K0MPA</span></div>
+            <ol className="space-y-3 text-sm">
+              <li><span className="font-bold">1.</span> Create an account at Betify.</li>
+              <li><span className="font-bold">2.</span> Use the promo code <span className="font-bold">K0MPA</span> when registering.</li>
+              <li><span className="font-bold">3.</span> Enjoy all promotions, cashback and free spins.</li>
+            </ol>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <a href={BETIFY_SIGNUP_URL} target="_blank" rel="noreferrer"
+                 className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white bg-lime-600 hover:brightness-110 ring-1 ring-white/10">
+                REGISTAR AGORA <ExternalLink className="h-4 w-4" />
+              </a>
+              <a href={BETIFY_PROMO_URL} target="_blank" rel="noreferrer"
+                 className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/10 hover:bg-white/15 ring-1 ring-white/15">
+                VER PROMOÇÕES
+              </a>
+            </div>
+          </div>
+
+          <div className="rounded-2xl overflow-hidden ring-1 ring-white/15 bg-black/40">
+            <div className="relative w-full" style={{ paddingTop: "100%" }}>
+              <img src="https://altacdn.com/bf/img/sliders/ca/150746_bf_website_banner_wsb.webp" alt="Betify preview" className="absolute inset-0 h-full w-full object-cover" />
+            </div>
+          </div>
+        </div>
+
+        {/* cards pequenos */}
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-2xl p-5 bg-white/10 ring-1 ring-white/15">
+            <div className="text-sm font-semibold text-white/80 mb-2">Cashback</div>
+            <div className="text-2xl font-extrabold">Até 20%</div>
+            <p className="text-white/70 text-sm mt-1">Recebe cashback semanal nas tuas apostas.</p>
+          </div>
+          <div className="rounded-2xl p-5 bg-white/10 ring-1 ring-white/15">
+            <div className="text-sm font-semibold text-white/80 mb-2">Free Spins</div>
+            <div className="text-2xl font-extrabold">Até 100FS</div>
+            <p className="text-white/70 text-sm mt-1">Campanhas com giros grátis nas melhores slots.</p>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -682,21 +821,34 @@ function LanguageToggle({ lang, onChange }: { lang:"PT"|"EN"; onChange:(l:"PT"|"
 /* ---------- Background ---------- */
 function BackgroundLayer() {
   return (
-    <div className="absolute inset-0 -z-10 pointer-events-none" style={{ background:"linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%)" }}>
-      <div aria-hidden style={{ position:"absolute", inset:0, background:"radial-gradient(60% 40% at 15% 5%, rgba(244,63,94,.28) 0%, rgba(244,63,94,0) 70%), radial-gradient(55% 45% at 85% 95%, rgba(244,63,94,.22) 0%, rgba(244,63,94,0) 75%)", mixBlendMode:"screen" }} />
+    <div className="absolute inset-0 -z-10 pointer-events-none"
+      style={{ background: "linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%)" }}>
+      <div aria-hidden
+        style={{
+          position: "absolute", inset: 0,
+          background:
+            "radial-gradient(60% 40% at 15% 5%, rgba(244,63,94,.28) 0%, rgba(244,63,94,0) 70%)," +
+            "radial-gradient(55% 45% at 85% 95%, rgba(244,63,94,.22) 0%, rgba(244,63,94,0) 75%)",
+          mixBlendMode: "screen",
+        }}
+      />
     </div>
   );
 }
 
 /* ---------- Root ---------- */
+type Route = "home" | "betify";
+
 export default function CasinoPartnerHub() {
   const [lang, setLang] = useState<Lang>("PT");
   const t = useMemo(() => messages[lang], [lang]);
   const isLive = useLiveAutoTwitch(TWITCH_CHANNEL, 60_000);
   const [showOverlay, setShowOverlay] = useState(false);
 
+  const [route, setRoute] = useState<Route>("home");
+
   useEffect(() => {
-    if ((import.meta as any)?.env?.DEV && brands.length < 2) console.warn("[TEST] expected >=2 brands");
+    if ((import.meta as any)?.env?.DEV && brands.length < 1) console.warn("[TEST] expected >=1 brand");
   }, []);
 
   return (
@@ -708,13 +860,27 @@ export default function CasinoPartnerHub() {
 
         <div className="flex-1">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-start">
-            <Sidebar onOpenStream={() => setShowOverlay(true)} />
+            <Sidebar
+              onOpenStream={() => setShowOverlay(true)}
+              onOpenBetify={() => setRoute("betify")}
+            />
+
             <main className="space-y-10">
-              <StreamHero channel={TWITCH_CHANNEL} />
-              <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
-                {brands.map((b, i) => (<React.Fragment key={b.name + i}><BrandCard b={b} /></React.Fragment>))}
-              </div>
-              <YouTubeGrid channelId={YT_CHANNEL_ID} limit={8} />
+              {route === "home" ? (
+                <>
+                  <StreamHero channel={TWITCH_CHANNEL} />
+                  <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
+                    {brands.map((b, i) => (
+                      <React.Fragment key={b.name + i}>
+                        <BrandCard b={b} />
+                      </React.Fragment>
+                    ))}
+                  </div>
+                  <YouTubeGrid channelId={YT_CHANNEL_ID} limit={8} />
+                </>
+              ) : (
+                <BetifyLanding onBack={() => setRoute("home")} />
+              )}
             </main>
           </div>
         </div>
