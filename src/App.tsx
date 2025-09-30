@@ -110,26 +110,26 @@ type Translations = {
   footer: { terms: string; privacy: string; cookies: string; rg_paragraph: string; rg_site: string; };
 };
 const messages: Record<Lang, Translations> = {
-PT: {
-  brand: "K0MPA", search: "Pesquisar…",
-  nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
-  promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
-  card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
-  social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
-  footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
-           rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
-           rg_site:"BeGambleAware.org" }
-},
-EN: {
-  brand:"K0MPA", search:"Search…",
-  nav:{ menu:"Menu", casinos:"Casinos", offers:"Offers", betify:"Betify", shop:"Shop", community:"Community", slots:"Slots", stream:"Stream", minigames:"Mini Games", new:"NEW" },
-  promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
-  card:{ min:"Min. Dep.", bonus:"Bonus", cashback:"Cashback", spins:"Free Spins", code:"Code:", terms:"+18 | T&C apply", showMore:"More", back:"Back", moreInfo:"More information", visit:"Visit brand", go:"CLAIM BONUS", copy:"Copy" },
-  social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
-  footer:{ terms:"Terms & Conditions", privacy:"Privacy Policy", cookies:"Cookie Policy",
-           rg_paragraph:"18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
-           rg_site:"BeGambleAware.org" }
-}
+  PT: {
+    brand: "K0MPA", search: "Pesquisar…",
+    nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
+    promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
+    card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
+    social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
+    footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
+             rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
+             rg_site:"BeGambleAware.org" }
+  },
+  EN: {
+    brand:"K0MPA", search:"Search…",
+    nav:{ menu:"Menu", casinos:"Casinos", offers:"Offers", betify:"Betify", shop:"Shop", community:"Community", slots:"Slots", stream:"Stream", minigames:"Mini Games", new:"NEW" },
+    promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
+    card:{ min:"Min. Dep.", bonus:"Bonus", cashback:"Cashback", spins:"Free Spins", code:"Code:", terms:"+18 | T&C apply", showMore:"More", back:"Back", moreInfo:"More information", visit:"Visit brand", go:"CLAIM BONUS", copy:"Copy" },
+    social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
+    footer:{ terms:"Terms & Conditions", privacy:"Privacy Policy", cookies:"Cookie Policy",
+             rg_paragraph:"18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
+             rg_site:"BeGambleAware.org" }
+  }
 };
 const LangCtx = createContext<{lang:Lang; setLang:(l:Lang)=>void; t:Translations}>({lang:"PT", setLang:()=>{}, t:messages.PT});
 function useLang(){ return useContext(LangCtx); }
@@ -322,11 +322,11 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
               </a>
             </li>
             <li className="col-span-2">
-  <a href={SOCIAL_LINKS.x} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-    <TwitterIcon className="h-5 w-5" />
-    Twitter
-  </a>
-</li>
+              <a href={SOCIAL_LINKS.x} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <TwitterIcon className="h-5 w-5" />
+                Twitter
+              </a>
+            </li>
           </ul>
 
           <div className="mt-3 text-center text-[12px] text-white/55">
@@ -455,8 +455,6 @@ function TwitterIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-
-/* ---------- YouTube GRID (mostra últimos VÍDEOS, ignora shorts) --------- */
 /* ---------- YouTube GRID (só vídeos, ignora shorts) ---------- */
 type YtItem = { id: string; title: string; thumb: string };
 
@@ -494,7 +492,6 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
           });
         }
 
-        // fallback: se por algum motivo não apanharmos nada
         if (list.length === 0) throw new Error("no videos parsed");
 
         setItems(list.slice(0, limit));
@@ -746,11 +743,9 @@ function BackgroundLayer() {
       className="absolute inset-0 -z-10 pointer-events-none"
       style={{
         background:
-          // fundo base suave e contínuo (sem banda a meio)
           "linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%)",
       }}
     >
-      {/* glow radiais subtis */}
       <div
         aria-hidden
         style={{
