@@ -217,7 +217,7 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
         style={{
-          height: "calc(100vh - var(--sticky-top,112px) - 16px)",
+          height: "calc(80vh - var(--sticky-top,112px) - 16px)",
           overflow: "auto",
         }}
       >
