@@ -531,27 +531,44 @@ function BrandCard({ b }: { b: Brand }) {
   const methods = b.payments && b.payments.length ? b.payments : ["btc","mbw","mb","visa","mc"];
 
   return (
-    <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height:CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
-      <div className="absolute inset-0 transition-transform duration-500" style={{ transformStyle:"preserve-3d", transform: flip ? "rotateY(180deg)" : "none" }}>
+    <Card
+      className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10"
+      style={{ height: CARD_H, perspective: "1200px", overflow: "visible", boxShadow: `0 14px 40px ${shadow}` }}
+    >
+      <div className="absolute inset-0 transition-transform duration-500"
+           style={{ transformStyle: "preserve-3d", transform: flip ? "rotateY(180deg)" : "none" }}>
+
         {/* FRONT */}
-        <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
+        <div className="absolute inset-0" style={{ backfaceVisibility: "hidden" }}>
           <TagBadge tag={b.tag} accent={acc} />
+
+          {/* >>> BRAND NO TOPO (centrado) <<< */}
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20">
+            <BrandChip logo={b.logo} name={b.name} />
+          </div>
+
           <div className="absolute inset-0 overflow-hidden rounded-3xl">
-            <img src={b.image} alt={b.name} className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: b.imagePos ?? "center" }} />
+            <img
+              src={b.image}
+              alt={b.name}
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{ objectPosition: b.imagePos ?? "center" }}
+            />
             <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/50" />
 
-            <div className="absolute right-4 top-4 z-10">
-              <button onClick={()=>setFlip(true)} className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+            <div className="absolute right-4 top-4 z-20">
+              <button
+                onClick={() => setFlip(true)}
+                className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+              >
                 {t.card.showMore}
               </button>
             </div>
 
             <div className="absolute inset-x-4 bottom-4">
               <div className="relative rounded-2xl bg-black/35 p-3 backdrop-blur-md ring-1 ring-white/10 overflow-visible">
-                {/* BRAND CHIP (logo + nome) */}
-                <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-16 z-40">
-                  <BrandChip logo={b.logo} name={b.name} />
-                </div>
+
+                {/* (removido) BrandChip aqui em baixo */}
 
                 {/* MÉTODOS DE PAGAMENTO */}
                 <PaymentRibbon methods={methods} />
@@ -564,19 +581,24 @@ function BrandCard({ b }: { b: Brand }) {
                   <FancyStat icon={Sparkles} label={t.card.spins} value={b.freeSpins} accent={acc} />
                 </div>
                 <div className="pt-2 pb-1 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
-                <div className="pt-1"><FancyCTA href={b.link} label={t.card.go} accent={acc} /></div>
+                <div className="pt-1">
+                  <FancyCTA href={b.link} label={t.card.go} accent={acc} />
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* BACK */}
-        <div className="absolute inset-0" style={{ backfaceVisibility:"hidden", transform:"rotateY(180deg)" }}>
-          <div className="relative flex h-full flex-col rounded-3xl bg-[linear-gradient(180deg,rgba(28,28,28,.85),rgba(28,28,28,.78))] p-5 overflow-hidden ring-1 ring-white/8" style={{ boxShadow:`0 16px 40px ${shadow}` }}>
+        <div className="absolute inset-0" style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
+          <div
+            className="relative flex h-full flex-col rounded-3xl bg-[linear-gradient(180deg,rgba(28,28,28,.85),rgba(28,28,28,.78))] p-5 overflow-hidden ring-1 ring-white/8"
+            style={{ boxShadow: `0 16px 40px ${shadow}` }}
+          >
             <div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="text-base font-bold text-white">{t.card.moreInfo}</span>
-                <span className="h-1 w-14 rounded-full" style={{ background:acc }} />
+                <span className="h-1 w-14 rounded-full" style={{ background: acc }} />
               </div>
               <TagBadge tag={b.tag} inline accent={acc} />
             </div>
@@ -594,23 +616,20 @@ function BrandCard({ b }: { b: Brand }) {
                   <span className="text-white/60">{t.card.code}</span>
                   <span className="ml-2 font-semibold tracking-wide">{b.code}</span>
                 </div>
-                <button onClick={async()=>{ try{ await navigator.clipboard.writeText(b.code);}catch{} }} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60">
+                <button
+                  onClick={async () => { try { await navigator.clipboard.writeText(b.code); } catch {} }}
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
+                >
                   <Copy className="h-4 w-4" />
                   {t.card.copy}
                 </button>
               </div>
             </div>
 
-            <div className="mt-4">
-              <div className="grid grid-cols-2 items-stretch gap-3">
-                <Button className="h-11 rounded-2xl bg-white/8 ring-1 ring-white/12 hover:bg-white/12 text-sm text-white" onClick={()=>setFlip(false)}>{t.card.back}</Button>
-                <a href={b.link} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center justify-center rounded-2xl px-4 text-sm font-semibold text-white transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background:`linear-gradient(135deg, ${acc}, ${rgba(acc,0.85)})`, boxShadow:`0 8px 20px ${rgba(acc,0.35)}` }}>
-                  {t.card.visit}
-                </a>
-              </div>
-            </div>
-
-            <div className="pointer-events-none absolute inset-0 -z-10 rounded-3xl opacity-60 blur-2xl" style={{ background:`radial-gradient(80% 60% at 10% 0%, ${rgba(acc,0.13)} 0%, transparent 60%)` }} />
+            <div
+              className="pointer-events-none absolute inset-0 -z-10 rounded-3xl opacity-60 blur-2xl"
+              style={{ background: `radial-gradient(80% 60% at 10% 0%, ${rgba(acc, 0.13)} 0%, transparent 60%)` }}
+            />
           </div>
         </div>
       </div>
