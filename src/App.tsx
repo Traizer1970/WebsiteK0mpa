@@ -115,7 +115,7 @@ PT: {
   nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
   promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
   card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
-  social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok VAL", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
+  social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
   footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
            rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
            rg_site:"BeGambleAware.org" }
@@ -125,7 +125,7 @@ EN: {
   nav:{ menu:"Menu", casinos:"Casinos", offers:"Offers", betify:"Betify", shop:"Shop", community:"Community", slots:"Slots", stream:"Stream", minigames:"Mini Games", new:"NEW" },
   promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
   card:{ min:"Min. Dep.", bonus:"Bonus", cashback:"Cashback", spins:"Free Spins", code:"Code:", terms:"+18 | T&C apply", showMore:"More", back:"Back", moreInfo:"More information", visit:"Visit brand", go:"CLAIM BONUS", copy:"Copy" },
-  social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok VAL", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
+  social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
   footer:{ terms:"Terms & Conditions", privacy:"Privacy Policy", cookies:"Cookie Policy",
            rg_paragraph:"18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
            rg_site:"BeGambleAware.org" }
@@ -457,7 +457,8 @@ function TwitterIcon(props: React.SVGProps<SVGSVGElement>) {
 
 
 /* ---------- YouTube GRID (mostra últimos VÍDEOS, ignora shorts) --------- */
-type YtItem = { id: string; title: string; published: string; thumb: string; seconds: number };
+/* ---------- YouTube GRID (só vídeos, ignora shorts) ---------- */
+type YtItem = { id: string; title: string; thumb: string };
 
 function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: number }) {
   const [items, setItems] = useState<YtItem[] | null>(null);
@@ -465,36 +466,39 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
 
   useEffect(() => {
     if (!channelId) return;
-    const url = `https://r.jina.ai/http://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`;
+
+    // Página "Videos" do canal (não inclui links /shorts)
+    const url = `https://r.jina.ai/http://www.youtube.com/channel/${encodeURIComponent(channelId)}/videos`;
 
     (async () => {
       try {
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error(String(res.status));
+        const html = await res.text();
 
-        const xml = await res.text();
-        const doc = new DOMParser().parseFromString(xml, "text/xml");
-        const entries = Array.from(doc.getElementsByTagName("entry"));
+        // matches: href="/watch?v=VIDEOID" ... title="TITLE"
+        const re = /href="\/watch\?v=([a-zA-Z0-9_-]{11})"[^>]*\s+title="([^"]+)"/g;
+        const seen = new Set<string>();
+        const list: YtItem[] = [];
+        let m: RegExpExecArray | null;
 
-        const mapped = entries
-          .map((e) => {
-            const id =
-              e.getElementsByTagName("yt:videoId")[0]?.textContent ||
-              e.getElementsByTagName("videoId")[0]?.textContent || "";
-            const title = e.getElementsByTagName("title")[0]?.textContent || "";
-            const published = e.getElementsByTagName("published")[0]?.textContent || "";
-            const thumb = (e.querySelector('media\\:thumbnail') as any)?.getAttribute("url") || "";
-            // ler duração (segundos) – presente no feed de uploads
-            const durNode = e.getElementsByTagName("yt:duration")[0] as Element | undefined;
-            const seconds = durNode ? Number(durNode.getAttribute("seconds") || 0) : 0;
+        while ((m = re.exec(html)) && list.length < limit + 2) {
+          const id = m[1];
+          const title = m[2];
+          if (seen.has(id)) continue;
+          seen.add(id);
+          list.push({
+            id,
+            title,
+            thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+          });
+        }
 
-            return { id, title, published, thumb, seconds };
-          })
-          .filter(v => v.id && v.seconds >= 60) // << ignora shorts de forma fiável
-          .slice(0, limit);
+        // fallback: se por algum motivo não apanharmos nada
+        if (list.length === 0) throw new Error("no videos parsed");
 
-        setItems(mapped);
-        setFailed(mapped.length === 0);
+        setItems(list.slice(0, limit));
+        setFailed(false);
       } catch {
         setItems([]);
         setFailed(true);
@@ -518,12 +522,11 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
 
       {!!items && items.length > 0 && (
         <>
-          {/* destaca o último vídeo longo com embed “nocookie” (mais compatível) */}
           {last && (
             <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
               <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
                 <iframe
-                  title="Último vídeo"
+                  title={last.title || "Último vídeo"}
                   src={`https://www.youtube-nocookie.com/embed/${last.id}`}
                   className="absolute inset-0 h-full w-full border-0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -535,7 +538,6 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
             </div>
           )}
 
-          {/* lista os seguintes como links (evita bloqueios a alguns utilizadores) */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {items.slice(1).map((v) => (
               <a
@@ -547,10 +549,11 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
                 title={v.title}
               >
                 <div className="relative aspect-video bg-black">
-                  {v.thumb && <img src={v.thumb} alt={v.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />}
+                  <img src={v.thumb} alt={v.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
                 </div>
                 <div className="p-3">
                   <div className="line-clamp-2 text-sm font-semibold text-white/90 group-hover:text-white">{v.title}</div>
+                  <div className="mt-1 text-[11px] text-white/60">YouTube</div>
                 </div>
               </a>
             ))}
@@ -558,7 +561,7 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
         </>
       )}
 
-      {/* fallback (se o feed falhar) */}
+      {/* fallback final: playlist de uploads (pode misturar shorts) */}
       {!!items && items.length === 0 && failed && (
         <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
           <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
@@ -577,6 +580,7 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
     </section>
   );
 }
+
 /* ---------- Brand Card ---------- */
 function FancyStat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: React.ElementType; accent: string; }) {
   return (
