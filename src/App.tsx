@@ -183,7 +183,7 @@ const brands: Brand[] = [
     tag:"HOT",
     logo:"https://www.ce-at.fr/img/logo.webp",
     image:"https://media.discordapp.net/attachments/1220479317973270549/1422710518057013268/image-1-5.png?ex=68dda9ec&is=68dc586c&hm=d9c56e94cc4cfcbce2bee6b5addb3ff849d8d13c3f4e6b9fd902eea974f54e9b&=&format=webp&quality=lossless&width=1430&height=800",
-    imagePos:"center center",
+    imagePos:"center -140px",
     minDep:"20€", bonus:"100%", cashback:"Até 20%", freeSpins:"Até 100FS", code:"K0MPA", link: BETIFY_PROMO_URL,
     theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
     payments:["btc","mb","mbb","visa","mc"]
@@ -265,7 +265,7 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
 }
 
 /* ---------- Sidebar ---------- */
-function Sidebar({ onOpenStream, onOpenBetify }: { onOpenStream: () => void; onOpenBetify: () => void }) {
+function Sidebar({ onOpenStream, onOpenBetify, onGoHome }: { onOpenStream: () => void; onOpenBetify: () => void; onGoHome: () => void; }) {
   const { t, lang } = useLang();
 
   return (
@@ -281,21 +281,26 @@ function Sidebar({ onOpenStream, onOpenBetify }: { onOpenStream: () => void; onO
           </div>
 
           <nav className="space-y-2">
-            <a href={BETIFY_PROMO_URL} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+            {/* Ofertas -> vai para HOME */}
+            <button
+              type="button"
+              onClick={onGoHome}
+              className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            >
               <span className="flex items-center gap-2">
                 <Gift className="h-4 w-4" />
                 {t.nav.offers}
               </span>
               <Badge className="text-white" style={{ background: "#9146FF" }}>{t.nav.new}</Badge>
-            </a>
+            </button>
 
-            {/* Botão Betify: só texto, com “espaço fantasma” para alinhar com ícone */}
+            {/* Botão Betify: só texto */}
             <button
               type="button"
               onClick={onOpenBetify}
               className="w-full flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
             >
-              <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />{/* placeholder */}
+              <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
               <span className="font-semibold">Betify</span>
             </button>
 
@@ -667,7 +672,6 @@ function BrandCard({ b }: { b: Brand }) {
       <div className="absolute inset-0 transition-transform duration-500" style={{ transformStyle:"preserve-3d", transform: flip ? "rotateY(180deg)" : "none" }}>
         {/* FRONT */}
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
-          {/* chip com logo/nome — dentro do card e só na frente */}
           <BrandPill logo={b.logo} name={b.name} />
           <TagBadge tag={b.tag} accent={acc} />
           <div className="absolute inset-0 overflow-hidden rounded-3xl">
@@ -696,7 +700,7 @@ function BrandCard({ b }: { b: Brand }) {
           </div>
         </div>
 
-        {/* BACK (sem chip) */}
+        {/* BACK */}
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden", transform:"rotateY(180deg)" }}>
           <div className="relative flex h-full flex-col rounded-3xl bg-[linear-gradient(180deg,rgba(28,28,28,.85),rgba(28,28,28,.78))] p-5 overflow-hidden ring-1 ring-white/8" style={{ boxShadow:`0 16px 40px ${shadow}` }}>
             <div className="mb-3 flex items-center justify-between">
@@ -889,23 +893,34 @@ function Footer() {
   return (
     <footer className="mx-auto w-full max-w-7xl px-6 sm:px-8 pb-8">
       <div className="rounded-2xl bg-black/35 backdrop-blur-md ring-1 ring-white/10 text-white/80 px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,.28)]">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {/* TUDO CENTRADO */}
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
           <div className="flex items-center gap-2">
             <span className="text-sm font-extrabold tracking-tight text-white">K0MPA</span>
             <span className="text-xs text-white/60">© {year}</span>
           </div>
-          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-semibold">
+
+          <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] font-semibold">
             <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Termos & Condições</span>
             <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Política de Privacidade</span>
             <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Política de Cookies</span>
           </nav>
-          <a href="https://www.begambleaware.org/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs hover:text-white/90" title="BeGambleAware.org">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15 backdrop-blur text-[11px] leading-none font-bold select-none">18+</span>
+
+          {/* 18+ SEM CÍRCULO */}
+          <a
+            href="https://www.begambleaware.org/"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 text-xs hover:text-white/90"
+            title="BeGambleAware.org"
+          >
+            <span className="text-xs font-bold select-none">18+</span>
             BeGambleAware.org
           </a>
         </div>
+
         <div className="my-3 h-px bg-white/10" />
-        <p className="text-[12px] leading-snug text-white/55">{t.footer.rg_paragraph}</p>
+        <p className="text-[12px] leading-snug text-white/55 text-center">{t.footer.rg_paragraph}</p>
       </div>
     </footer>
   );
@@ -969,6 +984,7 @@ export default function CasinoPartnerHub() {
             <Sidebar
               onOpenStream={() => setShowOverlay(true)}
               onOpenBetify={() => setRoute("betify")}
+              onGoHome={() => setRoute("home")}
             />
 
             <main className="space-y-10">
