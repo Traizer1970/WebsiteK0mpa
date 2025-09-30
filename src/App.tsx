@@ -10,6 +10,9 @@ import {
 const TWITCH_CHANNEL = "k0mpa";
 /* YouTube (UC…) — @k0mpa */
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
+/* (opcional) imagem para capa offline do Twitch */
+const OFFLINE_IMG: string | undefined = undefined;
+
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
 function hexToRgb(hex: string) {
@@ -204,7 +207,7 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   );
 }
 
-/* ---------- Sidebar com Discord ---------- */
+/* ---------- Sidebar (sticky com scroll interno) ---------- */
 function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   const { t, lang } = useLang();
 
@@ -213,7 +216,6 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
       className="hidden md:block w-[240px] mx-auto"
       style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
     >
-      {/* ocupa o viewport útil e permite scroll interno sem “fugir” do ecrã */}
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
         style={{
@@ -343,7 +345,6 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   );
 }
 
-
 /* ---------- helpers ---------- */
 function tagVisual(tag: Brand["tag"]) {
   switch (tag) { case "HOT": return { accent:"#ef4444" }; case "NEW": return { accent:"#8b5cf6" }; default: return { accent:"#10b981" }; }
@@ -469,13 +470,65 @@ function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => v
   return mounted ? createPortal(content, document.body) : null;
 }
 
-/* ---------- Stream por cima dos cards (hero) ---------- */
-function StreamHero({ channel }: { channel: string }) {
+/* ---------- Stream por cima dos cards (hero) com OFFLINE ---------- */
+function StreamHero({
+  channel,
+  isLive,
+  offlineImage,
+}: {
+  channel: string;
+  isLive: boolean;
+  offlineImage?: string;
+}) {
   const src = buildTwitchEmbedUrl(channel);
+  const avatar = `https://decapi.me/twitch/avatar/${encodeURIComponent(channel)}`;
+
+  if (!isLive) {
+    return (
+      <section>
+        <div className="relative overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)]">
+          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+            {offlineImage ? (
+              <img
+                src={offlineImage}
+                alt={`${channel} offline`}
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                <img
+                  src={avatar}
+                  alt={`${channel} avatar`}
+                  className="h-24 w-24 rounded-full ring-2 ring-white/20 shadow-lg object-cover"
+                  loading="lazy"
+                />
+              </div>
+            )}
+            <div className="absolute inset-0 bg-black/35 backdrop-blur-[2px]" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white ring-1 ring-white/15">
+                Canal offline
+              </span>
+              <h3 className="text-white text-lg font-bold">@{channel}</h3>
+              <a
+                href={`https://twitch.tv/${channel}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-10 items-center justify-center rounded-xl px-4 text-sm font-semibold text-white ring-1 ring-white/10 hover:bg-white/10"
+              >
+                Abrir na Twitch
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section>
       <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
-        {/* 16:9 responsivo */}
         <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
           <iframe
             title={`twitch-${channel}-hero`}
@@ -492,7 +545,6 @@ function StreamHero({ channel }: { channel: string }) {
   );
 }
 
-
 /* ---------- YouTube GRID (sem API) ---------- */
 type YtItem = { id: string; title: string; published: string; thumb: string };
 function timeAgo(iso: string) {
@@ -507,45 +559,38 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
   const [items, setItems] = useState<YtItem[] | null>(null);
   const [failed, setFailed] = useState(false);
 
-useEffect(() => {
-  if (!channelId) return;
-  const url = `https://r.jina.ai/http://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`;
-
-  (async () => {
-    try {
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) throw new Error(String(res.status));
-
-      const xml = await res.text();
-      const doc = new DOMParser().parseFromString(xml, "text/xml");
-      const entries = Array.from(doc.getElementsByTagName("entry"));
-
-      const mapped = entries.slice(0, limit).map((e) => {
-        const id =
-          e.getElementsByTagName("yt:videoId")[0]?.textContent ||
-          e.getElementsByTagName("videoId")[0]?.textContent || "";
-        const title = e.getElementsByTagName("title")[0]?.textContent || "";
-        const published = e.getElementsByTagName("published")[0]?.textContent || "";
-        const thumb = (e.querySelector('media\\:thumbnail') as any)?.getAttribute("url") || "";
-        return { id, title, published, thumb };
-      }).filter(x => x.id);
-
-      setItems(mapped);
-      // <— SE vier vazio, activa fallback (iframe)
-      setFailed(mapped.length === 0);
-    } catch {
-      setItems([]);   // para esconder o skeleton
-      setFailed(true); // activa fallback (iframe)
-    }
-  })();
-}, [channelId, limit]);
-
+  useEffect(() => {
+    if (!channelId) return;
+    const url = `https://r.jina.ai/http://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`;
+    (async () => {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(String(res.status));
+        const xml = await res.text();
+        const doc = new DOMParser().parseFromString(xml, "text/xml");
+        const entries = Array.from(doc.getElementsByTagName("entry"));
+        const mapped = entries.slice(0, limit).map((e) => {
+          const id =
+            e.getElementsByTagName("yt:videoId")[0]?.textContent ||
+            e.getElementsByTagName("videoId")[0]?.textContent || "";
+          const title = e.getElementsByTagName("title")[0]?.textContent || "";
+          const published = e.getElementsByTagName("published")[0]?.textContent || "";
+          const thumb = (e.querySelector('media\\:thumbnail') as any)?.getAttribute("url") || "";
+          return { id, title, published, thumb };
+        }).filter(x => x.id);
+        setItems(mapped);
+        setFailed(mapped.length === 0);
+      } catch {
+        setItems([]);
+        setFailed(true);
+      }
+    })();
+  }, [channelId, limit]);
 
   return (
     <section className="space-y-3">
       <h2 className="text-white/90 text-base font-bold">Últimos vídeos</h2>
 
-      {/* Loading skeleton */}
       {items === null && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 opacity-60">
           {Array.from({ length: 8 }).map((_, i) => (
@@ -554,7 +599,6 @@ useEffect(() => {
         </div>
       )}
 
-      {/* Grid normal */}
       {!!items && items.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {items.map((v) => (
@@ -587,26 +631,23 @@ useEffect(() => {
         </div>
       )}
 
-      {/* Fallback: playlist “Uploads” em iframe (UU + channelId.slice(2)) */}
-{!!items && items.length === 0 && failed && (
-  <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
-    <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-      <iframe
-        title="YouTube uploads"
-        src={`https://www.youtube.com/embed?listType=playlist&list=${"UU" + channelId.slice(2)}`}
-        className="absolute inset-0 h-full w-full border-0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowFullScreen
-        loading="lazy"
-      />
-    </div>
-  </div>
-)}
-
+      {!!items && items.length === 0 && failed && (
+        <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
+          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+            <iframe
+              title="YouTube uploads"
+              src={`https://www.youtube.com/embed?listType=playlist&list=${"UU" + channelId.slice(2)}`}
+              className="absolute inset-0 h-full w-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              loading="lazy"
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
-
 
 /* ---------- Brand Card ---------- */
 function FancyStat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: React.ElementType; accent: string; }) {
@@ -811,7 +852,7 @@ export default function CasinoPartnerHub() {
             <Sidebar onOpenStream={() => setShowOverlay(true)} />
             <main className="space-y-10">
               {/* Twitch por cima dos cards */}
-<StreamHero channel={TWITCH_CHANNEL} />
+              <StreamHero channel={TWITCH_CHANNEL} isLive={isLive} offlineImage={OFFLINE_IMG} />
 
               {/* Cards */}
               <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
