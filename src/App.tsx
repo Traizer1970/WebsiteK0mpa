@@ -8,10 +8,11 @@ import {
 
 /* ---------- CONFIG ---------- */
 const TWITCH_CHANNEL = "k0mpa";
+/* imagem para o ecrã OFFLINE (altera para a tua!) */
+const TWITCH_OFFLINE_IMG =
+  "https://i.imgur.com/2kM2c7C.jpeg"; // <-- SUBSTITUI por uma tua
 /* YouTube (UC…) — @k0mpa */
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
-/* (opcional) imagem para capa offline do Twitch */
-const OFFLINE_IMG: string | undefined = undefined;
 
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
@@ -207,7 +208,7 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   );
 }
 
-/* ---------- Sidebar (sticky com scroll interno) ---------- */
+/* ---------- Sidebar (sempre visível) ---------- */
 function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   const { t, lang } = useLang();
 
@@ -216,10 +217,11 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
       className="hidden md:block w-[240px] mx-auto"
       style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
     >
+      {/* ocupa o viewport útil e permite scroll interno sem desaparecer */}
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
         style={{
-          height: "calc(80vh - var(--sticky-top,112px) - 16px)",
+          height: "calc(100vh - var(--sticky-top,112px) - 16px)",
           overflow: "auto",
         }}
       >
@@ -281,7 +283,6 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
           </nav>
         </div>
 
-        {/* empurra o rodapé para o fundo da caixa */}
         <div className="flex-1" />
 
         {/* RODAPÉ — Redes + copyright colados ao fundo */}
@@ -470,75 +471,62 @@ function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => v
   return mounted ? createPortal(content, document.body) : null;
 }
 
-/* ---------- Stream por cima dos cards (hero) com OFFLINE ---------- */
-function StreamHero({
-  channel,
-  isLive,
-  offlineImage,
-}: {
-  channel: string;
-  isLive: boolean;
-  offlineImage?: string;
-}) {
+/* ---------- Stream por cima dos cards (hero) ---------- */
+function StreamHero({ channel, isLive }: { channel: string; isLive: boolean }) {
   const src = buildTwitchEmbedUrl(channel);
-  const avatar = `https://decapi.me/twitch/avatar/${encodeURIComponent(channel)}`;
 
-  if (!isLive) {
+  if (isLive) {
     return (
       <section>
-        <div className="relative overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)]">
+        <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
           <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-            {offlineImage ? (
-              <img
-                src={offlineImage}
-                alt={`${channel} offline`}
-                className="absolute inset-0 h-full w-full object-cover"
-                loading="lazy"
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-                <img
-                  src={avatar}
-                  alt={`${channel} avatar`}
-                  className="h-24 w-24 rounded-full ring-2 ring-white/20 shadow-lg object-cover"
-                  loading="lazy"
-                />
-              </div>
-            )}
-            <div className="absolute inset-0 bg-black/35 backdrop-blur-[2px]" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white ring-1 ring-white/15">
-                Canal offline
-              </span>
-              <h3 className="text-white text-lg font-bold">@{channel}</h3>
-              <a
-                href={`https://twitch.tv/${channel}`}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex h-10 items-center justify-center rounded-xl px-4 text-sm font-semibold text-white ring-1 ring-white/10 hover:bg-white/10"
-              >
-                Abrir na Twitch
-              </a>
-            </div>
+            <iframe
+              title={`twitch-${channel}-hero`}
+              src={src}
+              allow="autoplay; picture-in-picture; fullscreen; encrypted-media"
+              allowFullScreen
+              frameBorder="0"
+              scrolling="no"
+              className="absolute inset-0 h-full w-full border-0"
+            />
           </div>
         </div>
       </section>
     );
   }
 
+  // OFFLINE — mostra a tua capa + CTA
   return (
     <section>
-      <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
+      <div className="relative overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)]">
         <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-          <iframe
-            title={`twitch-${channel}-hero`}
-            src={src}
-            allow="autoplay; picture-in-picture; fullscreen; encrypted-media"
-            allowFullScreen
-            frameBorder="0"
-            scrolling="no"
-            className="absolute inset-0 h-full w-full border-0"
+          <img
+            src={TWITCH_OFFLINE_IMG}
+            alt="Stream offline"
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="eager"
+            decoding="async"
           />
+          <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,.55),rgba(0,0,0,.25))]" />
+          <div className="absolute left-4 right-4 bottom-4 flex flex-wrap items-center gap-3">
+            <a
+              href={`https://twitch.tv/${channel}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 bg-white/10 hover:bg-white/15"
+            >
+              Abrir na Twitch
+            </a>
+            <a
+              href={`https://www.twitch.tv/${channel}/videos?filter=archives&sort=time`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15"
+              style={{ background: TWITCH_PURPLE }}
+            >
+              Vídeos recentes
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -562,13 +550,16 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
   useEffect(() => {
     if (!channelId) return;
     const url = `https://r.jina.ai/http://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`;
+
     (async () => {
       try {
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error(String(res.status));
+
         const xml = await res.text();
         const doc = new DOMParser().parseFromString(xml, "text/xml");
         const entries = Array.from(doc.getElementsByTagName("entry"));
+
         const mapped = entries.slice(0, limit).map((e) => {
           const id =
             e.getElementsByTagName("yt:videoId")[0]?.textContent ||
@@ -578,10 +569,11 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
           const thumb = (e.querySelector('media\\:thumbnail') as any)?.getAttribute("url") || "";
           return { id, title, published, thumb };
         }).filter(x => x.id);
+
         setItems(mapped);
         setFailed(mapped.length === 0);
       } catch {
-        setItems([]);
+        setItems([]);   // oculta skeleton
         setFailed(true);
       }
     })();
@@ -852,7 +844,7 @@ export default function CasinoPartnerHub() {
             <Sidebar onOpenStream={() => setShowOverlay(true)} />
             <main className="space-y-10">
               {/* Twitch por cima dos cards */}
-              <StreamHero channel={TWITCH_CHANNEL} isLive={isLive} offlineImage={OFFLINE_IMG} />
+              <StreamHero channel={TWITCH_CHANNEL} isLive={isLive} />
 
               {/* Cards */}
               <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
