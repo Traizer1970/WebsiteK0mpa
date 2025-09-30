@@ -214,6 +214,7 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
       className="hidden md:block w-[240px] mx-auto"
       style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
     >
+      {/* ocupa o viewport útil e permite scroll interno sem desaparecer */}
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
         style={{
@@ -221,6 +222,7 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
           overflow: "auto",
         }}
       >
+        {/* TOPO — Menu */}
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
             <span className="text-sm font-semibold text-white">
@@ -275,11 +277,23 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
               <Tv className="h-4 w-4" />
               <span>{t.nav.stream}</span>
             </button>
+
+            {/* NOVO — Instant Gaming */}
+            <a
+              href="https://www.instant-gaming.com/en/?igr=k0mpa"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            >
+              <Sparkles className="h-4 w-4" />
+              <span>Instant Gaming</span>
+            </a>
           </nav>
         </div>
 
         <div className="flex-1" />
 
+        {/* RODAPÉ — Redes + copyright colados ao fundo */}
         <footer className="pt-4 border-t border-white/10">
           <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">
             {t.social.title}
@@ -379,90 +393,20 @@ function FancyCTA({ href, label, accent }: { href: string; label: string; accent
   );
 }
 
-/* ---------- Twitch mini/overlay (opcional) ---------- */
+/* ---------- Twitch embed helpers ---------- */
 function buildTwitchEmbedUrl(channel: string) {
-  const host =
-    typeof window !== "undefined" ? window.location.hostname : "localhost";
-
-  // Garante todos os candidatos válidos de parent
+  const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
   const parents = new Set<string>([
     host,
     host.startsWith("www.") ? host.slice(4) : `www.${host}`,
     "localhost",
     "127.0.0.1",
   ]);
-
-  // Monta a string parent=...&parent=...
-  const qsParents = Array.from(parents)
-    .filter(Boolean)
-    .map((p) => `parent=${encodeURIComponent(p)}`)
-    .join("&");
-
-  // autoplay + muted para evitar bloqueio do navegador
-  return `https://player.twitch.tv/?channel=${encodeURIComponent(
-    channel
-  )}&autoplay=1&muted=1&${qsParents}`;
+  const qsParents = Array.from(parents).map(p => `parent=${encodeURIComponent(p)}`).join("&");
+  return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&autoplay=1&muted=1&${qsParents}`;
 }
 
-/* ➕ Para o StreamHero com chat (player + chat) */
-function buildTwitchEmbedSources(channel: string) {
-  const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
-  const parents = new Set<string>([host, "localhost"]);
-  if (host.startsWith("www.")) parents.add(host.slice(4)); else parents.add(`www.${host}`);
-  const parentQS = Array.from(parents).map(p => `parent=${encodeURIComponent(p)}`).join("&");
-  const playerSrc = `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&${parentQS}`;
-  const chatSrc = `https://www.twitch.tv/embed/${encodeURIComponent(channel)}/chat?${parentQS}&darkpopout`;
-  return { playerSrc, chatSrc };
-}
-
-function clamp(n: number, min: number, max: number) { return Math.max(min, Math.min(max, n)); }
-type Pos = { x: number; y: number };
-function useDockDrag(initial: Pos = { x: 16, y: 16 }, box = { w: 320, h: 240 }) {
-  const [pos, setPos] = React.useState<Pos>(() => {
-    try { return JSON.parse(localStorage.getItem("liveDockPos") || JSON.stringify(initial)) as Pos; } catch { return initial; }
-  });
-  const dragRef = React.useRef<{ sx: number; sy: number; ox: number; oy: number } | null>(null);
-  const onDown = (e: React.PointerEvent) => { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); dragRef.current = { sx:e.clientX, sy:e.clientY, ox:pos.x, oy:pos.y }; };
-  const onMove = (e: React.PointerEvent) => {
-    if (!dragRef.current) return;
-    const dx = e.clientX - dragRef.current.sx, dy = e.clientY - dragRef.current.sy;
-    const vw = window.innerWidth, vh = window.innerHeight;
-    setPos({ x: clamp(dragRef.current.ox - dx, 0, vw - box.w), y: clamp(dragRef.current.oy - dy, 0, vh - box.h) });
-  };
-  const onUp = (e: React.PointerEvent) => {
-    try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
-    const vw = window.innerWidth, vh = window.innerHeight, snap = 16;
-    setPos((p) => {
-      const snapped = { x:(p.x<=snap)?0:(p.x>=vw-box.w-snap)?vw-box.w:p.x, y:(p.y<=snap)?0:(p.y>=vh-box.h-snap)?vh-box.h:p.y };
-      try { localStorage.setItem("liveDockPos", JSON.stringify(snapped)); } catch {}
-      return snapped;
-    });
-    dragRef.current = null;
-  };
-  return { pos, setPos, onDown, onMove, onUp };
-}
-function LiveDock({ channel, onClose }: { channel: string; onClose: () => void }) {
-  const box = { w: 320, h: 240 };
-  const { pos, onDown, onMove, onUp } = useDockDrag({ x: 16, y: 16 }, box);
-  const playerSrc = buildTwitchEmbedUrl(channel);
-  return (
-    <div style={{ position:"fixed", right:pos.x, bottom:pos.y, zIndex:50, touchAction:"none" }}>
-      <div className="rounded-2xl bg-black/70 backdrop-blur-md ring-1 ring-white/15 shadow-[0_10px_40px_rgba(0,0,0,.45)] overflow-hidden w-[320px] select-none">
-        <div data-dock="header" className="flex items-center justify-between px-3 py-2 cursor-grab active:cursor-grabbing" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}>
-          <div className="inline-flex items-center gap-2"><TwitchBadge /><span className="text-xs font-semibold text-white/90">/{channel}</span></div>
-          <button onClick={(e)=>{ e.stopPropagation(); onClose(); }} onPointerDown={(e)=>e.stopPropagation()} className="rounded-md px-2 py-1 text-xs font-semibold text-white/80 hover:bg-white/10" aria-label="Fechar mini-player">Fechar</button>
-        </div>
-        <div className="bg-black w-[320px] h-[180px]">
-          <iframe title={`twitch-${channel}`} src={playerSrc} width="320" height="180" frameBorder="0" scrolling="no" allow="autoplay; picture-in-picture; fullscreen; encrypted-media" allowFullScreen className="block w-[320px] h-[180px] border-0" />
-        </div>
-        <div className="flex items-center justify-between px-3 py-2">
-          <a href={`https://twitch.tv/${channel}`} target="_blank" rel="noreferrer" className="text-[12px] font-semibold text-white/90 hover:underline">Ver na Twitch</a>
-          <span className="text-[11px] text-white/60">Som desligado</span>
-        </div>
-      </div>
-    </div>
-  );
-}
+/* ---------- Overlay (full-screen) ---------- */
 function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => void }) {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
@@ -492,23 +436,22 @@ function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => v
   );
   return mounted ? createPortal(content, document.body) : null;
 }
-/* ---------- StreamHero: apenas o PLAYER (sem chat) ---------- */
+
+/* ---------- Stream por cima dos cards (hero) ---------- */
 function StreamHero({ channel }: { channel: string }) {
-  const src = React.useMemo(() => buildTwitchEmbedUrl(channel), [channel]);
+  const src = buildTwitchEmbedUrl(channel);
 
   return (
     <section>
       <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
         <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
           <iframe
-            key={src} // força reload se o parent mudar
-            title={`twitch-player-${channel}`}
+            title={`twitch-${channel}-hero`}
             src={src}
             allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
             allowFullScreen
             frameBorder="0"
             scrolling="no"
-            referrerPolicy="origin-when-cross-origin"
             className="absolute inset-0 h-full w-full border-0"
           />
         </div>
@@ -558,7 +501,7 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
         setFailed(mapped.length === 0);
       } catch {
         setItems([]);   // oculta skeleton
-        setFailed(true);
+               setFailed(true);
       }
     })();
   }, [channelId, limit]);
@@ -640,7 +583,7 @@ function FancyStat({ label, value, icon: Icon, accent }: { label: string; value:
 }
 function StatTile({ icon: Icon, label, value, accent }: { icon: React.ElementType; label: string; value: string; accent: string; }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl p-3.5 transition bg-white/5 ring-1 ring-white/10 shadow-[0_2px_10px_rgba(15,23,42,0.06)]" style={{ backgroundImage:"radial-gradient(120% 100% at 10% 0%, rgba(148,163,184,0.10) 0%, rgba(255,255,255,0) 60%)" }}>
+    <div className="group relative overflow-hidden rounded-2xl p-3.5 transition bg-white/5 ring-1 ring-white/10 shadow-[0_2px_10px_rgba(15,23,42,0.06)] focus-within:ring-2 focus-within:ring-rose-400/60" style={{ backgroundImage:"radial-gradient(120% 100% at 10% 0%, rgba(148,163,184,0.10) 0%, rgba(255,255,255,0) 60%)" }}>
       <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background:`linear-gradient(90deg, ${accent}, transparent)` }} />
       <div className="flex items-center gap-2 text-white/70">
         <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg ring-1 ring-white/10" style={{ background:`${accent}14` }}>
@@ -799,14 +742,6 @@ export default function CasinoPartnerHub() {
   const t = useMemo(() => messages[lang], [lang]);
   const isLive = useLiveAutoTwitch(TWITCH_CHANNEL, 60_000);
 
-  const [hideDock, setHideDock] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return sessionStorage.getItem("liveDockDismissed") === "1";
-  });
-  const closeDock = () => {
-    setHideDock(true);
-    if (typeof window !== "undefined") sessionStorage.setItem("liveDockDismissed", "1");
-  };
   const [showOverlay, setShowOverlay] = useState(false);
 
   useEffect(() => {
@@ -827,7 +762,7 @@ export default function CasinoPartnerHub() {
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-start">
             <Sidebar onOpenStream={() => setShowOverlay(true)} />
             <main className="space-y-10">
-              {/* Twitch embed (player + chat) com offline nativo */}
+              {/* Twitch por cima dos cards */}
               <StreamHero channel={TWITCH_CHANNEL} />
 
               {/* Cards */}
@@ -847,7 +782,7 @@ export default function CasinoPartnerHub() {
 
         <Footer />
 
-        {!hideDock && <LiveDock channel={TWITCH_CHANNEL} onClose={closeDock} />}
+        {/* Mini-player removido */}
         {showOverlay && <StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />}
       </div>
     </LangCtx.Provider>
