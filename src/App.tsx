@@ -184,7 +184,7 @@ const brands: Brand[] = [
     logo: "https://www.ce-at.fr/img/logo.webp",
     image: "https://media.discordapp.net/attachments/1220479317973270549/1422710518057013268/image-1-5.png?ex=68dda9ec&is=68dc586c&hm=d9c56e94cc4cfcbce2bee6b5addb3ff849d8d13c3f4e6b9fd902eea974f54e9b&=&format=webp&quality=lossless&width=1430&height=800",
     /* puxa a imagem MUITO para cima */
-    imagePos: "center -180px",  // <- ajusta entre -180px e -320px ao teu gosto
+    imagePos: "center -80px",  // <- ajusta entre -180px e -320px ao teu gosto
     minDep: "20€",
     bonus: "100%",
     cashback: "Até 20%",
