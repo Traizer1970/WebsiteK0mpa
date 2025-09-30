@@ -472,6 +472,7 @@ function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => v
 }
 
 /* ---------- Stream por cima dos cards (hero) ---------- */
+/* ---------- Stream por cima dos cards (hero) ---------- */
 function StreamHero({ channel, isLive }: { channel: string; isLive: boolean }) {
   const src = buildTwitchEmbedUrl(channel);
 
@@ -495,19 +496,38 @@ function StreamHero({ channel, isLive }: { channel: string; isLive: boolean }) {
     );
   }
 
-  // OFFLINE — mostra a tua capa + CTA
+  // OFFLINE — tenta usar imagem custom; se falhar, mostra placeholder
+  const [imgOk, setImgOk] = React.useState(true);
+
   return (
     <section>
       <div className="relative overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)]">
         <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-          <img
-            src={TWITCH_OFFLINE_IMG}
-            alt="Stream offline"
-            className="absolute inset-0 h-full w-full object-cover"
-            loading="eager"
-            decoding="async"
-          />
+          {imgOk ? (
+            <img
+              src={TWITCH_OFFLINE_IMG}
+              alt="Stream offline"
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="eager"
+              decoding="async"
+              onError={() => setImgOk(false)}
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 bg-[radial-gradient(80%_80%_at_50%_50%,rgba(145,70,255,.25),rgba(0,0,0,.7))]" />
+              <div className="relative text-center">
+                <div className="text-3xl sm:text-4xl font-extrabold tracking-wide text-white/90">
+                  STREAM OFFLINE
+                </div>
+                <div className="mt-1 text-sm text-white/70">@{channel}</div>
+              </div>
+            </div>
+          )}
+
+          {/* Overlay escuro para contraste */}
           <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,.55),rgba(0,0,0,.25))]" />
+
+          {/* CTAs */}
           <div className="absolute left-4 right-4 bottom-4 flex flex-wrap items-center gap-3">
             <a
               href={`https://twitch.tv/${channel}`}
@@ -522,7 +542,7 @@ function StreamHero({ channel, isLive }: { channel: string; isLive: boolean }) {
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15"
-              style={{ background: TWITCH_PURPLE }}
+              style={{ background: "#9146FF" }}
             >
               Vídeos recentes
             </a>
@@ -532,6 +552,7 @@ function StreamHero({ channel, isLive }: { channel: string; isLive: boolean }) {
     </section>
   );
 }
+
 
 /* ---------- YouTube GRID (sem API) ---------- */
 type YtItem = { id: string; title: string; published: string; thumb: string };
