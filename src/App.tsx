@@ -8,9 +8,6 @@ import {
 
 /* ---------- CONFIG ---------- */
 const TWITCH_CHANNEL = "k0mpa";
-/* imagem para o ecrã OFFLINE (altera para a tua!) */
-const TWITCH_OFFLINE_IMG =
-  "https://i.imgur.com/2kM2c7C.jpeg"; // <-- SUBSTITUI por uma tua
 /* YouTube (UC…) — @k0mpa */
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 
@@ -217,7 +214,6 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
       className="hidden md:block w-[240px] mx-auto"
       style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
     >
-      {/* ocupa o viewport útil e permite scroll interno sem desaparecer */}
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
         style={{
@@ -225,7 +221,6 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
           overflow: "auto",
         }}
       >
-        {/* TOPO — Menu */}
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
             <span className="text-sm font-semibold text-white">
@@ -285,7 +280,6 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
 
         <div className="flex-1" />
 
-        {/* RODAPÉ — Redes + copyright colados ao fundo */}
         <footer className="pt-4 border-t border-white/10">
           <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">
             {t.social.title}
@@ -391,8 +385,18 @@ function buildTwitchEmbedUrl(channel: string) {
   const parents = new Set<string>([host, "localhost"]);
   if (host.startsWith("www.")) parents.add(host.slice(4)); else parents.add(`www.${host}`);
   const qsParents = Array.from(parents).map(p => `parent=${encodeURIComponent(p)}`).join("&");
-  // Nada de autoplay/muted aqui — deixamos o player decidir e mostrar o ecrã offline nativo
   return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&${qsParents}`;
+}
+
+/* ➕ Para o StreamHero com chat (player + chat) */
+function buildTwitchEmbedSources(channel: string) {
+  const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
+  const parents = new Set<string>([host, "localhost"]);
+  if (host.startsWith("www.")) parents.add(host.slice(4)); else parents.add(`www.${host}`);
+  const parentQS = Array.from(parents).map(p => `parent=${encodeURIComponent(p)}`).join("&");
+  const playerSrc = `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&${parentQS}`;
+  const chatSrc = `https://www.twitch.tv/embed/${encodeURIComponent(channel)}/chat?${parentQS}&darkpopout`;
+  return { playerSrc, chatSrc };
 }
 
 function clamp(n: number, min: number, max: number) { return Math.max(min, Math.min(max, n)); }
@@ -473,30 +477,47 @@ function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => v
   return mounted ? createPortal(content, document.body) : null;
 }
 
-/* ---------- Stream por cima dos cards (hero) ---------- */
+/* ---------- StreamHero: PLAYER + CHAT (embed oficial, com offline nativo) ---------- */
 function StreamHero({ channel }: { channel: string }) {
-  const src = buildTwitchEmbedUrl(channel); // usa a tua função já definida
+  const { playerSrc, chatSrc } = React.useMemo(
+    () => buildTwitchEmbedSources(channel),
+    [channel]
+  );
 
   return (
     <section>
       <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
-        {/* 16:9 responsivo */}
-        <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-          <iframe
-            title={`twitch-${channel}-hero`}
-            src={src}
-            // Sem autoplay/muted para deixar o player mostrar o OFFLINE nativo quando não há live
-            allow="picture-in-picture; fullscreen; encrypted-media"
-            allowFullScreen
-            frameBorder="0"
-            scrolling="no"
-            className="absolute inset-0 h-full w-full border-0"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-[1fr,360px]">
+          {/* Player 16:9 responsivo */}
+          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+            <iframe
+              title={`twitch-player-${channel}`}
+              src={playerSrc}
+              allow="fullscreen; picture-in-picture; encrypted-media"
+              allowFullScreen
+              frameBorder="0"
+              scrolling="no"
+              className="absolute inset-0 h-full w-full border-0"
+            />
+          </div>
+          {/* Chat (mostrado em >= md) */}
+          <div className="hidden md:block relative">
+            <div className="absolute inset-0">
+              <iframe
+                title={`twitch-chat-${channel}`}
+                src={chatSrc}
+                frameBorder="0"
+                scrolling="no"
+                className="h-full w-full border-0 bg-[#0e0e10]"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
+
 /* ---------- YouTube GRID (sem API) ---------- */
 type YtItem = { id: string; title: string; published: string; thumb: string };
 function timeAgo(iso: string) {
@@ -620,7 +641,7 @@ function FancyStat({ label, value, icon: Icon, accent }: { label: string; value:
 }
 function StatTile({ icon: Icon, label, value, accent }: { icon: React.ElementType; label: string; value: string; accent: string; }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl p-3.5 transition bg-white/5 ring-1 ring-white/10 shadow-[0_2px_10px_rgba(15,23,42,0.06)] focus-within:ring-2 focus-within:ring-rose-400/60" style={{ backgroundImage:"radial-gradient(120% 100% at 10% 0%, rgba(148,163,184,0.10) 0%, rgba(255,255,255,0) 60%)" }}>
+    <div className="group relative overflow-hidden rounded-2xl p-3.5 transition bg-white/5 ring-1 ring-white/10 shadow-[0_2px_10px_rgba(15,23,42,0.06)]" style={{ backgroundImage:"radial-gradient(120% 100% at 10% 0%, rgba(148,163,184,0.10) 0%, rgba(255,255,255,0) 60%)" }}>
       <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background:`linear-gradient(90deg, ${accent}, transparent)` }} />
       <div className="flex items-center gap-2 text-white/70">
         <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg ring-1 ring-white/10" style={{ background:`${accent}14` }}>
@@ -807,7 +828,7 @@ export default function CasinoPartnerHub() {
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-start">
             <Sidebar onOpenStream={() => setShowOverlay(true)} />
             <main className="space-y-10">
-              {/* Twitch por cima dos cards */}
+              {/* Twitch embed (player + chat) com offline nativo */}
               <StreamHero channel={TWITCH_CHANNEL} />
 
               {/* Cards */}
