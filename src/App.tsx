@@ -207,138 +207,142 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
 /* ---------- Sidebar com Discord ---------- */
 function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   const { t, lang } = useLang();
-  const HEIGHT = 520; // ajusta aqui: 480/500/540...
 
   return (
-    <aside className="hidden md:block w-[240px] mx-auto">
-      {/* Wrapper sticky que posiciona a caixa ao centro vertical do viewport */}
-      <div className="sticky" style={{ top: `calc((100vh - ${HEIGHT}px)/2)` }}>
-        <div
-          className="flex flex-col rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
-          style={{ height: `${HEIGHT}px`, overflow: "auto" }}
-        >
-          {/* TOPO — Menu */}
-          <div>
-            <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
-              <span className="text-sm font-semibold text-white">
-                {t.nav?.menu ?? "Menu"}
-              </span>
-              <ChevronRight className="h-4 w-4 text-white/70" />
-            </div>
-
-            <nav className="space-y-2">
-              <a
-                href="#"
-                className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-              >
-                <span className="flex items-center gap-2">
-                  <Gift className="h-4 w-4" />
-                  {t.nav.offers}
-                </span>
-                <Badge className="text-white" style={{ background: "#9146FF" }}>
-                  {t.nav.new}
-                </Badge>
-              </a>
-
-              <div className="my-3 h-px bg-white/10" />
-
-              <div
-                className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/45 pointer-events-none select-none"
-                aria-disabled="true"
-                title={lang === "PT" ? "Em breve" : "Coming soon"}
-              >
-                <Store className="h-4 w-4 opacity-70" />
-                <span>{t.nav.shop}</span>
-                <span className="ml-auto text-[10px] text-white/35">
-                  {lang === "PT" ? "em breve" : "coming soon"}
-                </span>
-              </div>
-
-              <a
-                href={SOCIAL_LINKS.discord}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-              >
-                <Users className="h-4 w-4" />
-                <span>{t.nav.community}</span>
-              </a>
-
-              <button
-                type="button"
-                onClick={onOpenStream}
-                className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-              >
-                <Tv className="h-4 w-4" />
-                <span>{t.nav.stream}</span>
-              </button>
-            </nav>
+    <aside
+      className="hidden md:block w-[240px] mx-auto"
+      style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
+    >
+      {/* ocupa o viewport útil e permite scroll interno sem “fugir” do ecrã */}
+      <div
+        className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
+        style={{
+          height: "calc(100vh - var(--sticky-top,112px) - 16px)",
+          overflow: "auto",
+        }}
+      >
+        {/* TOPO — Menu */}
+        <div>
+          <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
+            <span className="text-sm font-semibold text-white">
+              {t.nav?.menu ?? "Menu"}
+            </span>
+            <ChevronRight className="h-4 w-4 text-white/70" />
           </div>
 
-          {/* SPACER — empurra o rodapé para baixo */}
-          <div className="flex-1" />
+          <nav className="space-y-2">
+            <a
+              href="#"
+              className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            >
+              <span className="flex items-center gap-2">
+                <Gift className="h-4 w-4" />
+                {t.nav.offers}
+              </span>
+              <Badge className="text-white" style={{ background: "#9146FF" }}>
+                {t.nav.new}
+              </Badge>
+            </a>
 
-          {/* RODAPÉ — Redes + copyright colados ao fundo */}
-          <footer className="pt-4 border-t border-white/10">
-            <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">
-              {t.social.title}
-            </div>
-            <ul className="grid grid-cols-2 gap-3 text-sm">
-              <li>
-                <a
-                  href={SOCIAL_LINKS.youtube}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 hover:underline"
-                >
-                  <Youtube className="h-5 w-5" />
-                  {t.social.youtube}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={SOCIAL_LINKS.instagram}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 hover:underline"
-                >
-                  <Instagram className="h-5 w-5" />
-                  {t.social.instagram}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={SOCIAL_LINKS.twitch}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 hover:underline"
-                >
-                  <TwitchIcon className="h-5 w-5" />
-                  {t.social.twitch}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={SOCIAL_LINKS.telegram}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 hover:underline"
-                >
-                  <Send className="h-5 w-5" />
-                  {t.social.telegram}
-                </a>
-              </li>
-            </ul>
+            <div className="my-3 h-px bg-white/10" />
 
-            <div className="mt-3 text-center text-[12px] text-white/55">
-              Copyright © {new Date().getFullYear()} K0MPA
+            <div
+              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/45 pointer-events-none select-none"
+              aria-disabled="true"
+              title={lang === "PT" ? "Em breve" : "Coming soon"}
+            >
+              <Store className="h-4 w-4 opacity-70" />
+              <span>{t.nav.shop}</span>
+              <span className="ml-auto text-[10px] text-white/35">
+                {lang === "PT" ? "em breve" : "coming soon"}
+              </span>
             </div>
-          </footer>
+
+            <a
+              href={SOCIAL_LINKS.discord}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            >
+              <Users className="h-4 w-4" />
+              <span>{t.nav.community}</span>
+            </a>
+
+            <button
+              type="button"
+              onClick={onOpenStream}
+              className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            >
+              <Tv className="h-4 w-4" />
+              <span>{t.nav.stream}</span>
+            </button>
+          </nav>
         </div>
+
+        {/* empurra o rodapé para o fundo da caixa */}
+        <div className="flex-1" />
+
+        {/* RODAPÉ — Redes + copyright colados ao fundo */}
+        <footer className="pt-4 border-t border-white/10">
+          <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">
+            {t.social.title}
+          </div>
+          <ul className="grid grid-cols-2 gap-3 text-sm">
+            <li>
+              <a
+                href={SOCIAL_LINKS.youtube}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <Youtube className="h-5 w-5" />
+                {t.social.youtube}
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.instagram}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <Instagram className="h-5 w-5" />
+                {t.social.instagram}
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.twitch}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <TwitchIcon className="h-5 w-5" />
+                {t.social.twitch}
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.telegram}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <Send className="h-5 w-5" />
+                {t.social.telegram}
+              </a>
+            </li>
+          </ul>
+
+          <div className="mt-3 text-center text-[12px] text-white/55">
+            Copyright © {new Date().getFullYear()} K0MPA
+          </div>
+        </footer>
       </div>
     </aside>
   );
 }
+
 
 /* ---------- helpers ---------- */
 function tagVisual(tag: Brand["tag"]) {
