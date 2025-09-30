@@ -20,19 +20,19 @@ function hexToRgb(hex: string) {
 }
 function rgba(hex: string, a: number) { const { r, g, b } = hexToRgb(hex); return `rgba(${r},${g},${b},${a})`; }
 const TWITCH_PURPLE = "#9146FF";
+
+/* links das redes */
 const SOCIAL_LINKS = {
   youtube:  "https://youtube.com/@k0mpa",
   instagram:"https://instagram.com/k0mpa",
   twitch:   "https://twitch.tv/k0mpa",
   telegram: "https://t.me/k0mpa",
   discord:  "https://discord.gg/k0mpa",
-
-  // NOVOS
   tiktok:        "https://www.tiktok.com/@k0mpa",
   tiktokValorant:"https://www.tiktok.com/@k0mpavalorant",
   x:             "https://x.com/k0mpa",
+  instantGaming: "https://www.instant-gaming.com/en/?igr=k0mpa",
 } as const;
-
 
 /* ---------- Twitch LIVE (sem API key) ---------- */
 function useLiveAutoTwitch(channel: string, intervalMs = 60_000) {
@@ -102,30 +102,13 @@ export function Badge({ className, ...props }: React.HTMLAttributes<HTMLSpanElem
 /* ---------- i18n ---------- */
 type Lang = "PT" | "EN";
 type Translations = {
-  brand: string;
-  search: string;
-  nav: {
-    menu: string; casinos: string; offers: string; betify: string; shop: string;
-    community: string; slots: string; stream: string; minigames: string; new: string;
-  };
+  brand: string; search: string;
+  nav: { menu: string; casinos: string; offers: string; betify: string; shop: string; community: string; slots: string; stream: string; minigames: string; new: string; };
   promo: { lootbox: string; everyDep: string; bonus: string; giveaways: string; monthly: string; depcode: string; claim: string; };
   card: { min: string; bonus: string; cashback: string; spins: string; code: string; terms: string; showMore: string; back: string; moreInfo: string; visit: string; go: string; copy: string; };
-  social: {
-    title: string;
-    youtube: string;
-    instagram: string;
-    twitch: string;
-    telegram: string;
-    /** NOVOS **/
-    tiktok: string;
-    tiktok_val: string;
-    x: string;
-    /** **/
-    copyright: (y: number) => string;
-  };
+  social: { title: string; youtube: string; instagram: string; twitch: string; telegram: string; tiktok: string; tiktok_val: string; x: string; copyright: (y:number)=>string; };
   footer: { terms: string; privacy: string; cookies: string; rg_paragraph: string; rg_site: string; };
 };
-
 const messages: Record<Lang, Translations> = {
 PT: {
   brand: "K0MPA", search: "Pesquisar…",
@@ -164,37 +147,20 @@ const brands: Brand[] = [
     minDep:"25€", bonus:"450%", cashback:"Até 35%", freeSpins:"Até 350FS", code:"K0MPA", link:"#",
     theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
     payments:["btc","mb","mbb","visa","mc"] },
-  { name:"1XBIT", tag:"NEW", logo:"", image:"https://thenewscrypto.com/wp-content/uploads/2022/01/IMG-20220110-WA0000.jpg", imagePos:"center",
-    minDep:"10€", bonus:"100%", cashback:"—", freeSpins:"125FS", code:"K0MPA", link:"#",
-    theme: { accent:"#d97706", shadow:"rgba(217,119,6,0.45)", ring:"rgba(217,119,6,.45)" },
-    payments:["btc"] },
 ];
 
-/* Ícone TikTok (inline) */
+/* Ícones inline (TikTok + X) */
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
-      <path
-        d="M16 3v4.2c1.9 1.3 3.2 1.9 5 2v3c-2.2-.1-3.8-.8-5-1.7v4.8c0 3.2-2.6 5.9-6.2 5.9S3.9 18.5 3.9 15.1c0-3.1 2.3-5.6 5.3-6v3c-1.3.3-2.3 1.5-2.3 3 0 1.7 1.3 3 3 3s3-1.4 3-3.1V3H16z"
-        fill="currentColor"
-      />
+      <path d="M16 3v4.2c1.9 1.3 3.2 1.9 5 2v3c-2.2-.1-3.8-.8-5-1.7v4.8c0 3.2-2.6 5.9-6.2 5.9S3.9 18.5 3.9 15.1c0-3.1 2.3-5.6 5.3-6v3c-1.3.3-2.3 1.5-2.3 3 0 1.7 1.3 3 3 3s3-1.4 3-3.1V3H16z" fill="currentColor"/>
     </svg>
   );
 }
-/* Ícone X (estilizado) */
-/* Ícone X (Twitter/X) — versão fiel ao logo */
 function XIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      focusable="false"
-      {...props}
-    >
-      <path
-        d="M18.244 2H21.5l-7.62 8.72L23 22h-7.09l-5.54-7.2L3.6 22H0.35l8.23-9.41L0 2h7.19l5.08 6.76L18.244 2z"
-        fill="currentColor"
-      />
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path d="M18.244 2H21.5l-7.62 8.72L23 22h-7.09l-5.54-7.2L3.6 22H.35l8.23-9.41L0 2h7.19l5.08 6.76L18.244 2z" fill="currentColor"/>
     </svg>
   );
 }
@@ -257,44 +223,29 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   );
 }
 
-/* ---------- Sidebar (sempre visível) ---------- */
+/* ---------- Sidebar ---------- */
 function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
   const { t, lang } = useLang();
 
   return (
-    <aside
-      className="hidden md:block w-[240px] mx-auto"
-      style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
-    >
-      {/* ocupa o viewport útil e permite scroll interno sem desaparecer */}
+    <aside className="hidden md:block w-[240px] mx-auto" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
-        style={{
-          height: "calc(100vh - var(--sticky-top,112px) - 16px)",
-          overflow: "auto",
-        }}
+        style={{ height: "calc(100vh - var(--sticky-top,112px) - 16px)", overflow: "auto" }}
       >
-        {/* TOPO — Menu */}
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
-            <span className="text-sm font-semibold text-white">
-              {t.nav?.menu ?? "Menu"}
-            </span>
+            <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
             <ChevronRight className="h-4 w-4 text-white/70" />
           </div>
 
           <nav className="space-y-2">
-            <a
-              href="#"
-              className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-            >
+            <a href="#" className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
               <span className="flex items-center gap-2">
                 <Gift className="h-4 w-4" />
                 {t.nav.offers}
               </span>
-              <Badge className="text-white" style={{ background: "#9146FF" }}>
-                {t.nav.new}
-              </Badge>
+              <Badge className="text-white" style={{ background: "#9146FF" }}>{t.nav.new}</Badge>
             </a>
 
             <div className="my-3 h-px bg-white/10" />
@@ -306,37 +257,21 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
             >
               <Store className="h-4 w-4 opacity-70" />
               <span>{t.nav.shop}</span>
-              <span className="ml-auto text-[10px] text-white/35">
-                {lang === "PT" ? "em breve" : "coming soon"}
-              </span>
+              <span className="ml-auto text-[10px] text-white/35">{lang === "PT" ? "em breve" : "coming soon"}</span>
             </div>
 
-            <a
-              href={SOCIAL_LINKS.discord}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-            >
+            <a href={SOCIAL_LINKS.discord} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
               <Users className="h-4 w-4" />
               <span>{t.nav.community}</span>
             </a>
 
-            <button
-              type="button"
-              onClick={onOpenStream}
-              className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-            >
+            <button type="button" onClick={onOpenStream} className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
               <Tv className="h-4 w-4" />
               <span>{t.nav.stream}</span>
             </button>
 
-            {/* NOVO — Instant Gaming */}
-            <a
-              href="https://www.instant-gaming.com/en/?igr=k0mpa"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-            >
+            {/* Instant Gaming */}
+            <a href={SOCIAL_LINKS.instantGaming} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
               <Sparkles className="h-4 w-4" />
               <span>Instant Gaming</span>
             </a>
@@ -345,57 +280,54 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
 
         <div className="flex-1" />
 
-        {/* RODAPÉ — Redes + copyright colados ao fundo */}
+        {/* Redes (melhor alinhadas) */}
         <footer className="pt-4 border-t border-white/10">
-          <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">
-            {t.social.title}
-          </div>
-<ul className="grid grid-cols-2 gap-3 text-sm">
-  <li>
-    <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <Youtube className="h-5 w-5" />
-      {t.social.youtube}
-    </a>
-  </li>
-  <li>
-    <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <Instagram className="h-5 w-5" />
-      {t.social.instagram}
-    </a>
-  </li>
-  <li>
-    <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <TwitchIcon className="h-5 w-5" />
-      {t.social.twitch}
-    </a>
-  </li>
-  <li>
-    <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <Send className="h-5 w-5" />
-      {t.social.telegram}
-    </a>
-  </li>
-  {/* NOVOS */}
-  <li>
-    <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <TikTokIcon className="h-5 w-5" />
-      {t.social.tiktok}
-    </a>
-  </li>
-  <li>
-    <a href={SOCIAL_LINKS.tiktokValorant} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <TikTokIcon className="h-5 w-5" />
-      {t.social.tiktok_val}
-    </a>
-  </li>
-  <li className="col-span-2 sm:col-span-1">
-    <a href={SOCIAL_LINKS.x} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <XIcon className="h-5 w-5" />
-      {t.social.x}
-    </a>
-  </li>
-</ul>
+          <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">{t.social.title}</div>
 
+          <ul className="grid grid-cols-2 md:grid-cols-2 gap-x-5 gap-y-3 text-sm">
+            <li>
+              <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <Youtube className="h-5 w-5" />
+                {t.social.youtube}
+              </a>
+            </li>
+            <li>
+              <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <Instagram className="h-5 w-5" />
+                {t.social.instagram}
+              </a>
+            </li>
+            <li>
+              <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <TwitchIcon className="h-5 w-5" />
+                {t.social.twitch}
+              </a>
+            </li>
+            <li>
+              <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <Send className="h-5 w-5" />
+                {t.social.telegram}
+              </a>
+            </li>
+            <li>
+              <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <TikTokIcon className="h-5 w-5" />
+                {t.social.tiktok}
+              </a>
+            </li>
+            <li>
+              <a href={SOCIAL_LINKS.tiktokValorant} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <TikTokIcon className="h-5 w-5" />
+                {t.social.tiktok_val}
+              </a>
+            </li>
+            <li className="col-span-2">
+              <a href={SOCIAL_LINKS.x} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                <XIcon className="h-5 w-5" />
+                {t.social.x}
+              </a>
+            </li>
+          </ul>
 
           <div className="mt-3 text-center text-[12px] text-white/55">
             Copyright © {new Date().getFullYear()} K0MPA
@@ -489,10 +421,9 @@ function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => v
   return mounted ? createPortal(content, document.body) : null;
 }
 
-/* ---------- Stream por cima dos cards (hero) ---------- */
+/* ---------- Stream (hero) ---------- */
 function StreamHero({ channel }: { channel: string }) {
   const src = buildTwitchEmbedUrl(channel);
-
   return (
     <section>
       <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
@@ -512,7 +443,7 @@ function StreamHero({ channel }: { channel: string }) {
   );
 }
 
-/* ---------- YouTube GRID (sem API) ---------- */
+/* ---------- YouTube GRID (mostra últimos VÍDEOS, ignora shorts) --------- */
 type YtItem = { id: string; title: string; published: string; thumb: string };
 function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -521,6 +452,10 @@ function timeAgo(iso: string) {
   const d = Math.floor(hrs/24); if (d<30) return `${d}d`;
   const m = Math.floor(d/30); if (m<12) return `${m}mês`;
   const y = Math.floor(m/12); return `${y}a`;
+}
+function isShortTitle(title: string) {
+  const s = title.toLowerCase();
+  return s.includes("#short") || s.includes("shorts");
 }
 function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: number }) {
   const [items, setItems] = useState<YtItem[] | null>(null);
@@ -539,24 +474,28 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
         const doc = new DOMParser().parseFromString(xml, "text/xml");
         const entries = Array.from(doc.getElementsByTagName("entry"));
 
-        const mapped = entries.slice(0, limit).map((e) => {
-          const id =
-            e.getElementsByTagName("yt:videoId")[0]?.textContent ||
-            e.getElementsByTagName("videoId")[0]?.textContent || "";
-          const title = e.getElementsByTagName("title")[0]?.textContent || "";
-          const published = e.getElementsByTagName("published")[0]?.textContent || "";
-          const thumb = (e.querySelector('media\\:thumbnail') as any)?.getAttribute("url") || "";
-          return { id, title, published, thumb };
-        }).filter(x => x.id);
+        const mapped = entries
+          .map((e) => {
+            const id = e.getElementsByTagName("yt:videoId")[0]?.textContent || e.getElementsByTagName("videoId")[0]?.textContent || "";
+            const title = e.getElementsByTagName("title")[0]?.textContent || "";
+            const published = e.getElementsByTagName("published")[0]?.textContent || "";
+            const thumb = (e.querySelector('media\\:thumbnail') as any)?.getAttribute("url") || "";
+            return { id, title, published, thumb };
+          })
+          .filter(x => x.id && !isShortTitle(x.title))     // << remove shorts
+          .slice(0, limit);
 
         setItems(mapped);
         setFailed(mapped.length === 0);
       } catch {
         setItems([]);   // oculta skeleton
-               setFailed(true);
+        setFailed(true);
       }
     })();
   }, [channelId, limit]);
+
+  // último vídeo destacado (não short)
+  const last = items?.[0];
 
   return (
     <section className="space-y-3">
@@ -571,35 +510,46 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
       )}
 
       {!!items && items.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {items.map((v) => (
-            <a
-              key={v.id}
-              href={`https://www.youtube.com/watch?v=${v.id}`}
-              target="_blank"
-              rel="noreferrer"
-              className="group rounded-xl overflow-hidden ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition block"
-              title={v.title}
-            >
-              <div className="relative aspect-video bg-black">
-                {v.thumb && (
-                  <img
-                    src={v.thumb}
-                    alt={v.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                )}
+        <>
+          {/* destaque com embed de 1 vídeo para melhor compatibilidade */}
+          {last && (
+            <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
+              <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+                <iframe
+                  title="Último vídeo"
+                  src={`https://www.youtube-nocookie.com/embed/${last.id}`}
+                  className="absolute inset-0 h-full w-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                  loading="lazy"
+                />
               </div>
-              <div className="p-3">
-                <div className="line-clamp-2 text-sm font-semibold text-white/90 group-hover:text-white">
-                  {v.title}
+            </div>
+          )}
+
+          {/* grelha de mais vídeos (links externos para evitar bloqueios) */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {items.slice(1).map((v) => (
+              <a
+                key={v.id}
+                href={`https://www.youtube.com/watch?v=${v.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="group rounded-xl overflow-hidden ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition block"
+                title={v.title}
+              >
+                <div className="relative aspect-video bg-black">
+                  {v.thumb && <img src={v.thumb} alt={v.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />}
                 </div>
-                <div className="mt-1 text-[11px] text-white/60">{timeAgo(v.published)} • YouTube</div>
-              </div>
-            </a>
-          ))}
-        </div>
+                <div className="p-3">
+                  <div className="line-clamp-2 text-sm font-semibold text-white/90 group-hover:text-white">{v.title}</div>
+                  <div className="mt-1 text-[11px] text-white/60">{timeAgo(v.published)} • YouTube</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </>
       )}
 
       {!!items && items.length === 0 && failed && (
@@ -607,9 +557,10 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
           <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
             <iframe
               title="YouTube uploads"
-              src={`https://www.youtube.com/embed?listType=playlist&list=${"UU" + channelId.slice(2)}`}
+              src={`https://www.youtube-nocookie.com/embed?listType=playlist&list=${"UU" + channelId.slice(2)}`}
               className="absolute inset-0 h-full w-full border-0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
               loading="lazy"
             />
@@ -736,7 +687,7 @@ function BrandCard({ b }: { b: Brand }) {
   );
 }
 
-/* ---------- Footer ---------- */
+/* ---------- Footer (18+ centrado) ---------- */
 function Footer() {
   const { t } = useLang();
   const year = new Date().getFullYear();
@@ -754,16 +705,18 @@ function Footer() {
             <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Política de Cookies</span>
           </nav>
           <a href="https://www.begambleaware.org/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs hover:text-white/90" title="BeGambleAware.org">
-            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[11px] font-bold">18+</span>
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15 backdrop-blur text-[11px] leading-none font-bold select-none">18+</span>
             BeGambleAware.org
           </a>
         </div>
         <div className="my-3 h-px bg-white/10" />
-        <p className="text-[12px] leading-snug text-white/55">18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.</p>
+        <p className="text-[12px] leading-snug text-white/55">{t.footer.rg_paragraph}</p>
       </div>
     </footer>
   );
 }
+
+/* ---------- Idioma ---------- */
 function LanguageToggle({ lang, onChange }: { lang:"PT"|"EN"; onChange:(l:"PT"|"EN")=>void; }) {
   const base = "text-sm font-semibold tracking-wide transition-colors";
   const inactive = "text-white/70 hover:text-white/90";
@@ -775,16 +728,31 @@ function LanguageToggle({ lang, onChange }: { lang:"PT"|"EN"; onChange:(l:"PT"|"
     </div>
   );
 }
+
+/* ---------- Background sem “corte” ---------- */
 function BackgroundLayer() {
   return (
-    <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-      background:
-        "radial-gradient(120% 90% at 15% 0%, rgba(244,63,94,.35) 0%, rgba(244,63,94,.12) 35%, transparent 60%)," +
-        "radial-gradient(100% 85% at 85% 100%, rgba(244,63,94,.28) 0%, transparent 55%)," +
-        "linear-gradient(180deg, #150608 0%, #0f0406 40%, #090306 100%)",
-      WebkitMaskImage:"radial-gradient(120% 100% at 50% 50%, #000 70%, transparent 100%)",
-      maskImage:"radial-gradient(120% 100% at 50% 50%, #000 70%, transparent 100%)",
-    }} />
+    <div
+      className="absolute inset-0 -z-10 pointer-events-none"
+      style={{
+        background:
+          // fundo base suave e contínuo (sem banda a meio)
+          "linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%)",
+      }}
+    >
+      {/* glow radiais subtis */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "radial-gradient(60% 40% at 15% 5%, rgba(244,63,94,.28) 0%, rgba(244,63,94,0) 70%)," +
+            "radial-gradient(55% 45% at 85% 95%, rgba(244,63,94,.22) 0%, rgba(244,63,94,0) 75%)",
+          mixBlendMode: "screen",
+        }}
+      />
+    </div>
   );
 }
 
@@ -804,20 +772,14 @@ export default function CasinoPartnerHub() {
     <LangCtx.Provider value={{ lang, setLang, t }}>
       <div className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-clip">
         <BackgroundLayer />
-
-        {/* espaçador do header fixo */}
         <div style={{ height: "var(--hdr-offset, 68px)" }} aria-hidden />
-
         <HeaderBar isLive={isLive} />
 
         <div className="flex-1">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-start">
             <Sidebar onOpenStream={() => setShowOverlay(true)} />
             <main className="space-y-10">
-              {/* Twitch por cima dos cards */}
               <StreamHero channel={TWITCH_CHANNEL} />
-
-              {/* Cards */}
               <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
                 {brands.map((b, i) => (
                   <React.Fragment key={b.name + i}>
@@ -825,16 +787,12 @@ export default function CasinoPartnerHub() {
                   </React.Fragment>
                 ))}
               </div>
-
-              {/* Grelha YouTube */}
               <YouTubeGrid channelId={YT_CHANNEL_ID} limit={8} />
             </main>
           </div>
         </div>
 
         <Footer />
-
-        {/* Mini-player removido */}
         {showOverlay && <StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />}
       </div>
     </LangCtx.Provider>
