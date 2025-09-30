@@ -179,23 +179,16 @@ export type Brand = {
 };
 const brands: Brand[] = [
   {
-    name: "Betify",
-    tag: "HOT",
-    logo: "https://www.ce-at.fr/img/logo.webp",
-    image: "https://media.discordapp.net/attachments/1220479317973270549/1422710518057013268/image-1-5.png?ex=68dda9ec&is=68dc586c&hm=d9c56e94cc4cfcbce2bee6b5addb3ff849d8d13c3f4e6b9fd902eea974f54e9b&=&format=webp&quality=lossless&width=1430&height=800",
-    /* puxa a imagem MUITO para cima */
-    imagePos: "center -55px",  // <- ajusta entre -180px e -320px ao teu gosto
-    minDep: "20€",
-    bonus: "100%",
-    cashback: "Até 20%",
-    freeSpins: "Até 100FS",
-    code: "K0MPA",
-    link: BETIFY_PROMO_URL,
+    name:"Betify",
+    tag:"HOT",
+    logo:"https://www.ce-at.fr/img/logo.webp",
+    image:"https://media.discordapp.net/attachments/1220479317973270549/1422710518057013268/image-1-5.png?ex=68dda9ec&is=68dc586c&hm=d9c56e94cc4cfcbce2bee6b5addb3ff849d8d13c3f4e6b9fd902eea974f54e9b&=&format=webp&quality=lossless&width=1430&height=800",
+    imagePos:"center center",
+    minDep:"20€", bonus:"100%", cashback:"Até 20%", freeSpins:"Até 100FS", code:"K0MPA", link: BETIFY_PROMO_URL,
     theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
-    payments: ["btc","mb","mbb","visa","mc"]
+    payments:["btc","mb","mbb","visa","mc"]
   },
 ];
-
 
 /* Ícones inline (TikTok + X) */
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
