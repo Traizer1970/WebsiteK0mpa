@@ -26,7 +26,13 @@ const SOCIAL_LINKS = {
   twitch:   "https://twitch.tv/k0mpa",
   telegram: "https://t.me/k0mpa",
   discord:  "https://discord.gg/k0mpa",
+
+  // NOVOS
+  tiktok:        "https://www.tiktok.com/@k0mpa",
+  tiktokValorant:"https://www.tiktok.com/@k0mpavalorant",
+  x:             "https://x.com/k0mpa",
 } as const;
+
 
 /* ---------- Twitch LIVE (sem API key) ---------- */
 function useLiveAutoTwitch(channel: string, intervalMs = 60_000) {
@@ -96,20 +102,37 @@ export function Badge({ className, ...props }: React.HTMLAttributes<HTMLSpanElem
 /* ---------- i18n ---------- */
 type Lang = "PT" | "EN";
 type Translations = {
-  brand: string; search: string;
-  nav: { menu: string; casinos: string; offers: string; betify: string; shop: string; community: string; slots: string; stream: string; minigames: string; new: string; };
+  brand: string;
+  search: string;
+  nav: {
+    menu: string; casinos: string; offers: string; betify: string; shop: string;
+    community: string; slots: string; stream: string; minigames: string; new: string;
+  };
   promo: { lootbox: string; everyDep: string; bonus: string; giveaways: string; monthly: string; depcode: string; claim: string; };
   card: { min: string; bonus: string; cashback: string; spins: string; code: string; terms: string; showMore: string; back: string; moreInfo: string; visit: string; go: string; copy: string; };
-  social: { title: string; youtube: string; instagram: string; twitch: string; telegram: string; copyright: (y:number)=>string; };
+  social: {
+    title: string;
+    youtube: string;
+    instagram: string;
+    twitch: string;
+    telegram: string;
+    /** NOVOS **/
+    tiktok: string;
+    tiktok_val: string;
+    x: string;
+    /** **/
+    copyright: (y: number) => string;
+  };
   footer: { terms: string; privacy: string; cookies: string; rg_paragraph: string; rg_site: string; };
 };
+
 const messages: Record<Lang, Translations> = {
 PT: {
   brand: "K0MPA", search: "Pesquisar…",
   nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
   promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
   card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
-  social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", copyright:(y)=>`Copyright © ${y} K0MPA` },
+  social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok VALORANT", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
   footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
            rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
            rg_site:"BeGambleAware.org" }
@@ -119,7 +142,7 @@ EN: {
   nav:{ menu:"Menu", casinos:"Casinos", offers:"Offers", betify:"Betify", shop:"Shop", community:"Community", slots:"Slots", stream:"Stream", minigames:"Mini Games", new:"NEW" },
   promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
   card:{ min:"Min. Dep.", bonus:"Bonus", cashback:"Cashback", spins:"Free Spins", code:"Code:", terms:"+18 | T&C apply", showMore:"More", back:"Back", moreInfo:"More information", visit:"Visit brand", go:"CLAIM BONUS", copy:"Copy" },
-  social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", copyright:(y)=>`Copyright © ${y} K0MPA` },
+  social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok VALORANT", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
   footer:{ terms:"Terms & Conditions", privacy:"Privacy Policy", cookies:"Cookie Policy",
            rg_paragraph:"18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
            rg_site:"BeGambleAware.org" }
@@ -146,6 +169,26 @@ const brands: Brand[] = [
     theme: { accent:"#d97706", shadow:"rgba(217,119,6,0.45)", ring:"rgba(217,119,6,.45)" },
     payments:["btc"] },
 ];
+
+/* Ícone TikTok (inline) */
+function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path
+        d="M16 3v4.2c1.9 1.3 3.2 1.9 5 2v3c-2.2-.1-3.8-.8-5-1.7v4.8c0 3.2-2.6 5.9-6.2 5.9S3.9 18.5 3.9 15.1c0-3.1 2.3-5.6 5.3-6v3c-1.3.3-2.3 1.5-2.3 3 0 1.7 1.3 3 3 3s3-1.4 3-3.1V3H16z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+/* Ícone X (estilizado) */
+function XIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path d="M4 4l16 16M20 4L4 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  );
+}
 
 /* ---------- header (FIXO) ---------- */
 function TwitchBadge({ label = "Twitch" }: { label?: string }) {
@@ -298,52 +341,52 @@ function Sidebar({ onOpenStream }: { onOpenStream: () => void }) {
           <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">
             {t.social.title}
           </div>
-          <ul className="grid grid-cols-2 gap-3 text-sm">
-            <li>
-              <a
-                href={SOCIAL_LINKS.youtube}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 hover:underline"
-              >
-                <Youtube className="h-5 w-5" />
-                {t.social.youtube}
-              </a>
-            </li>
-            <li>
-              <a
-                href={SOCIAL_LINKS.instagram}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 hover:underline"
-              >
-                <Instagram className="h-5 w-5" />
-                {t.social.instagram}
-              </a>
-            </li>
-            <li>
-              <a
-                href={SOCIAL_LINKS.twitch}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 hover:underline"
-              >
-                <TwitchIcon className="h-5 w-5" />
-                {t.social.twitch}
-              </a>
-            </li>
-            <li>
-              <a
-                href={SOCIAL_LINKS.telegram}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 hover:underline"
-              >
-                <Send className="h-5 w-5" />
-                {t.social.telegram}
-              </a>
-            </li>
-          </ul>
+<ul className="grid grid-cols-2 gap-3 text-sm">
+  <li>
+    <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <Youtube className="h-5 w-5" />
+      {t.social.youtube}
+    </a>
+  </li>
+  <li>
+    <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <Instagram className="h-5 w-5" />
+      {t.social.instagram}
+    </a>
+  </li>
+  <li>
+    <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <TwitchIcon className="h-5 w-5" />
+      {t.social.twitch}
+    </a>
+  </li>
+  <li>
+    <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <Send className="h-5 w-5" />
+      {t.social.telegram}
+    </a>
+  </li>
+  {/* NOVOS */}
+  <li>
+    <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <TikTokIcon className="h-5 w-5" />
+      {t.social.tiktok}
+    </a>
+  </li>
+  <li>
+    <a href={SOCIAL_LINKS.tiktokValorant} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <TikTokIcon className="h-5 w-5" />
+      {t.social.tiktok_val}
+    </a>
+  </li>
+  <li className="col-span-2 sm:col-span-1">
+    <a href={SOCIAL_LINKS.x} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <XIcon className="h-5 w-5" />
+      {t.social.x}
+    </a>
+  </li>
+</ul>
+
 
           <div className="mt-3 text-center text-[12px] text-white/55">
             Copyright © {new Date().getFullYear()} K0MPA
