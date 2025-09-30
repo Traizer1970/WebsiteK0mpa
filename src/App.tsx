@@ -25,6 +25,37 @@ function hexToRgb(hex: string) {
 function rgba(hex: string, a: number) { const { r, g, b } = hexToRgb(hex); return `rgba(${r},${g},${b},${a})`; }
 const TWITCH_PURPLE = "#9146FF";
 
+/* ---------- Betify: duas promoções ---------- */
+type Promo = {
+  id: string;
+  icon: React.ElementType;
+  title: string;
+  blurb: string;
+  highlight: string;
+  code?: string;
+  href: string;
+};
+
+const betifyPromos: Promo[] = [
+  {
+    id: "every-dep",
+    icon: Percent,
+    title: "Bónus em todos os depósitos",
+    blurb: "Recebe bónus extra sempre que depositares usando o meu código.",
+    highlight: "5% em Every Dep.",
+    code: "K0MPA",
+    href: BETIFY_PROMO_URL,
+  },
+  {
+    id: "fs-monthly",
+    icon: Sparkles,
+    title: "Campanhas e Free Spins",
+    blurb: "Campanhas mensais com giros grátis nas melhores slots.",
+    highlight: "Até 100FS",
+    href: BETIFY_PROMO_URL,
+  },
+];
+
 /* links das redes */
 const SOCIAL_LINKS = {
   youtube:  "https://youtube.com/@k0mpa",
@@ -713,68 +744,143 @@ function BrandCard({ b }: { b: Brand }) {
   );
 }
 
+function PromoCard({ p }: { p: Promo }) {
+  return (
+    <div
+      className="rounded-3xl p-5 sm:p-6 ring-1 ring-white/15 shadow-[0_14px_50px_rgba(0,0,0,.35)] text-white/90"
+      style={{ background: "linear-gradient(180deg,#4c1d95 0%, #3b0a7a 60%, #2a065d 100%)" }}
+    >
+      <div className="flex items-start gap-3">
+        <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
+          <p.icon className="h-5 w-5 text-white" />
+        </span>
+        <div className="flex-1">
+          <div className="text-sm font-semibold text-white/75">Promo</div>
+          <h3 className="text-xl font-black tracking-tight text-white">{p.title}</h3>
+          <div className="mt-1.5 text-[13px]">{p.blurb}</div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-[auto,1fr] sm:items-center">
+            <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
+              <Sparkles className="h-4 w-4" />
+              <span className="text-sm font-extrabold text-white">{p.highlight}</span>
+            </div>
+
+            {p.code ? (
+              <div className="grid grid-cols-[1fr,auto] gap-2">
+                <div className="h-10 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 flex items-center text-sm">
+                  <span className="text-white/60 mr-2">Código:</span>
+                  <span className="font-bold tracking-wide">{p.code}</span>
+                </div>
+                <button
+                  onClick={async () => { try { await navigator.clipboard.writeText(p.code!); } catch {} }}
+                  className="h-10 inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/15 ring-1 ring-white/15 px-3 text-sm font-semibold"
+                >
+                  <Copy className="h-4 w-4" /> Copiar
+                </button>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-3">
+            <a
+              href={p.href}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-extrabold text-white"
+              style={{ background: "linear-gradient(135deg,#7c3aed,#6d28d9)", boxShadow: "0 10px 26px rgba(124,58,237,.35)" }}
+            >
+              RECLAMAR AGORA
+              <ExternalLink className="h-4 w-4" />
+            </a>
+            <span className="text-[11px] text-white/60 self-center">+18 | T&C aplicam-se</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 /* ---------- Página Betify ---------- */
 function BetifyLanding({ onBack }: { onBack: () => void }) {
   return (
     <div className="space-y-8">
-      {/* Hero */}
-      <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 shadow-[0_16px_60px_rgba(0,0,0,.35)] text-white"
-        style={{ background: "linear-gradient(180deg,#5b21b6 0%, #4c1d95 50%, #3b0764 100%)" }}>
+      {/* Hero com look do site */}
+      <section
+        className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 shadow-[0_16px_60px_rgba(0,0,0,.35)] text-white"
+        style={{ background: "linear-gradient(180deg,#5b21b6 0%, #4c1d95 50%, #3b0764 100%)" }}
+      >
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <img src="https://www.ce-at.fr/img/logo.webp" alt="Betify" className="h-9 w-9 rounded bg-white/90 ring-1 ring-black/10 object-contain" />
+            <img
+              src="https://www.ce-at.fr/img/logo.webp"
+              alt="Betify"
+              className="h-9 w-9 rounded bg-white/90 ring-1 ring-black/10 object-contain"
+            />
             <div>
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Betify</h1>
-              <p className="text-white/80 text-sm">How to play at Betify and unlock the best VIP program</p>
+              <p className="text-white/80 text-sm">Como jogar na Betify e desbloquear o melhor VIP</p>
             </div>
           </div>
-          <Button onClick={onBack} className="bg-white/10 text-white hover:bg-white/15 ring-1 ring-white/20"><ArrowLeft className="h-4 w-4" /> Voltar</Button>
+          <Button onClick={onBack} className="bg-white/10 text-white hover:bg-white/15 ring-1 ring-white/20">
+            <ArrowLeft className="h-4 w-4" /> Voltar
+          </Button>
         </div>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-[1.2fr,.8fr]">
+          {/* Passos + CTAs com vidro */}
           <div className="rounded-2xl bg-white/10 ring-1 ring-white/15 p-5">
-            <div className="text-lg font-extrabold mb-3">Sign up with code <span className="text-lime-300">K0MPA</span></div>
+            <div className="text-lg font-extrabold mb-3">
+              Regista-te com o código <span className="text-lime-300">K0MPA</span>
+            </div>
             <ol className="space-y-3 text-sm">
-              <li><span className="font-bold">1.</span> Create an account at Betify.</li>
-              <li><span className="font-bold">2.</span> Use the promo code <span className="font-bold">K0MPA</span> when registering.</li>
-              <li><span className="font-bold">3.</span> Enjoy all promotions, cashback and free spins.</li>
+              <li><span className="font-bold">1.</span> Cria conta na Betify.</li>
+              <li><span className="font-bold">2.</span> Usa o código <span className="font-bold">K0MPA</span> no registo.</li>
+              <li><span className="font-bold">3.</span> Aproveita promoções, cashback e free spins.</li>
             </ol>
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <a href={BETIFY_SIGNUP_URL} target="_blank" rel="noreferrer"
-                 className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white bg-lime-600 hover:brightness-110 ring-1 ring-white/10">
+              <a
+                href={BETIFY_SIGNUP_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white bg-lime-600 hover:brightness-110 ring-1 ring-white/10"
+              >
                 REGISTAR AGORA <ExternalLink className="h-4 w-4" />
               </a>
-              <a href={BETIFY_PROMO_URL} target="_blank" rel="noreferrer"
-                 className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/10 hover:bg-white/15 ring-1 ring-white/15">
+              <a
+                href={BETIFY_PROMO_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/10 hover:bg-white/15 ring-1 ring-white/15"
+              >
                 VER PROMOÇÕES
               </a>
             </div>
           </div>
 
+          {/* Visual */}
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/15 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
-              <img src="https://altacdn.com/bf/img/sliders/ca/150746_bf_website_banner_wsb.webp" alt="Betify preview" className="absolute inset-0 h-full w-full object-cover" />
+              <img
+                src="https://altacdn.com/bf/img/sliders/ca/150746_bf_website_banner_wsb.webp"
+                alt="Betify preview"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
             </div>
           </div>
         </div>
 
-        {/* cards pequenos */}
+        {/* DUAS promoções distintas, alinhadas ao design do site */}
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl p-5 bg-white/10 ring-1 ring-white/15">
-            <div className="text-sm font-semibold text-white/80 mb-2">Cashback</div>
-            <div className="text-2xl font-extrabold">Até 20%</div>
-            <p className="text-white/70 text-sm mt-1">Recebe cashback semanal nas tuas apostas.</p>
-          </div>
-          <div className="rounded-2xl p-5 bg-white/10 ring-1 ring-white/15">
-            <div className="text-sm font-semibold text-white/80 mb-2">Free Spins</div>
-            <div className="text-2xl font-extrabold">Até 100FS</div>
-            <p className="text-white/70 text-sm mt-1">Campanhas com giros grátis nas melhores slots.</p>
-          </div>
+          {betifyPromos.map((p) => (
+            <PromoCard key={p.id} p={p} />
+          ))}
         </div>
       </section>
     </div>
   );
 }
+
 
 /* ---------- Footer ---------- */
 function Footer() {
