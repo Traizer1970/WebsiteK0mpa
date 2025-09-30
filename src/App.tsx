@@ -478,45 +478,30 @@ function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => v
 }
 
 /* ---------- StreamHero: PLAYER + CHAT (embed oficial, com offline nativo) ---------- */
+/* ---------- StreamHero: apenas o PLAYER (sem chat) ---------- */
 function StreamHero({ channel }: { channel: string }) {
-  const { playerSrc, chatSrc } = React.useMemo(
-    () => buildTwitchEmbedSources(channel),
-    [channel]
-  );
+  const src = React.useMemo(() => buildTwitchEmbedUrl(channel), [channel]);
 
   return (
     <section>
       <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
-        <div className="grid grid-cols-1 md:grid-cols-[1fr,360px]">
-          {/* Player 16:9 responsivo */}
-          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-            <iframe
-              title={`twitch-player-${channel}`}
-              src={playerSrc}
-              allow="fullscreen; picture-in-picture; encrypted-media"
-              allowFullScreen
-              frameBorder="0"
-              scrolling="no"
-              className="absolute inset-0 h-full w-full border-0"
-            />
-          </div>
-          {/* Chat (mostrado em >= md) */}
-          <div className="hidden md:block relative">
-            <div className="absolute inset-0">
-              <iframe
-                title={`twitch-chat-${channel}`}
-                src={chatSrc}
-                frameBorder="0"
-                scrolling="no"
-                className="h-full w-full border-0 bg-[#0e0e10]"
-              />
-            </div>
-          </div>
+        {/* 16:9 responsivo */}
+        <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+          <iframe
+            title={`twitch-player-${channel}`}
+            src={src}
+            allow="fullscreen; picture-in-picture; encrypted-media"
+            allowFullScreen
+            frameBorder="0"
+            scrolling="no"
+            className="absolute inset-0 h-full w-full border-0"
+          />
         </div>
       </div>
     </section>
   );
 }
+
 
 /* ---------- YouTube GRID (sem API) ---------- */
 type YtItem = { id: string; title: string; published: string; thumb: string };
