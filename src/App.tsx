@@ -150,7 +150,6 @@ const brands: Brand[] = [
   {
     name:"Betify",
     tag:"HOT",
-    /* usa este logo no chip do topo do card; podes trocar para outro */
     logo:"https://www.ce-at.fr/img/logo.webp",
     image:"https://altacdn.com/bf/img/sliders/ca/150746_bf_website_banner_wsb.webp",
     imagePos:"left center",
@@ -259,13 +258,13 @@ function Sidebar({ onOpenStream, onOpenBetify }: { onOpenStream: () => void; onO
               <Badge className="text-white" style={{ background: "#9146FF" }}>{t.nav.new}</Badge>
             </a>
 
-            {/* Botão Betify dedicado */}
+            {/* Botão Betify: só texto, com “espaço fantasma” para alinhar com ícone */}
             <button
               type="button"
               onClick={onOpenBetify}
-              className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+              className="w-full flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
             >
-              <img src="https://www.ce-at.fr/img/logo.webp" alt="Betify" className="h-5 w-5 rounded-sm object-contain ring-1 ring-white/15 bg-white/90" />
+              <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />{/* placeholder */}
               <span className="font-semibold">Betify</span>
             </button>
 
@@ -615,7 +614,7 @@ function StatTile({ icon: Icon, label, value, accent }: { icon: React.ElementTyp
 }
 function BrandPill({ logo, name }: { logo?: string; name: string }) {
   return (
-    <div className="absolute left-1/2 -translate-x-1/2 -top-6 z-30">
+    <div className="absolute left-1/2 -translate-x-1/2 top-3 z-30">
       <div className="inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 ring-1 ring-black/10 shadow-md">
         {logo ? <img src={logo} alt={name} className="h-5 w-5 rounded-sm object-contain" /> : null}
         <span className="text-sm font-bold text-slate-900">{name}</span>
@@ -634,10 +633,11 @@ function BrandCard({ b }: { b: Brand }) {
 
   return (
     <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height:CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
-      <BrandPill logo={b.logo} name={b.name} />
       <div className="absolute inset-0 transition-transform duration-500" style={{ transformStyle:"preserve-3d", transform: flip ? "rotateY(180deg)" : "none" }}>
         {/* FRONT */}
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
+          {/* chip com logo/nome — dentro do card e só na frente */}
+          <BrandPill logo={b.logo} name={b.name} />
           <TagBadge tag={b.tag} accent={acc} />
           <div className="absolute inset-0 overflow-hidden rounded-3xl">
             <img src={b.image} alt={b.name} className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: b.imagePos ?? "center" }} />
@@ -665,7 +665,7 @@ function BrandCard({ b }: { b: Brand }) {
           </div>
         </div>
 
-        {/* BACK */}
+        {/* BACK (sem chip) */}
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden", transform:"rotateY(180deg)" }}>
           <div className="relative flex h-full flex-col rounded-3xl bg-[linear-gradient(180deg,rgba(28,28,28,.85),rgba(28,28,28,.78))] p-5 overflow-hidden ring-1 ring-white/8" style={{ boxShadow:`0 16px 40px ${shadow}` }}>
             <div className="mb-3 flex items-center justify-between">
