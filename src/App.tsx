@@ -143,7 +143,7 @@ export type Brand = {
   payments?: Array<"btc"|"mb"|"mbb"|"visa"|"mc">;
 };
 const brands: Brand[] = [
-  { name:"Betify", tag:"HOT", logo:"", image:"https://betify.org/wp-content/uploads/2025/01/Betify-app.webp", imagePos:"left center",
+  { name:"Betify", tag:"HOT", logo:"", image:"https://altacdn.com/bf/img/sliders/ca/150746_bf_website_banner_wsb.webp", imagePos:"left center",
     minDep:"20€", bonus:"100%", cashback:"Até 20%", freeSpins:"Até 100FS", code:"K0MPA", link:"#",
     theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
     payments:["btc","mb","mbb","visa","mc"] },
