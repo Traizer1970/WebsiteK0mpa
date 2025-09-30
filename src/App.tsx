@@ -381,11 +381,27 @@ function FancyCTA({ href, label, accent }: { href: string; label: string; accent
 
 /* ---------- Twitch mini/overlay (opcional) ---------- */
 function buildTwitchEmbedUrl(channel: string) {
-  const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
-  const parents = new Set<string>([host, "localhost"]);
-  if (host.startsWith("www.")) parents.add(host.slice(4)); else parents.add(`www.${host}`);
-  const qsParents = Array.from(parents).map(p => `parent=${encodeURIComponent(p)}`).join("&");
-  return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&${qsParents}`;
+  const host =
+    typeof window !== "undefined" ? window.location.hostname : "localhost";
+
+  // Garante todos os candidatos válidos de parent
+  const parents = new Set<string>([
+    host,
+    host.startsWith("www.") ? host.slice(4) : `www.${host}`,
+    "localhost",
+    "127.0.0.1",
+  ]);
+
+  // Monta a string parent=...&parent=...
+  const qsParents = Array.from(parents)
+    .filter(Boolean)
+    .map((p) => `parent=${encodeURIComponent(p)}`)
+    .join("&");
+
+  // autoplay + muted para evitar bloqueio do navegador
+  return `https://player.twitch.tv/?channel=${encodeURIComponent(
+    channel
+  )}&autoplay=1&muted=1&${qsParents}`;
 }
 
 /* ➕ Para o StreamHero com chat (player + chat) */
@@ -476,8 +492,6 @@ function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => v
   );
   return mounted ? createPortal(content, document.body) : null;
 }
-
-/* ---------- StreamHero: PLAYER + CHAT (embed oficial, com offline nativo) ---------- */
 /* ---------- StreamHero: apenas o PLAYER (sem chat) ---------- */
 function StreamHero({ channel }: { channel: string }) {
   const src = React.useMemo(() => buildTwitchEmbedUrl(channel), [channel]);
@@ -485,15 +499,16 @@ function StreamHero({ channel }: { channel: string }) {
   return (
     <section>
       <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,.35)] bg-black">
-        {/* 16:9 responsivo */}
         <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
           <iframe
+            key={src} // força reload se o parent mudar
             title={`twitch-player-${channel}`}
             src={src}
-            allow="fullscreen; picture-in-picture; encrypted-media"
+            allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
             allowFullScreen
             frameBorder="0"
             scrolling="no"
+            referrerPolicy="origin-when-cross-origin"
             className="absolute inset-0 h-full w-full border-0"
           />
         </div>
@@ -501,7 +516,6 @@ function StreamHero({ channel }: { channel: string }) {
     </section>
   );
 }
-
 
 /* ---------- YouTube GRID (sem API) ---------- */
 type YtItem = { id: string; title: string; published: string; thumb: string };
