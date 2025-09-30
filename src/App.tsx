@@ -182,10 +182,19 @@ function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 /* Ícone X (estilizado) */
+/* Ícone X (Twitter/X) — versão fiel ao logo */
 function XIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
-      <path d="M4 4l16 16M20 4L4 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+      {...props}
+    >
+      <path
+        d="M18.244 2H21.5l-7.62 8.72L23 22h-7.09l-5.54-7.2L3.6 22H0.35l8.23-9.41L0 2h7.19l5.08 6.76L18.244 2z"
+        fill="currentColor"
+      />
     </svg>
   );
 }
