@@ -630,28 +630,51 @@ function TwitchEmbedMini({ channel }: { channel: string }) {
 
 function YouTubeLastMini({ channelId }: { channelId: string }) {
   const [vid, setVid] = React.useState<{ id: string; title: string } | null>(null);
+  const [failed, setFailed] = React.useState(false);
 
   React.useEffect(() => {
     let cancelled = false;
+    setVid(null);
+    setFailed(false);
+
     const url = `https://r.jina.ai/http://www.youtube.com/channel/${encodeURIComponent(channelId)}/videos`;
     (async () => {
       try {
         const res = await fetch(url, { cache: "no-store" });
         const html = await res.text();
         const m = /href="\/watch\?v=([a-zA-Z0-9_-]{11})"[^>]*\s+title="([^"]+)"/.exec(html);
-        if (!cancelled && m) setVid({ id: m[1], title: m[2] });
-      } catch {}
+        if (!cancelled) {
+          if (m) setVid({ id: m[1], title: m[2] });
+          else setFailed(true);
+        }
+      } catch {
+        if (!cancelled) setFailed(true);
+      }
     })();
+
     return () => { cancelled = true; };
   }, [channelId]);
 
-return (
+  // uploads playlist id = "UU" + channel id sem "UC"
+  const uploadsPlaylist = "UU" + channelId.slice(2);
+
+  return (
     <section className="min-w-0 rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_8px_26px_rgba(0,0,0,.35)] bg-black">
       <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
         {vid ? (
           <iframe
             title={vid.title}
             src={`https://www.youtube-nocookie.com/embed/${vid.id}`}
+            className="absolute inset-0 h-full w-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+            loading="lazy"
+          />
+        ) : failed ? (
+          <iframe
+            title="Uploads"
+            src={`https://www.youtube-nocookie.com/embed?listType=playlist&list=${uploadsPlaylist}`}
             className="absolute inset-0 h-full w-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
@@ -665,6 +688,7 @@ return (
     </section>
   );
 }
+
 
 /* Twitter (bird) */
 function TwitterIcon(props: React.SVGProps<SVGSVGElement>) {
