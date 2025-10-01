@@ -397,51 +397,72 @@ function Sidebar({ onOpenStream, onOpenBetify, onGoHome }: { onOpenStream: () =>
         {/* Redes */}
         <footer className="pt-4 border-t border-white/10">
   <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">{t.social.title}</div>
+<ul className="grid grid-cols-2 md:grid-cols-2 gap-x-5 gap-y-3 text-sm">
+  {/* 1. Twitch */}
+  <li>
+    <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <TwitchIcon className="h-5 w-5" />
+      Twitch
+    </a>
+  </li>
 
-          <ul className="grid grid-cols-2 md:grid-cols-2 gap-x-5 gap-y-3 text-sm">
-            <li>
-              <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-                <Youtube className="h-5 w-5" />
-                Youtube
-              </a>
-            </li>
-            <li>
-              <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-                <Instagram className="h-5 w-5" />
-                Instagram
-              </a>
-            </li>
-            <li>
-              <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-                <TwitchIcon className="h-5 w-5" />
-                Twitch
-              </a>
-            </li>
-            <li>
-              <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-                <Send className="h-5 w-5" />
-                Telegram
-              </a>
-            </li>
-            <li>
-              <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-                <TikTokIcon className="h-5 w-5" />
-                TikTok
-              </a>
-            </li>
-            <li>
-              <a href={SOCIAL_LINKS.tiktokValorant} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-                <TikTokIcon className="h-5 w-5" />
-                TikTok2
-              </a>
-            </li>
-            <li className="col-span-2">
-              <a href={SOCIAL_LINKS.x} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-                <TwitterIcon className="h-5 w-5" />
-                Twitter
-              </a>
-            </li>
-          </ul>
+  {/* 2. Instagram */}
+  <li>
+    <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <Instagram className="h-5 w-5" />
+      Instagram
+    </a>
+  </li>
+
+  {/* 3. TikTok 1 */}
+  <li>
+    <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <TikTokIcon className="h-5 w-5" />
+      TikTok
+    </a>
+  </li>
+
+  {/* 4. TikTok 2 */}
+  <li>
+    <a href={SOCIAL_LINKS.tiktokValorant} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <TikTokIcon className="h-5 w-5" />
+      TikTok2
+    </a>
+  </li>
+
+  {/* 5. Telegram */}
+  <li>
+    <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <Send className="h-5 w-5" />
+      Telegram
+    </a>
+  </li>
+
+  {/* 6. Discord (novo) */}
+  <li>
+    <a href={SOCIAL_LINKS.discord} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <DiscordIconImg />
+      Discord
+    </a>
+  </li>
+
+  {/* 7. YouTube */}
+  <li>
+    <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <Youtube className="h-5 w-5" />
+      Youtube
+    </a>
+  </li>
+
+  {/* 8. Twitter / X */}
+  <li>
+    <a href={SOCIAL_LINKS.x} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+      <TwitterIcon className="h-5 w-5" />
+      Twitter
+    </a>
+  </li>
+</ul>
+
 
           <div className="mt-3 text-center text-[12px] text-white/55">
             Copyright © {new Date().getFullYear()} K0MPA
@@ -470,6 +491,21 @@ function TagBadge({ tag, inline=false, className="", style, accent }: { tag: Bra
 }
 
 /* ---------- Payment logos ---------- */
+// Discord (usa o SVG oficial via URL)
+function DiscordIconImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
+  return (
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/9/98/Discord_logo.svg"
+      alt="Discord"
+      {...props}
+      className={cn("h-5 w-5 object-contain", props.className)}
+      draggable={false}
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
 function PaymentIcon({ type }: { type: PaymentType }) {
   const src = PAYMENT_ICON_URLS[type];
   const alt = type === "btc" ? "Bitcoin" : type === "mbw" ? "MB WAY" : type === "mb" ? "Multibanco" : type === "visa" ? "VISA" : "Mastercard";
