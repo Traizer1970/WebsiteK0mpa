@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState, createContext, useContext } from "react";
 import { createPortal } from "react-dom";
 import {
-  Search, ChevronRight, Gift, Store, Users, Tv,
+  ChevronRight, Gift, Store, Users, Tv,
   TrendingUp, Youtube, Instagram, Twitch as TwitchIcon, Send, Coins, Percent, Copy,
   Sparkles, Flame, Crown, ArrowLeft, ExternalLink
 } from "lucide-react";
@@ -316,14 +316,7 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   )}
 </div>
 
-
-          <div className="relative hidden flex-1 md:flex">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60" />
-            <input
-              type="search" placeholder={t.search}
-              className="h-9 w-full rounded-lg bg-transparent pl-9 pr-3 text-sm text-white placeholder:text-white/55 ring-1 ring-white/15 transition focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-500 outline-none"
-            />
-          </div>
+<div className="flex-1" />
 
           <div className="ml-auto">
             <LanguageToggle lang={lang} onChange={setLang} />
