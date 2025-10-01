@@ -40,13 +40,13 @@ const betifyPromos: Promo[] = [
 /* links das redes */
 const SOCIAL_LINKS = {
   youtube:  "https://youtube.com/@k0mpa",
-  instagram:"https://instagram.com/k0mpa",
+  instagram:"https://www.instagram.com/k0mpa_",
   twitch:   "https://twitch.tv/k0mpa",
-  telegram: "https://t.me/k0mpa",
-  discord:  "https://discord.gg/k0mpa",
-  tiktok:        "https://www.tiktok.com/@k0mpa",
+  telegram: "https://t.me/+L7INF90tYokwMDY0",
+  discord:  "https://discord.gg/JMe6xxU",
+  tiktok:        "https://www.tiktok.com/@k0mpa_",
   tiktokValorant:"https://www.tiktok.com/@k0mpavalorant",
-  x:             "https://x.com/k0mpa",
+  x:             "https://x.com/k0mpafps",
   instantGaming: "https://www.instant-gaming.com/en/?igr=k0mpa",
 } as const;
 
@@ -779,14 +779,37 @@ function BrandCard({ b }: { b: Brand }) {
               </div>
             </div>
 
-            <div className="mt-4">
-              <div className="grid grid-cols-2 items-stretch gap-3">
-                <Button className="h-11 rounded-2xl bg-white/8 ring-1 ring-white/12 hover:bg-white/12 text-sm text-white" onClick={()=>setFlip(false)}>{t.card.back}</Button>
-                <a href={b.link} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center justify-center rounded-2xl px-4 text-sm font-semibold text-white transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background:`linear-gradient(135deg, ${acc}, ${rgba(acc,0.85)})`, boxShadow:`0 8px 20px ${rgba(acc,0.35)}` }}>
-                  {t.card.visit}
-                </a>
-              </div>
-            </div>
+            <div className="mt-5">
+  {/* 1 coluna no mobile, lado-a-lado em ≥sm */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    {/* Secundário / voltar — mesmo height e raio */}
+    <button
+      type="button"
+      onClick={() => setFlip(false)}
+      className="h-12 rounded-2xl px-4 text-sm font-semibold text-white/90 bg-white/5 hover:bg-white/10 ring-1 ring-white/12
+                 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
+    >
+      {t.card.back}
+    </button>
+
+    {/* Primário / visitar — mesmo height e raio */}
+    <a
+      href={b.link}
+      target="_blank"
+      rel="noreferrer"
+      className="h-12 inline-flex items-center justify-center rounded-2xl px-5 text-sm font-extrabold text-white
+                 ring-1 ring-white/10 transition hover:brightness-110 focus:outline-none focus-visible:outline-none
+                 focus:ring-2 focus:ring-rose-400/60"
+      style={{
+        background: `linear-gradient(135deg, ${acc}, ${rgba(acc, 0.88)})`,
+        boxShadow: `0 10px 24px ${rgba(acc, 0.30)}`
+      }}
+    >
+      {t.card.visit}
+    </a>
+  </div>
+</div>
+
 
             <div className="pointer-events-none absolute inset-0 -z-10 rounded-3xl opacity-60 blur-2xl" style={{ background:`radial-gradient(80% 60% at 10% 0%, ${rgba(acc,0.13)} 0%, transparent 60%)` }} />
           </div>
