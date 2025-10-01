@@ -707,16 +707,6 @@ function StatTile({ icon: Icon, label, value, accent }: { icon: React.ElementTyp
     </div>
   );
 }
-function BrandPill({ logo, name }: { logo?: string; name: string }) {
-  return (
-    <div className="absolute left-1/2 -translate-x-1/2 top-3 z-30">
-      <div className="inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 ring-1 ring-black/10 shadow-md">
-        {logo ? <img src={logo} alt={name} className="h-5 w-5 rounded-sm object-contain" /> : null}
-        <span className="text-sm font-bold text-slate-900">{name}</span>
-      </div>
-    </div>
-  );
-}
 function BrandCard({ b }: { b: Brand }) {
   const { t } = useLang();
   const [flip, setFlip] = useState(false);
@@ -731,7 +721,6 @@ function BrandCard({ b }: { b: Brand }) {
       <div className="absolute inset-0 transition-transform duration-500" style={{ transformStyle:"preserve-3d", transform: flip ? "rotateY(180deg)" : "none" }}>
         {/* FRONT */}
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
-          <BrandPill logo={b.logo} name={b.name} />
           <TagBadge tag={b.tag} accent={acc} />
           <div className="absolute inset-0 overflow-hidden rounded-3xl">
             <img src={b.image} alt={b.name} className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: b.imagePos ?? "center" }} />
