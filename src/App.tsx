@@ -1205,7 +1205,6 @@ function BackgroundLayer() {
     </div>
   );
 }
-
 /* ---------- Root ---------- */
 type Route = "home" | "betify";
 
