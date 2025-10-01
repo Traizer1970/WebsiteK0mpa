@@ -27,33 +27,15 @@ const TWITCH_PURPLE = "#9146FF";
 
 /* ---------- Betify: duas promoções ---------- */
 type Promo = {
-  id: string;
+  id: "every-dep" | "fs-monthly";
   icon: React.ElementType;
-  title: string;
-  blurb: string;
-  highlight: string;
   code?: string;
   href: string;
 };
 
 const betifyPromos: Promo[] = [
-  {
-    id: "every-dep",
-    icon: Percent,
-    title: "Bónus em todos os depósitos",
-    blurb: "Recebe bónus extra sempre que depositares usando o meu código.",
-    highlight: "5% em Every Dep.",
-    code: "K0MPA",
-    href: BETIFY_PROMO_URL,
-  },
-  {
-    id: "fs-monthly",
-    icon: Sparkles,
-    title: "Campanhas e Free Spins",
-    blurb: "Campanhas mensais com giros grátis nas melhores slots.",
-    highlight: "Até 100FS",
-    href: BETIFY_PROMO_URL,
-  },
+  { id: "every-dep", icon: Percent, code: "K0MPA", href: BETIFY_PROMO_URL },
+  { id: "fs-monthly", icon: Sparkles, href: BETIFY_PROMO_URL },
 ];
 
 /* links das redes */
@@ -139,95 +121,109 @@ type Lang = "PT" | "EN";
 type Translations = {
   brand: string; search: string;
   nav: { menu: string; casinos: string; offers: string; betify: string; shop: string; community: string; slots: string; stream: string; minigames: string; new: string; };
-  promo: {
-    lootbox: string; everyDep: string; bonus: string; giveaways: string; monthly: string; depcode: string; claim: string;
-    /* NOVO: títulos/descrições das promos Betify + highlights */
-    titles: { everyDep: string; fsMonthly: string; };
-    blurbs: { everyDep: string; fsMonthly: string; };
-    highlights: { everyDep: string; fsMonthly: string; };
-  };
+  promo: { lootbox: string; everyDep: string; bonus: string; giveaways: string; monthly: string; depcode: string; claim: string; };
   card: { min: string; bonus: string; cashback: string; spins: string; code: string; terms: string; showMore: string; back: string; moreInfo: string; visit: string; go: string; copy: string; };
   social: { title: string; youtube: string; instagram: string; twitch: string; telegram: string; tiktok: string; tiktok_val: string; x: string; copyright: (y:number)=>string; };
   footer: { terms: string; privacy: string; cookies: string; rg_paragraph: string; rg_site: string; };
-  /* NOVO: secção Betify + “Últimos vídeos” */
+
+  /* NOVO */
+  latestVideos: string;
+
   betify: {
     title: string; subtitle: string;
     steps: { one: string; two_prefix: string; two_code: string; two_suffix: string; three: string; };
     cta_signup: string; cta_promos: string; promo_label: string;
+    promos: {
+      "every-dep": { title: string; blurb: string; highlight: string; };
+      "fs-monthly": { title: string; blurb: string; highlight: string; };
+    };
   };
-  latestVideos: string;
 };
+
 
 const messages: Record<Lang, Translations> = {
   PT: {
-    brand: "K0MPA",
-    search: "Pesquisar…",
+    brand: "K0MPA", search: "Pesquisar…",
     nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
-
-    promo:{
-      lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus",
-      titles: { everyDep: "Bónus em todos os depósitos", fsMonthly: "Campanhas e Free Spins" },
-      blurbs: {
-        everyDep: "Recebe bónus extra sempre que depositares usando o meu código.",
-        fsMonthly: "Campanhas mensais com giros grátis nas melhores slots."
-      },
-      highlights: { everyDep: "5% em Every Dep.", fsMonthly: "Até 100FS" }
-    },
-
+    promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
     card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
-
     social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
-
     footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
              rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
-             rg_site:"BeGambleAware.org" },
+             rg_site:"BeGambleAware.org" },latestVideos: "Últimos vídeos",
 
-    betify:{
-      title:"Betify",
-      subtitle:"Como jogar na Betify e desbloquear o melhor VIP",
-      steps:{ one:"Cria conta na Betify.", two_prefix:"Usa o código", two_code:"K0MPA", two_suffix:"no registo.", three:"Aproveita promoções, cashback e free spins." },
-      cta_signup:"REGISTAR AGORA", cta_promos:"VER PROMOÇÕES", promo_label:"Promo"
-    },
 
-    latestVideos: "Últimos vídeos"
+    betify: {
+      title: "Betify",
+      subtitle: "Como jogar na Betify e desbloquear o melhor VIP",
+      steps: {
+        one: "Cria conta na Betify.",
+        two_prefix: "Usa o código",
+        two_code: "K0MPA",
+        two_suffix: "no registo.",
+        three: "Aproveita promoções, cashback e free spins."
+      },
+      cta_signup: "REGISTAR AGORA",
+      cta_promos: "VER PROMOÇÕES",
+      promo_label: "Promo",
+      promos: {
+        "every-dep": {
+          title: "Bónus em todos os depósitos",
+          blurb: "Recebe bónus extra sempre que depositares usando o meu código.",
+          highlight: "5% em Every Dep."
+        },
+        "fs-monthly": {
+          title: "Campanhas e Free Spins",
+          /* 👉 texto exato que pediste */
+          blurb:
+            "Betify (Depósito Mínimo 20€ — 40FS sem wager na Shaolin Panda); Betify (Depósito 50€ — 100FS sem wager na Shaolin Panda).",
+          highlight: "Até 100FS"
+        }
+      }
+    }
   },
 
   EN: {
-    brand:"K0MPA",
-    search:"Search…",
+    brand:"K0MPA", search:"Search…",
     nav:{ menu:"Menu", casinos:"Casinos", offers:"Offers", betify:"Betify", shop:"Shop", community:"Community", slots:"Slots", stream:"Stream", minigames:"Mini Games", new:"NEW" },
-
-    promo:{
-      lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus",
-      titles: { everyDep: "Bonus on every deposit", fsMonthly: "Campaigns & Free Spins" },
-      blurbs: {
-        everyDep: "Get extra bonus whenever you deposit using my code.",
-        fsMonthly: "Monthly campaigns with free spins on the best slots."
-      },
-      highlights: { everyDep: "5% on Every Dep.", fsMonthly: "Up to 100FS" }
-    },
-
+    promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
     card:{ min:"Min. Dep.", bonus:"Bonus", cashback:"Cashback", spins:"Free Spins", code:"Code:", terms:"+18 | T&C apply", showMore:"More", back:"Back", moreInfo:"More information", visit:"Visit brand", go:"CLAIM BONUS", copy:"Copy" },
-
     social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
-
     footer:{ terms:"Terms & Conditions", privacy:"Privacy Policy", cookies:"Cookie Policy",
              rg_paragraph:"18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
-             rg_site:"BeGambleAware.org" },
+             rg_site:"BeGambleAware.org" },latestVideos: "Latest videos",
 
-    betify:{
-      title:"Betify",
-      subtitle:"How to play on Betify and unlock the best VIP",
-      steps:{ one:"Create an account on Betify.", two_prefix:"Use the code", two_code:"K0MPA", two_suffix:"during signup.", three:"Enjoy promotions, cashback and free spins." },
-      cta_signup:"SIGN UP NOW", cta_promos:"SEE PROMOTIONS", promo_label:"Promo"
-    },
 
-    latestVideos: "Latest videos"
+    betify: {
+      title: "Betify",
+      subtitle: "How to play on Betify and unlock the best VIP",
+      steps: {
+        one: "Create an account on Betify.",
+        two_prefix: "Use the code",
+        two_code: "K0MPA",
+        two_suffix: "during signup.",
+        three: "Enjoy promotions, cashback and free spins."
+      },
+      cta_signup: "SIGN UP NOW",
+      /* este botão vai rolar para as promos na mesma página */
+      cta_promos: "SEE PROMOTIONS",
+      promo_label: "Promo",
+      promos: {
+        "every-dep": {
+          title: "Bonus on every deposit",
+          blurb: "Get extra bonus whenever you deposit using my code.",
+          highlight: "5% on Every Dep."
+        },
+        "fs-monthly": {
+          title: "Campaigns & Free Spins",
+          blurb:
+            "Betify (Min. deposit €20 — 40FS no wager on Shaolin Panda); Betify (Deposit €50 — 100FS no wager on Shaolin Panda).",
+          highlight: "Up to 100FS"
+        }
+      }
+    }
   }
-};
-
-
-const LangCtx = createContext<{lang:Lang; setLang:(l:Lang)=>void; t:Translations}>({lang:"PT", setLang:()=>{}, t:messages.PT});
+};const LangCtx = createContext<{lang:Lang; setLang:(l:Lang)=>void; t:Translations}>({lang:"PT", setLang:()=>{}, t:messages.PT});
 function useLang(){ return useContext(LangCtx); }
 
 /* ---------- Data ---------- */
@@ -817,6 +813,7 @@ function BrandCard({ b }: { b: Brand }) {
 }
 function PromoCard({ p }: { p: Promo }) {
   const { t } = useLang();
+  const copy = t.betify.promos[p.id]; // títulos/descrição/localização
   return (
     <div className="rounded-3xl p-5 sm:p-6 ring-1 ring-white/12 text-white/90 bg-white/[.06] backdrop-blur-md shadow-[0_14px_50px_rgba(0,0,0,.35)] relative overflow-hidden">
       <span aria-hidden className="absolute inset-x-4 top-0 h-[3px] rounded-b-xl" style={{background:"linear-gradient(90deg,#22c55e,transparent)"}}/>
@@ -826,13 +823,13 @@ function PromoCard({ p }: { p: Promo }) {
         </span>
         <div className="flex-1">
           <div className="text-xs font-semibold text-white/60 uppercase">{t.betify.promo_label}</div>
-          <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">{p.title}</h3>
-          <div className="mt-1.5 text-[13px] text-white/75">{p.blurb}</div>
+          <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">{copy.title}</h3>
+          <div className="mt-1.5 text-[13px] text-white/75">{copy.blurb}</div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-[auto,1fr] sm:items-center">
             <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
               <Sparkles className="h-4 w-4" />
-              <span className="text-sm font-extrabold text-white">{p.highlight}</span>
+              <span className="text-sm font-extrabold text-white">{copy.highlight}</span>
             </div>
 
             {p.code ? (
@@ -869,44 +866,30 @@ function PromoCard({ p }: { p: Promo }) {
   );
 }
 
-
 /* ---------- Página Betify ---------- */
 function BetifyLanding({ onBack }: { onBack: () => void }) {
   const { t } = useLang();
 
-  // Constrói as promos já localizadas a partir do i18n
-  const localizedPromos: Promo[] = [
-    {
-      id: "every-dep",
-      icon: Percent,
-      title: t.promo.titles.everyDep,
-      blurb: t.promo.blurbs.everyDep,
-      highlight: t.promo.highlights.everyDep,
-      code: "K0MPA",
-      href: BETIFY_PROMO_URL,
-    },
-    {
-      id: "fs-monthly",
-      icon: Sparkles,
-      title: t.promo.titles.fsMonthly,
-      blurb: t.promo.blurbs.fsMonthly,
-      highlight: t.promo.highlights.fsMonthly,
-      href: BETIFY_PROMO_URL,
-    },
-  ];
+  const scrollToPromos = () =>
+    document.getElementById("betify-promos")?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   return (
     <div className="space-y-8">
-      <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
-        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background:
-          "radial-gradient(60% 80% at 10% 0%, rgba(139,92,246,.18) 0%, rgba(139,92,246,0) 55%)," +
-          "radial-gradient(50% 60% at 85% 100%, rgba(34,197,94,.16) 0%, rgba(34,197,94,0) 60%)",
-          mixBlendMode: "screen" }} />
+      {/* Hero */}
+      <section
+        className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]"
+      >
+        {/* glow/pattern */}
+        <div aria-hidden className="pointer-events-none absolute inset-0"
+             style={{background:
+               "radial-gradient(60% 80% at 10% 0%, rgba(139,92,246,.18) 0%, rgba(139,92,246,0) 55%)," +
+               "radial-gradient(50% 60% at 85% 100%, rgba(34,197,94,.16) 0%, rgba(34,197,94,0) 60%)",
+               mixBlendMode:"screen"}} />
         <div aria-hidden className="absolute inset-0 opacity-[.06] bg-[url('data:image/svg+xml;utf8,\
-<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 32 32\\' fill=\\'none\\'>\
-<path d=\\'M0 31h32M0 15h32\\' stroke=\\'#fff\\' stroke-opacity=\\'.6\\'/>\
-<path d=\\'M1 0v32M17 0v32\\' stroke=\\'#fff\\' stroke-opacity=\\'.4\\'/>\
-</svg>')]" />
+          <svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 32 32\\' fill=\\'none\\'>\
+          <path d=\\'M0 31h32M0 15h32\\' stroke=\\'#fff\\' stroke-opacity=\\'.6\\'/>\
+          <path d=\\'M1 0v32M17 0v32\\' stroke=\\'#fff\\' stroke-opacity=\\'.4\\'/>\
+          </svg>')]" />
 
         {/* header hero */}
         <div className="flex items-center justify-between gap-4 relative">
@@ -919,7 +902,7 @@ function BetifyLanding({ onBack }: { onBack: () => void }) {
         </div>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
-          {/* bloco steps */}
+          {/* steps */}
           <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
             <div className="text-lg font-extrabold mb-3">
               {t.betify.steps.two_prefix} <span className="text-emerald-300">{t.betify.steps.two_code}</span>
@@ -931,35 +914,46 @@ function BetifyLanding({ onBack }: { onBack: () => void }) {
             </ol>
 
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <a href={BETIFY_SIGNUP_URL} target="_blank" rel="noreferrer"
-                 className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 shadow-[0_10px_26px_rgba(34,197,94,.25)] hover:brightness-110 transition bg-[linear-gradient(180deg,#22c55e,#16a34a)]">
+              <a
+                href={BETIFY_SIGNUP_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 shadow-[0_10px_26px_rgba(34,197,94,.25)] hover:brightness-110 transition bg-[linear-gradient(180deg,#22c55e,#16a34a)]"
+              >
                 {t.betify.cta_signup} <ExternalLink className="h-4 w-4" />
               </a>
-              <a href={BETIFY_PROMO_URL} target="_blank" rel="noreferrer"
-                 className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/8 hover:bg-white/12 ring-1 ring-white/15">
+
+              {/* 👉 agora rola para a secção de promos */}
+              <button
+                type="button"
+                onClick={scrollToPromos}
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/8 hover:bg-white/12 ring-1 ring-white/15"
+              >
                 {t.betify.cta_promos}
-              </a>
+              </button>
             </div>
           </div>
 
           {/* visual */}
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
-              <img src="https://altacdn.com/bf/img/sliders/ca/150746_bf_website_banner_wsb.webp" alt="Betify preview" className="absolute inset-0 h-full w-full object-cover" />
+              <img
+                src="https://altacdn.com/bf/img/sliders/ca/150746_bf_website_banner_wsb.webp"
+                alt="Betify preview"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
             </div>
           </div>
         </div>
 
-        {/* promos (localizadas) */}
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {localizedPromos.map((p) => (<PromoCard key={p.id} p={p} />))}
+        {/* promos */}
+        <div id="betify-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
+          {betifyPromos.map((p) => (<PromoCard key={p.id} p={p} />))}
         </div>
       </section>
     </div>
   );
 }
-
-
 
 /* ---------- Footer ---------- */
 function Footer() {
