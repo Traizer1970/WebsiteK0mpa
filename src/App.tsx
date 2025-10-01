@@ -235,7 +235,7 @@ const brands: Brand[] = [
     tag:"HOT",
     logo:"https://www.ce-at.fr/img/logo.webp",
     image:"https://betify.org/wp-content/uploads/2025/02/betify-app-login.webp",
-    imagePos:"center -140px",
+    imagePos:"center",
     minDep:"20€", bonus:"100%", cashback:"Até 20%", freeSpins:"Até 100FS", code:"K0MPA", link: BETIFY_PROMO_URL,
     theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
     payments:["btc","mb","mbb","visa","mc"]
