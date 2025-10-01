@@ -632,7 +632,7 @@ function YouTubeLastMini({ channelId }: { channelId: string }) {
   const [vid, setVid] = React.useState<{ id: string; title: string } | null>(null);
   const [failed, setFailed] = React.useState(false);
   const isShorts = (s: string) => /\bshorts\b|#shorts/i.test(s);
-  
+
 React.useEffect(() => {
   let cancelled = false;
   const url = `https://r.jina.ai/http://www.youtube.com/channel/${encodeURIComponent(channelId)}/videos`;
@@ -702,119 +702,6 @@ function TwitterIcon(props: React.SVGProps<SVGSVGElement>) {
         d="M23 4.8c-.8.4-1.7.7-2.6.8a4.55 4.55 0 0 0 2-2.5 9.06 9.06 0 0 1-2.9 1.1 4.51 4.51 0 0 0-7.8 4.1A12.8 12.8 0 0 1 3 3.6a4.5 4.5 0 0 0 1.4 6 4.48 4.48 0 0 1-2-.6v.1a4.52 4.52 0 0 0 3.6 4.4c-.5.1-1 .2-1.6.1.4 1.3 1.7 2.3 3.3 2.3A9.05 9.05 0 0 1 2 19.5a12.77 12.77 0 0 0 6.9 2c8.3 0 12.9-6.9 12.6-13 0-.2 0-.4 0-.6A9.12 9.12 0 0 0 23 4.8z"
       />
     </svg>
-  );
-}
-
-/* ---------- YouTube GRID (só vídeos, ignora shorts) ---------- */
-type YtItem = { id: string; title: string; thumb: string };
-
-function YouTubeGrid({ channelId, limit = 8, hero = true }: { channelId: string; limit?: number; hero?: boolean }) {
-  const { t } = useLang();
-  const [items, setItems] = useState<YtItem[] | null>(null);
-  const [failed, setFailed] = useState(false);
-  const isShorts = (s: string) => /\bshorts\b|#shorts/i.test(s);
-
-  useEffect(() => {
-    if (!channelId) return;
-    const url = `https://r.jina.ai/http://www.youtube.com/channel/${encodeURIComponent(channelId)}/videos`;
-    (async () => {
-      try {
-        const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) throw new Error(String(res.status));
-        const html = await res.text();
-const re = /href="\/watch\?v=([a-zA-Z0-9_-]{11})"[^>]*\s+title="([^"]+)"/g;
-const seen = new Set<string>();
-const list: YtItem[] = [];
-let m: RegExpExecArray | null;
-        while ((m = re.exec(html)) && list.length < limit + 4) {
-  const id = m[1];
-  const title = m[2];
-  if (seen.has(id)) continue;
-  if (isShorts(title)) continue;            // ⬅️ ignora Shorts
-  seen.add(id);
-  list.push({ id, title, thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg` });
-}
-        if (list.length === 0) throw new Error("no videos parsed");
-        setItems(list.slice(0, limit));
-        setFailed(false);
-      } catch {
-        setItems([]);
-        setFailed(true);
-      }
-    })();
-  }, [channelId, limit]);
-
-  const last = items?.[0];
-
-  return (
-    <section className="space-y-3">
-      <h2 className="text-white/90 text-base font-bold">{t.latestVideos}</h2>
-
-      {items === null && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 opacity-60">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="aspect-video rounded-xl bg-white/10 animate-pulse" />
-          ))}
-        </div>
-      )}
-
-{!!items && items.length > 0 && (
-  <>
-    {hero && last && (
-      <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
-        <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-          <iframe
-            title={last.title || "Último vídeo"}
-            src={`https://www.youtube-nocookie.com/embed/${last.id}`}
-            className="absolute inset-0 h-full w-full border-0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-            loading="lazy"
-          />
-        </div>
-      </div>
-    )}
-
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {(hero ? items.slice(1) : items).map((v) => (
-              <a
-                key={v.id}
-                href={`https://www.youtube.com/watch?v=${v.id}`}
-                target="_blank"
-                rel="noreferrer"
-                className="group rounded-xl overflow-hidden ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition block"
-                title={v.title}
-              >
-                <div className="relative aspect-video bg-black">
-                  <img src={v.thumb} alt={v.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
-                </div>
-                <div className="p-3">
-                  <div className="line-clamp-2 text-sm font-semibold text-white/90 group-hover:text-white">{v.title}</div>
-                  <div className="mt-1 text-[11px] text-white/60">YouTube</div>
-                </div>
-              </a>
-            ))}
-          </div>
-        </>
-      )}
-
-      {!!items && items.length === 0 && failed && (
-        <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
-          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-            <iframe
-              title="Uploads"
-              src={`https://www.youtube-nocookie.com/embed?listType=playlist&list=${"UU" + channelId.slice(2)}`}
-              className="absolute inset-0 h-full w-full border-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-              loading="lazy"
-            />
-          </div>
-        </div>
-      )}
-    </section>
   );
 }
 
@@ -1245,9 +1132,6 @@ export default function CasinoPartnerHub() {
         <TwitchEmbedMini channel={TWITCH_CHANNEL} />
         <YouTubeLastMini channelId={YT_CHANNEL_ID} />
       </div>
-
-      {/* 3) LISTA DE VÍDEOS (sem hero grande para não repetir) */}
-      <YouTubeGrid channelId={YT_CHANNEL_ID} limit={8} hero={false} />
     </>
   ) : (
     <BetifyLanding onBack={() => setRoute("home")} />
