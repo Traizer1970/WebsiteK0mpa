@@ -302,7 +302,7 @@ function Sidebar({ onOpenStream, onOpenBetify, onGoHome }: { onOpenStream: () =>
 >
   <span className="flex items-center gap-2">
     <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
-    <span className="font-extrabold text-emerald-400">Betify</span>
+    <span className="font-extrabold text-white">Betify</span>
   </span>
 
   {/* badge estilo NOVO, mas verde e com o texto PROMO */}
