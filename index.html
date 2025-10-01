@@ -1,41 +1,63 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>K0MPA WEBSITE</title>
 
-    <!-- Google Fonts: Asimovian -->
+    <!-- Google Fonts: Asimovian (só para .brand-font) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Se tiveres pesos diferentes, podes usar :wght@400;700 -->
-    <link href="https://fonts.googleapis.com/css2?family=Asimovian&display=swap" rel="stylesheet">
-<style>
-  html, body, #root { min-height: 100%; }
-  body { position: relative; background: transparent; }
-
-  /* ÚNICA camada de fundo */
-  body::before{
-    content:"";
-    position:fixed;
-    z-index:-1;
-    /* bleed extra para nunca cortar (mesmo com zoom) */
-    inset:-30vh -12vw -30vh -12vw;
-    background:
-      /* radiais que tinhas no React */
-      radial-gradient(60% 40% at 15% 5%, rgba(244,63,94,.28) 0%, rgba(244,63,94,0) 70%),
-      radial-gradient(55% 45% at 85% 95%, rgba(244,63,94,.22) 0%, rgba(244,63,94,0) 75%),
-      /* gradiente base */
-      linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%);
-    pointer-events:none;
-  }
-</style>
-
+    <link
+      href="https://fonts.googleapis.com/css2?family=Asimovian:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
+
+  <style>
+    /* ---------- Fundo global (não corta no footer) ---------- */
+    :root {
+      --bg-a: #14070a;
+      --bg-b: #10060a;
+      --bg-c: #0b0507;
+    }
+
+    html {
+      min-height: 100%;
+      background-color: var(--bg-c); /* fallback */
+      background-image: linear-gradient(180deg, var(--bg-a) 0%, var(--bg-b) 45%, var(--bg-c) 100%);
+      background-attachment: fixed;  /* fixa o gradiente ao viewport */
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    /* o body e o #root não sobrepõem o fundo */
+    html, body, #root { min-height: 100%; }
+    body {
+      margin: 0;
+      background: transparent;
+      color: #fff;
+      font-family:
+        system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell,
+        "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    /* iOS/Safari: evita glitch do background-attachment: fixed */
+    @supports (-webkit-touch-callout: none) {
+      html { background-attachment: scroll; }
+    }
+
+    /* ---------- Fonte da marca apenas onde aplicado ---------- */
+    .brand-font {
+      font-family: "Asimovian", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-weight: 700; /* ajusta se quiseres */
+      letter-spacing: .5px; /* opcional */
+    }
+  </style>
 </html>

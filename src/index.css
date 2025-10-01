@@ -2,28 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Importa a fonte */
-@import url('https://fonts.googleapis.com/css2?family=Asimovian:wght@400;700&display=swap');
-
-/* Reset/base do app */
-:root {
-  --bg-a: #14070a;
-  --bg-b: #10060a;
-  --bg-c: #0b0507;
+/* ---------------- Base / Reset ---------------- */
+:root{
+  /* Cores do gradiente do fundo */
+  --bg-a:#14070a;
+  --bg-b:#10060a;
+  --bg-c:#0b0507;
 }
 
-/* Fonte global */
-html, body, #root {
-  height: 100%;
+html{
+  min-height:100%;
+  background-color:var(--bg-c); /* fallback */
+  background-image:linear-gradient(180deg,var(--bg-a) 0%,var(--bg-b) 45%,var(--bg-c) 100%);
+  background-attachment:fixed;   /* evita que “corte” ao fazer scroll */
+  background-repeat:no-repeat;
+  background-size:cover;
+
+  /* rendering mais suave do texto */
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
-body {
-  margin: 0;
-  font-family: 'Asimovian', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  background: linear-gradient(180deg, var(--bg-a) 0%, var(--bg-b) 45%, var(--bg-c) 100%);
+/* iOS/Safari: corrige bug com background-attachment: fixed */
+@supports (-webkit-touch-callout:none){
+  html{ background-attachment:scroll; }
 }
 
-/* classe usada no logo/marca */
-.brand-font {
-  font-family: 'Asimovian', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+html,body,#root{ min-height:100%; }
+
+body{
+  margin:0;
+  background:transparent;  /* deixa ver o gradiente do <html> */
+  color:#fff;
+  font-family:
+    system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Cantarell,
+    "Noto Sans","Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";
 }
+
+/* ---------------- Tipografia da marca ---------------- */
+/* Usa apenas onde queres a fonte Asimovian (ex.: logo) */
+.brand-font{
+  font-family:"Asimovian",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-weight:700;        /* ajusta ao teu gosto */
+  letter-spacing:.5px;    /* opcional */
+}
+
+/* ---------------- Pequenos utilitários opcionais ---------------- */
+a{ color:inherit; text-decoration:none; }
+img,video{ display:block; max-width:100%; height:auto; }
