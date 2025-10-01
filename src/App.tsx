@@ -1190,12 +1190,22 @@ function LanguageToggle({ lang, onChange }: { lang:"PT"|"EN"; onChange:(l:"PT"|"
 }
 
 /* ---------- Background ---------- */
+/* BackgroundLayer */
 function BackgroundLayer() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10">
+    <div
+      className="pointer-events-none fixed -z-10"
+      // dá bleed para não cortar em nenhum breakpoint
+      style={{
+        inset: "-30vh -12vw -30vh -12vw",
+        background: "linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%)",
+      }}
+    >
       <div
-        className="absolute inset-0"
+        aria-hidden
         style={{
+          position: "absolute",
+          inset: 0,
           background:
             "radial-gradient(60% 40% at 15% 5%, rgba(244,63,94,.28) 0%, rgba(244,63,94,0) 70%)," +
             "radial-gradient(55% 45% at 85% 95%, rgba(244,63,94,.22) 0%, rgba(244,63,94,0) 75%)",
@@ -1205,6 +1215,7 @@ function BackgroundLayer() {
     </div>
   );
 }
+
 /* ---------- Root ---------- */
 type Route = "home" | "betify";
 

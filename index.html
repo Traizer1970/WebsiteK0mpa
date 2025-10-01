@@ -6,35 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>K0MPA WEBSITE</title>
 
-    <!-- Google Fonts: Rock Salt -->
+    <!-- Google Fonts: Asimovian -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Se tiveres pesos diferentes, podes usar :wght@400;700 -->
     <link href="https://fonts.googleapis.com/css2?family=Asimovian&display=swap" rel="stylesheet">
+
+    <style>
+      /* Garante altura mínima de página */
+      html, body, #root { min-height: 100%; }
+
+      /* Deixa o body “transparente” e com posicionamento p/ o ::before */
+      body { position: relative; background: transparent; }
+
+      /*
+        Camada de fundo FIXA.
+        - "inset" negativo dá bleed extra para nunca cortar (mesmo com zoom).
+        - z-index -1 garante que fica atrás de tudo.
+      */
+      body::before {
+        content: "";
+        position: fixed;
+        z-index: -1;
+        inset: -30vh -12vw -30vh -12vw;  /* bleed generoso */
+        background:
+          linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%);
+        /* se quiseres, podes adicionar os teus radiais aqui por cima: 
+           , radial-gradient(60% 40% at 15% 5%, rgba(244,63,94,.28) 0%, rgba(244,63,94,0) 70%)
+           , radial-gradient(55% 45% at 85% 95%, rgba(244,63,94,.22) 0%, rgba(244,63,94,0) 75%)
+        */
+        pointer-events: none;
+      }
+
+      /* iOS: sem hacks de attachment; o ::before já resolve */
+    </style>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
-  <style>
-  /* Fundo base: cobre TODO o documento */
-  html {
-    min-height: 100%;
-    background-color: #0b0507; /* fallback */
-    background-image: linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%);
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-size: cover;
-  }
-
-  body, #root {
-    min-height: 100%;
-    background: transparent; /* não tapar o gradiente do html */
-  }
-
-  /* iOS: evita bug com background-attachment: fixed */
-  @supports (-webkit-touch-callout: none) {
-    html { background-attachment: scroll; }
-  }
-</style>
-
 </html>
