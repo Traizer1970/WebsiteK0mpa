@@ -29,12 +29,11 @@ const TWITCH_PURPLE = "#9146FF";
 type Promo = {
   id: "every-dep" | "fs-monthly";
   icon: React.ElementType;
-  code?: string;
   href: string;
 };
 
 const betifyPromos: Promo[] = [
-  { id: "every-dep", icon: Percent, code: "K0MPA", href: BETIFY_PROMO_URL },
+  { id: "every-dep", icon: Percent, href: BETIFY_PROMO_URL },
   { id: "fs-monthly", icon: Sparkles, href: BETIFY_PROMO_URL },
 ];
 
@@ -809,7 +808,8 @@ function BrandCard({ b }: { b: Brand }) {
 }
 function PromoCard({ p }: { p: Promo }) {
   const { t } = useLang();
-  const copy = t.betify.promos[p.id]; // títulos/descrição/localização
+  const copy = t.betify.promos[p.id];
+
   return (
     <div className="rounded-3xl p-5 sm:p-6 ring-1 ring-white/12 text-white/90 bg-white/[.06] backdrop-blur-md shadow-[0_14px_50px_rgba(0,0,0,.35)] relative overflow-hidden">
       <span aria-hidden className="absolute inset-x-4 top-0 h-[3px] rounded-b-xl" style={{background:"linear-gradient(90deg,#22c55e,transparent)"}}/>
@@ -822,26 +822,14 @@ function PromoCard({ p }: { p: Promo }) {
           <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">{copy.title}</h3>
           <div className="mt-1.5 text-[13px] text-white/75">{copy.blurb}</div>
 
-          <div className="mt-4 grid gap-3 sm:grid-cols-[auto,1fr] sm:items-center">
+          {/* destaque do benefício — sem quebra de linha */}
+          <div className="mt-4">
             <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
               <Sparkles className="h-4 w-4" />
-              <span className="text-sm font-extrabold text-white">{copy.highlight}</span>
+              <span className="text-sm font-extrabold text-white whitespace-nowrap">
+                {copy.highlight}
+              </span>
             </div>
-
-            {p.code ? (
-              <div className="grid grid-cols-[1fr,auto] gap-2">
-                <div className="h-10 rounded-xl bg-white/8 ring-1 ring-white/12 px-3 flex items-center text-sm">
-                  <span className="text-white/60 mr-2">{t.card.code}</span>
-                  <span className="font-bold tracking-wide">{p.code}</span>
-                </div>
-                <button
-                  onClick={async () => { try { await navigator.clipboard.writeText(p.code!); } catch {} }}
-                  className="h-10 inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/15 ring-1 ring-white/15 px-3 text-sm font-semibold"
-                >
-                  <Copy className="h-4 w-4" /> {t.card.copy}
-                </button>
-              </div>
-            ) : null}
           </div>
 
           <div className="mt-4 flex flex-wrap gap-3">
@@ -861,6 +849,7 @@ function PromoCard({ p }: { p: Promo }) {
     </div>
   );
 }
+
 
 /* ---------- Página Betify ---------- */
 function BetifyLanding({ onBack }: { onBack: () => void }) {
