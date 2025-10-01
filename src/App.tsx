@@ -235,7 +235,7 @@ const brands: Brand[] = [
     tag:"HOT",
     logo:"https://www.ce-at.fr/img/logo.webp",
     image:"https://betify.org/wp-content/uploads/2025/02/betify-app-login.webp",
-    imagePos:"left",
+    imagePos:"left 10px center",
     minDep:"20€", bonus:"100%", cashback:"Até 20%", freeSpins:"Até 100FS", code:"K0MPA", link: BETIFY_PROMO_URL,
     theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
     payments:["btc","mb","mbb","visa","mc"]
@@ -732,7 +732,7 @@ function BrandCard({ b }: { b: Brand }) {
             </div>
 
             <div className="absolute inset-x-4 bottom-4">
-              <div className="relative rounded-2xl bg-black/35 p-3 backdrop-blur-md ring-1 ring-white/10 overflow-visible">
+              <div className="relative rounded-2xl bg-black/35 p-4 backdrop-blur-md ring-1 ring-white/10 overflow-visible">
                 <PaymentRibbon methods={methods} />
                 <div className="pointer-events-none absolute left-6 right-6 -top-2 h-2 rounded-b-xl bg-gradient-to-b from-black/40 to-transparent" />
                 <div className="grid grid-cols-4 gap-2">
@@ -741,9 +741,13 @@ function BrandCard({ b }: { b: Brand }) {
                   <FancyStat icon={TrendingUp} label={t.card.cashback} value={b.cashback} accent={acc} />
                   <FancyStat icon={Sparkles} label={t.card.spins} value={b.freeSpins} accent={acc} />
                 </div>
-                <div className="pt-2 pb-1 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
-                <div className="pt-1"><FancyCTA href={b.link} label={t.card.go} accent={acc} /></div>
-              </div>
+                 <div className="py-2 text-[11px] font-semibold tracking-wide text-white/75 text-center">
+    {t.card.terms}
+  </div>
+  <div className="pt-1">
+    <FancyCTA href={b.link} label={t.card.go} accent={acc} />
+  </div>
+</div>
             </div>
           </div>
         </div>
@@ -779,26 +783,26 @@ function BrandCard({ b }: { b: Brand }) {
               </div>
             </div>
 
-            <div className="mt-5">
-  {/* 1 coluna no mobile, lado-a-lado em ≥sm */}
+<div className="mt-4">
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    {/* Secundário / voltar — mesmo height e raio */}
     <button
       type="button"
       onClick={() => setFlip(false)}
-      className="h-12 rounded-2xl px-4 text-sm font-semibold text-white/90 bg-white/5 hover:bg-white/10 ring-1 ring-white/12
-                 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
+      className="h-12 w-full rounded-2xl px-4 text-sm font-semibold
+                 text-white/90 bg-white/5 hover:bg-white/10
+                 ring-1 ring-white/12 focus:outline-none focus-visible:outline-none
+                 focus:ring-2 focus:ring-rose-400/60"
     >
       {t.card.back}
     </button>
 
-    {/* Primário / visitar — mesmo height e raio */}
     <a
       href={b.link}
       target="_blank"
       rel="noreferrer"
-      className="h-12 inline-flex items-center justify-center rounded-2xl px-5 text-sm font-extrabold text-white
-                 ring-1 ring-white/10 transition hover:brightness-110 focus:outline-none focus-visible:outline-none
+      className="h-12 w-full inline-flex items-center justify-center rounded-2xl px-5
+                 text-sm font-extrabold text-white ring-1 ring-white/10 transition
+                 hover:brightness-110 focus:outline-none focus-visible:outline-none
                  focus:ring-2 focus:ring-rose-400/60"
       style={{
         background: `linear-gradient(135deg, ${acc}, ${rgba(acc, 0.88)})`,
@@ -809,6 +813,7 @@ function BrandCard({ b }: { b: Brand }) {
     </a>
   </div>
 </div>
+
 
 
             <div className="pointer-events-none absolute inset-0 -z-10 rounded-3xl opacity-60 blur-2xl" style={{ background:`radial-gradient(80% 60% at 10% 0%, ${rgba(acc,0.13)} 0%, transparent 60%)` }} />
