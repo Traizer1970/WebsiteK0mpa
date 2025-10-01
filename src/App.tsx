@@ -633,57 +633,57 @@ function CommunityModal({ onClose }: { onClose: () => void }) {
 
   const content = (
     <div className="fixed inset-0 z-[9998] flex items-center justify-center" role="dialog" aria-modal="true">
-      {/* overlay: menos opaco */}
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onClick={onClose} />
+      {/* overlay: mais escuro */}
+      <div className="absolute inset-0 bg-black/55 backdrop-blur-[3px]" onClick={onClose} />
 
-      {/* card: vidro mais translúcido */}
-      <div className="relative mx-4 w-full max-w-xl rounded-3xl
-                      bg-white/6 backdrop-blur-md ring-1 ring-white/12
-                      text-white shadow-[0_18px_70px_rgba(0,0,0,.45)] p-6">
+      {/* card: vidro mais opaco */}
+      <div
+        className="relative mx-4 w-full max-w-xl rounded-3xl
+                   bg-white/14 backdrop-blur-lg ring-1 ring-white/20
+                   text-white shadow-[0_24px_90px_rgba(0,0,0,.55)] p-6"
+      >
         <div className="flex items-center justify-between">
-          <h3 className="text-2xl font-black">{t.nav.community}</h3>
+          <h3 className="text-2xl font-black text-white">{t.nav.community}</h3>
           <button
             onClick={onClose}
-            className="rounded-lg px-3 py-1.5 text-sm font-semibold bg-white/10 hover:bg-white/15
-                       ring-1 ring-white/15 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            className="rounded-lg px-3 py-1.5 text-sm font-semibold bg-white/15 hover:bg-white/20
+                       ring-1 ring-white/20 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
           >
             Fechar
           </button>
         </div>
 
-        <p className="mt-2 text-[15px] text-white/80">Escolhe onde queres entrar:</p>
+        <p className="mt-2 text-[15px] text-white/85">Escolhe onde queres entrar:</p>
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {/* Discord */}
           <a
             href={SOCIAL_LINKS.discord}
-            target="_blank"
-            rel="noreferrer"
-            className="group flex items-center gap-3 rounded-2xl bg-white/8 ring-1 ring-white/12
-                       px-4 py-4 hover:bg-white/12 transition"
+            target="_blank" rel="noreferrer"
+            className="group flex items-center gap-3 rounded-2xl bg-white/12 ring-1 ring-white/18
+                       px-4 py-4 hover:bg-white/16 transition"
           >
             <DiscordIcon className="h-6 w-6" />
             <div className="flex-1">
-              <div className="text-[15px] font-extrabold">Discord</div>
-              <div className="text-xs text-white/70">Chats, roles e anúncios</div>
+              <div className="text-[15px] font-extrabold text-white">Discord</div>
+              <div className="text-xs text-white/75">Chats, roles e anúncios</div>
             </div>
-            <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
+            <ExternalLink className="h-4 w-4 opacity-80 group-hover:opacity-100" />
           </a>
 
           {/* Telegram */}
           <a
             href={SOCIAL_LINKS.telegram}
-            target="_blank"
-            rel="noreferrer"
-            className="group flex items-center gap-3 rounded-2xl bg-white/8 ring-1 ring-white/12
-                       px-4 py-4 hover:bg-white/12 transition"
+            target="_blank" rel="noreferrer"
+            className="group flex items-center gap-3 rounded-2xl bg-white/12 ring-1 ring-white/18
+                       px-4 py-4 hover:bg-white/16 transition"
           >
             <Send className="h-6 w-6" />
             <div className="flex-1">
-              <div className="text-[15px] font-extrabold">Telegram</div>
-              <div className="text-xs text-white/70">Canal rápido de updates</div>
+              <div className="text-[15px] font-extrabold text-white">Telegram</div>
+              <div className="text-xs text-white/75">Canal rápido de updates</div>
             </div>
-            <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
+            <ExternalLink className="h-4 w-4 opacity-80 group-hover:opacity-100" />
           </a>
         </div>
       </div>
