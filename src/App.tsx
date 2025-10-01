@@ -13,7 +13,7 @@ const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 
 /* URLs Betify — troca para os teus links reais */
 const BETIFY_SIGNUP_URL = "https://betify.com/?ref=k0mpa";      // <- altera
-const BETIFY_PROMO_URL  = "https://discord.com/channels/740938200788369419/1347639454495412286/1366355614720327690";       // <- altera
+const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/";       // <- altera
 
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
