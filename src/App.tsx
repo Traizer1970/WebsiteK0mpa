@@ -331,11 +331,24 @@ function DiscordIcon(props: React.SVGProps<SVGSVGElement>) {
 
 
 /* ---------- Sidebar ---------- */
-function Sidebar({ onOpenStream, onOpenBetify, onGoHome }: { onOpenStream: () => void; onOpenBetify: () => void; onGoHome: () => void; }) {
+function Sidebar({
+  onOpenStream,
+  onOpenBetify,
+  onGoHome,
+  onOpenCommunity, // ⬅️ novo
+}: {
+  onOpenStream: () => void;
+  onOpenBetify: () => void;
+  onGoHome: () => void;
+  onOpenCommunity: () => void; // ⬅️ novo
+}) {
   const { t, lang } = useLang();
 
   return (
-    <aside className="hidden md:block w-[240px] mx-auto" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
+    <aside
+      className="hidden md:block w-[240px] mx-auto"
+      style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
+    >
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
         style={{ height: "calc(100vh - var(--sticky-top,112px) - 16px)", overflow: "auto" }}
@@ -357,28 +370,32 @@ function Sidebar({ onOpenStream, onOpenBetify, onGoHome }: { onOpenStream: () =>
                 <Gift className="h-4 w-4" />
                 {t.nav.offers}
               </span>
-              <Badge className="text-white" style={{ background: "#9146FF" }}>{t.nav.new}</Badge>
+              <Badge className="text-white" style={{ background: "#9146FF" }}>
+                {t.nav.new}
+              </Badge>
             </button>
 
-            {/* Botão Betify: só texto */}
-            {/* Betify com badge PROMO à direita (igual ao NOVO) */}
-<button
-  type="button"
-  onClick={onOpenBetify}
-  className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
->
-  <span className="flex items-center gap-2">
-    <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
-    <span className="font-extrabold text-white">{t.nav.betify}</span>
-  </span>
-  <Badge className="text-white" style={{ background: "#16a34a" }}>
-    {t.betify.promo_label}
-  </Badge>
-</button>
-
+            {/* Betify */}
+            <button
+              type="button"
+              onClick={onOpenBetify}
+              className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            >
+              <span className="flex items-center gap-2">
+                <span
+                  className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15"
+                  aria-hidden
+                />
+                <span className="font-extrabold text-white">{t.nav.betify}</span>
+              </span>
+              <Badge className="text-white" style={{ background: "#16a34a" }}>
+                {t.betify.promo_label}
+              </Badge>
+            </button>
 
             <div className="my-3 h-px bg-white/10" />
 
+            {/* Loja (disabled) */}
             <div
               className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/45 pointer-events-none select-none"
               aria-disabled="true"
@@ -386,21 +403,38 @@ function Sidebar({ onOpenStream, onOpenBetify, onGoHome }: { onOpenStream: () =>
             >
               <Store className="h-4 w-4 opacity-70" />
               <span>{t.nav.shop}</span>
-              <span className="ml-auto text-[10px] text-white/35">{lang === "PT" ? "em breve" : "coming soon"}</span>
+              <span className="ml-auto text-[10px] text-white/35">
+                {lang === "PT" ? "em breve" : "coming soon"}
+              </span>
             </div>
 
-            <a href={SOCIAL_LINKS.discord} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+            {/* Comunidade -> abre modal */}
+            <button
+              type="button"
+              onClick={onOpenCommunity}
+              className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            >
               <Users className="h-4 w-4" />
               <span>{t.nav.community}</span>
-            </a>
+            </button>
 
-            <button type="button" onClick={onOpenStream} className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+            {/* Stream (overlay) */}
+            <button
+              type="button"
+              onClick={onOpenStream}
+              className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            >
               <Tv className="h-4 w-4" />
               <span>{t.nav.stream}</span>
             </button>
 
             {/* Instant Gaming */}
-            <a href={SOCIAL_LINKS.instantGaming} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+            <a
+              href={SOCIAL_LINKS.instantGaming}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+            >
               <Sparkles className="h-4 w-4" />
               <span>Instant Gaming</span>
             </a>
@@ -411,74 +445,99 @@ function Sidebar({ onOpenStream, onOpenBetify, onGoHome }: { onOpenStream: () =>
 
         {/* Redes */}
         <footer className="pt-4 border-t border-white/10">
-  <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">{t.social.title}</div>
-<ul className="grid grid-cols-2 md:grid-cols-2 gap-x-5 gap-y-3 text-sm">
-  {/* 1. Twitch */}
-  <li>
-    <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <TwitchIcon className="h-5 w-5" />
-      Twitch
-    </a>
-  </li>
-
-  {/* 2. Instagram */}
-  <li>
-    <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <Instagram className="h-5 w-5" />
-      Instagram
-    </a>
-  </li>
-
-  {/* 3. TikTok 1 */}
-  <li>
-    <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <TikTokIcon className="h-5 w-5" />
-      TikTok
-    </a>
-  </li>
-
-  {/* 4. TikTok 2 */}
-  <li>
-    <a href={SOCIAL_LINKS.tiktokValorant} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <TikTokIcon className="h-5 w-5" />
-      TikTok2
-    </a>
-  </li>
-
-  {/* 5. Telegram */}
-  <li>
-    <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <Send className="h-5 w-5" />
-      Telegram
-    </a>
-  </li>
-
-  {/* 6. Discord (novo) */}
-<li>
-  <a href={SOCIAL_LINKS.discord} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-    <DiscordIcon className="h-5 w-5" />   {/* <-- em vez de <DiscordIconImg /> */}
-    Discord
-  </a>
-</li>
-
-
-  {/* 7. YouTube */}
-  <li>
-    <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <Youtube className="h-5 w-5" />
-      Youtube
-    </a>
-  </li>
-
-  {/* 8. Twitter / X */}
-  <li>
-    <a href={SOCIAL_LINKS.x} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <TwitterIcon className="h-5 w-5" />
-      Twitter
-    </a>
-  </li>
-</ul>
-
+          <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">
+            {t.social.title}
+          </div>
+          <ul className="grid grid-cols-2 md:grid-cols-2 gap-x-5 gap-y-3 text-sm">
+            <li>
+              <a
+                href={SOCIAL_LINKS.twitch}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <TwitchIcon className="h-5 w-5" />
+                Twitch
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.instagram}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <Instagram className="h-5 w-5" />
+                Instagram
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.tiktok}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <TikTokIcon className="h-5 w-5" />
+                TikTok
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.tiktokValorant}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <TikTokIcon className="h-5 w-5" />
+                TikTok2
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.telegram}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <Send className="h-5 w-5" />
+                Telegram
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.discord}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <DiscordIcon className="h-5 w-5" />
+                Discord
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.youtube}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <Youtube className="h-5 w-5" />
+                Youtube
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.x}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <TwitterIcon className="h-5 w-5" />
+                Twitter
+              </a>
+            </li>
+          </ul>
 
           <div className="mt-3 text-center text-[12px] text-white/55">
             Copyright © {new Date().getFullYear()} K0MPA
@@ -488,6 +547,7 @@ function Sidebar({ onOpenStream, onOpenBetify, onGoHome }: { onOpenStream: () =>
     </aside>
   );
 }
+
 
 /* ---------- helpers ---------- */
 function tagVisual(tag: Brand["tag"]) {
@@ -554,6 +614,68 @@ function buildTwitchEmbedUrl(channel: string) {
   ]);
   const qsParents = Array.from(parents).map(p => `parent=${encodeURIComponent(p)}`).join("&");
   return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&autoplay=1&muted=1&${qsParents}`;
+}
+function CommunityModal({ onClose }: { onClose: () => void }) {
+  const { t } = useLang();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    const prev = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.documentElement.style.overflow = prev;
+    };
+  }, [onClose]);
+
+  const content = (
+    <div className="fixed inset-0 z-[9998] flex items-center justify-center" role="dialog" aria-modal="true">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative mx-4 w-full max-w-md rounded-2xl bg-white/10 ring-1 ring-white/15 text-white shadow-[0_20px_80px_rgba(0,0,0,.6)] p-5">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold">{t.nav.community}</h3>
+          <button onClick={onClose} className="rounded-md px-3 py-1 text-sm font-semibold hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+            Fechar
+          </button>
+        </div>
+
+        <p className="mt-1 text-sm text-white/70">Escolhe onde queres entrar:</p>
+
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <a
+            href={SOCIAL_LINKS.discord}
+            target="_blank" rel="noreferrer"
+            className="group flex items-center gap-3 rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 hover:bg-white/15"
+          >
+            <DiscordIcon className="h-5 w-5" />
+            <div className="flex-1">
+              <div className="text-sm font-bold">Discord</div>
+              <div className="text-xs text-white/60">Chats, roles e anúncios</div>
+            </div>
+            <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
+          </a>
+
+          <a
+            href={SOCIAL_LINKS.telegram}
+            target="_blank" rel="noreferrer"
+            className="group flex items-center gap-3 rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 hover:bg-white/15"
+          >
+            <Send className="h-5 w-5" />
+            <div className="flex-1">
+              <div className="text-sm font-bold">Telegram</div>
+              <div className="text-xs text-white/60">Canal rápido de updates</div>
+            </div>
+            <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+
+  return mounted ? createPortal(content, document.body) : null;
 }
 
 /* ---------- Overlay (full-screen) ---------- */
@@ -1093,6 +1215,7 @@ export default function CasinoPartnerHub() {
   const t = useMemo(() => messages[lang], [lang]);
   const isLive = useLiveAutoTwitch(TWITCH_CHANNEL, 60_000);
   const [showOverlay, setShowOverlay] = useState(false);
+  const [showCommunity, setShowCommunity] = useState(false); // ⬅️ novo
 
   const [route, setRoute] = useState<Route>("home");
 
@@ -1113,6 +1236,7 @@ export default function CasinoPartnerHub() {
               onOpenStream={() => setShowOverlay(true)}
               onOpenBetify={() => setRoute("betify")}
               onGoHome={() => setRoute("home")}
+              onOpenCommunity={() => setShowCommunity(true)}   // ⬅️ adiciona isto
             />
 
 <main className="space-y-10">
@@ -1142,6 +1266,13 @@ export default function CasinoPartnerHub() {
         </div>
 
         <Footer />
+{showOverlay && (
+  <StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />
+)}
+{showCommunity && (
+  <CommunityModal onClose={() => setShowCommunity(false)} />   // ⬅️ adiciona isto
+)}
+
         {showOverlay && <StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />}
       </div>
     </LangCtx.Provider>
