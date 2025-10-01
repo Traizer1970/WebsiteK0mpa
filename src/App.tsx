@@ -1192,17 +1192,8 @@ function LanguageToggle({ lang, onChange }: { lang:"PT"|"EN"; onChange:(l:"PT"|"
 /* ---------- Background ---------- */
 function BackgroundLayer() {
   return (
-    <div
-      className="absolute -z-10 pointer-events-none left-0 right-0 top-0 bottom-[-160px]"
-      // ^ estica ~160px para lá do fim da página
-    >
-      {/* gradiente base */}
-      <div
-        className="absolute inset-0"
-        style={{ background: "linear-gradient(180deg,#14070a 0%,#10060a 45%,#0b0507 100%)" }}
-      />
-
-      {/* glows */}
+    <div className="pointer-events-none absolute inset-0 -z-10">
+      {/* glows sobre o gradiente do body */}
       <div
         className="absolute inset-0"
         style={{
@@ -1212,17 +1203,14 @@ function BackgroundLayer() {
           mixBlendMode: "screen",
         }}
       />
-
-      {/* fade suave no rodapé para evitar ‘corte’ */}
+      {/* pequeno fade opcional perto do rodapé (não obrigatório) */}
       <div
-        className="absolute left-0 right-0 bottom-0 h-40"
-        style={{ background: "linear-gradient(180deg, transparent, rgba(0,0,0,.35))" }}
+        className="absolute left-0 right-0 bottom-0 h-32"
+        style={{ background: "linear-gradient(180deg, transparent, rgba(0,0,0,.25))" }}
       />
     </div>
   );
 }
-
-
 /* ---------- Root ---------- */
 type Route = "home" | "betify";
 

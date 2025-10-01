@@ -40,3 +40,17 @@ html, body {
   background-color: #0b0507; /* igual ao fim do gradiente */
 }
 
+
+:root{
+  --bg-a:#14070a;
+  --bg-b:#10060a;
+  --bg-c:#0b0507;
+}
+
+html, body { height: 100%; }
+
+body{
+  /* gradiente base cobre a página toda */
+  background: linear-gradient(180deg, var(--bg-a) 0%, var(--bg-b) 45%, var(--bg-c) 100%) fixed;
+  /* "fixed" evita banding ao rolar e impede cortes */
+}
