@@ -631,29 +631,32 @@ function TwitchEmbedMini({ channel }: { channel: string }) {
 function YouTubeLastMini({ channelId }: { channelId: string }) {
   const [vid, setVid] = React.useState<{ id: string; title: string } | null>(null);
   const [failed, setFailed] = React.useState(false);
+  const isShorts = (s: string) => /\bshorts\b|#shorts/i.test(s);
+  
+React.useEffect(() => {
+  let cancelled = false;
+  const url = `https://r.jina.ai/http://www.youtube.com/channel/${encodeURIComponent(channelId)}/videos`;
+  (async () => {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      const html = await res.text();
 
-  React.useEffect(() => {
-    let cancelled = false;
-    setVid(null);
-    setFailed(false);
+      const re = /href="\/watch\?v=([a-zA-Z0-9_-]{11})"[^>]*\s+title="([^"]+)"/g;
+      let m: RegExpExecArray | null, found: { id: string; title: string } | null = null;
 
-    const url = `https://r.jina.ai/http://www.youtube.com/channel/${encodeURIComponent(channelId)}/videos`;
-    (async () => {
-      try {
-        const res = await fetch(url, { cache: "no-store" });
-        const html = await res.text();
-        const m = /href="\/watch\?v=([a-zA-Z0-9_-]{11})"[^>]*\s+title="([^"]+)"/.exec(html);
-        if (!cancelled) {
-          if (m) setVid({ id: m[1], title: m[2] });
-          else setFailed(true);
-        }
-      } catch {
-        if (!cancelled) setFailed(true);
+      while ((m = re.exec(html))) {
+        const id = m[1], title = m[2];
+        if (!isShorts(title)) { found = { id, title }; break; }  // ⬅️ ignora Shorts
       }
-    })();
 
-    return () => { cancelled = true; };
-  }, [channelId]);
+      if (!cancelled) setVid(found);
+      if (!cancelled && !found) setFailed(true);
+    } catch {
+      if (!cancelled) setFailed(true);
+    }
+  })();
+  return () => { cancelled = true; };
+}, [channelId]);
 
   // uploads playlist id = "UU" + channel id sem "UC"
   const uploadsPlaylist = "UU" + channelId.slice(2);
@@ -709,6 +712,7 @@ function YouTubeGrid({ channelId, limit = 8, hero = true }: { channelId: string;
   const { t } = useLang();
   const [items, setItems] = useState<YtItem[] | null>(null);
   const [failed, setFailed] = useState(false);
+  const isShorts = (s: string) => /\bshorts\b|#shorts/i.test(s);
 
   useEffect(() => {
     if (!channelId) return;
@@ -718,17 +722,18 @@ function YouTubeGrid({ channelId, limit = 8, hero = true }: { channelId: string;
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error(String(res.status));
         const html = await res.text();
-        const re = /href="\/watch\?v=([a-zA-Z0-9_-]{11})"[^>]*\s+title="([^"]+)"/g;
-        const seen = new Set<string>();
-        const list: YtItem[] = [];
-        let m: RegExpExecArray | null;
-        while ((m = re.exec(html)) && list.length < limit + 2) {
-          const id = m[1];
-          const title = m[2];
-          if (seen.has(id)) continue;
-          seen.add(id);
-          list.push({ id, title, thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg` });
-        }
+const re = /href="\/watch\?v=([a-zA-Z0-9_-]{11})"[^>]*\s+title="([^"]+)"/g;
+const seen = new Set<string>();
+const list: YtItem[] = [];
+let m: RegExpExecArray | null;
+        while ((m = re.exec(html)) && list.length < limit + 4) {
+  const id = m[1];
+  const title = m[2];
+  if (seen.has(id)) continue;
+  if (isShorts(title)) continue;            // ⬅️ ignora Shorts
+  seen.add(id);
+  list.push({ id, title, thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg` });
+}
         if (list.length === 0) throw new Error("no videos parsed");
         setItems(list.slice(0, limit));
         setFailed(false);
