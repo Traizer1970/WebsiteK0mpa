@@ -290,13 +290,19 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         <div className="flex h-12 items-center gap-3 rounded-xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 px-4 sm:px-5 text-white/90 shadow-[0_8px_30px_rgba(0,0,0,.25)]">
           <div className="mr-1.5 flex items-center gap-2.5">
-            <span className="text-white font-black tracking-tight text-[15px] leading-none">{t.brand}</span>
-            {isLive && (
-              <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" aria-label="Abrir Twitch (em direto)" title="Live na Twitch">
-                <TwitchBadge />
-              </a>
-            )}
-          </div>
+  <span
+    className="brand-font text-white tracking-tight text-[20px] leading-none"
+    title={t.brand}
+  >
+    {t.brand}
+  </span>
+  {isLive && (
+    <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" aria-label="Abrir Twitch (em direto)" title="Live na Twitch">
+      <TwitchBadge />
+    </a>
+  )}
+</div>
+
 
           <div className="relative hidden flex-1 md:flex">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60" />
@@ -1033,7 +1039,7 @@ function Footer() {
       <div className="rounded-2xl bg-black/35 backdrop-blur-md ring-1 ring-white/10 text-white/80 px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,.28)]">
         {/* TOPO: tudo numa linha, **centrado** e sem quebra */}
 {/* TOPO: tudo numa linha, sem quebra */}
-<div className="flex items-center justify-between gap-6 flex-nowrap overflow-x-auto">
+<div className="flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap max-w-full">
   {/* ESQUERDA */}
   <div className="shrink-0 whitespace-nowrap flex items-center gap-2">
     <span className="text-sm font-extrabold tracking-tight text-white">K0MPA</span>
@@ -1041,7 +1047,8 @@ function Footer() {
   </div>
 
   {/* CENTRO */}
-<nav className="shrink-0 whitespace-nowrap flex flex-nowrap items-center gap-x-6 text-[13px] font-semibold">
+<nav className="shrink-0 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-semibold max-w-full">
+
   <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none whitespace-nowrap">
     {t.footer.terms}
   </span>
@@ -1068,7 +1075,8 @@ function Footer() {
 </div>
 
         <div className="my-3 h-px bg-white/10" />
-        <p className="text-[12px] leading-snug text-white/55 text-center whitespace-nowrap overflow-x-auto">
+        <p className="text-[12px] leading-snug text-white/55 text-center whitespace-normal break-words max-w-full">
+
   {t.footer.rg_paragraph}
 </p>
       </div>
@@ -1124,7 +1132,7 @@ export default function CasinoPartnerHub() {
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
-      <div className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-clip">
+      <div className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-hidden">
         <BackgroundLayer />
         <div style={{ height: "var(--hdr-offset, 68px)" }} aria-hidden />
         <HeaderBar isLive={isLive} />

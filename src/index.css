@@ -42,3 +42,14 @@ input:-webkit-autofill:focus {
   -webkit-text-fill-color: #fff !important;
   transition: background-color 9999s ease-out 0s;
 }
+/* Google Font para o logo/brand */
+@import url('https://fonts.googleapis.com/css2?family=Chewy&display=swap');
+
+.brand-font{
+  font-family: "Chewy", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 400;               /* Chewy é display; sem necessidade de bold */
+  letter-spacing: .5px;           /* ligeiro tracking para respirar */
+  text-transform: uppercase;      /* opcional - remove se não quiseres */
+  /* glow/contraste suave como no screenshot (opcional) */
+  text-shadow: 0 1px 0 rgba(0,0,0,.25);
+}
