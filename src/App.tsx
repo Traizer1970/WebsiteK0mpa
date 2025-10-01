@@ -315,6 +315,18 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   );
 }
 
+function DiscordIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 256 199" aria-hidden="true" {...props}>
+      <path
+        fill="currentColor"
+        d="M216.856 16.597A208.625 208.625 0 0 0 172.135 0l-2.04 4.257c20.272 5.016 34.997 12.26 46.67 20.341-19.734-10.2-39.13-17.03-58.75-20.341-14.003-2.404-27.39-2.404-40.566 0-17.95 3.1-35.17 9.32-58.75 20.34 11.23-8.08 26.39-15.325 46.67-20.34L103.33 0a208.84 208.84 0 0 0-44.72 16.597C18.64 60.842 12.04 103.02 15.57 144.61c18.735 13.977 36.84 22.58 54.69 28.14l11.72-18.9c-6.44-2.48-12.66-5.54-18.61-9.19 1.55-1.14 3.07-2.33 4.56-3.58 36.04 16.86 75.2 16.86 111.24 0 1.49 1.25 3.01 2.44 4.56 3.58-5.95 3.65-12.17 6.71-18.6 9.19l11.71 18.9c17.86-5.56 35.96-14.16 54.7-28.14 4.36-50.71-7.52-92.73-35.68-128.01ZM95.71 128.76c-10.6 0-19.26-9.92-19.26-22.15 0-12.22 8.49-22.17 19.26-22.17s19.33 9.95 19.26 22.17c0 12.23-8.66 22.15-19.26 22.15Zm64.58 0c-10.6 0-19.26-9.92-19.26-22.15 0-12.22 8.49-22.17 19.26-22.17 10.78 0 19.26 9.95 19.26 22.17 0 12.23-8.66 22.15-19.26 22.15Z"
+      />
+    </svg>
+  );
+}
+
+
 /* ---------- Sidebar ---------- */
 function Sidebar({ onOpenStream, onOpenBetify, onGoHome }: { onOpenStream: () => void; onOpenBetify: () => void; onGoHome: () => void; }) {
   const { t, lang } = useLang();
@@ -439,12 +451,13 @@ function Sidebar({ onOpenStream, onOpenBetify, onGoHome }: { onOpenStream: () =>
   </li>
 
   {/* 6. Discord (novo) */}
-  <li>
-    <a href={SOCIAL_LINKS.discord} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-      <DiscordIconImg />
-      Discord
-    </a>
-  </li>
+<li>
+  <a href={SOCIAL_LINKS.discord} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+    <DiscordIcon className="h-5 w-5" />   {/* <-- em vez de <DiscordIconImg /> */}
+    Discord
+  </a>
+</li>
+
 
   {/* 7. YouTube */}
   <li>
