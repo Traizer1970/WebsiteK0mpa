@@ -728,12 +728,12 @@ function BrandCard({ b }: { b: Brand }) {
   alt={b.name}
   className="absolute inset-0 h-full w-full object-cover"
   style={{
-    // sangra 1px para cada lado para cobrir qualquer falha de render
+    // sangrar 1px para cada lado para evitar o pixel branco
     left: "-1px",
     right: "-1px",
     width: "calc(100% + 2px)",
-    // continua “centrada à esquerda”, com +10px (11px no total)
-    objectPosition: b.imagePos === "left" ? "11px center" : (b.imagePos ?? "center"),
+    // mover 10px para a ESQUERDA (offset negativo)
+    objectPosition: b.imagePos === "left" ? "-10px center" : (b.imagePos ?? "center"),
   }}
 />
 
