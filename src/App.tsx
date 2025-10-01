@@ -236,7 +236,7 @@ const brands: Brand[] = [
     logo:"https://www.ce-at.fr/img/logo.webp",
     image:"https://betify.org/wp-content/uploads/2025/02/betify-app-login.webp",
     imagePos:"left",
-    minDep:"20€", bonus:"100%", cashback:"Até 20%", freeSpins:"Até 100FS", code:"K0MPA", link: BETIFY_PROMO_URL,
+    minDep:"20€", bonus:"100%", cashback:"20%",     freeSpins:"100FS", code:"K0MPA", link: BETIFY_PROMO_URL,
     theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
     payments:["btc","mb","mbb","visa","mc"]
   },
@@ -550,6 +550,13 @@ function Sidebar({
 
 
 /* ---------- helpers ---------- */
+function cap(value: string, lang: Lang) {
+  const prefix = lang === "PT" ? "Até" : "Up to";
+  // se o valor já vier com "até"/"up to", não duplica
+  if (/^\s*(até|up to)\b/i.test(value)) return value;
+  return `${prefix} ${value}`;
+}
+
 function tagVisual(tag: Brand["tag"]) {
   switch (tag) { case "HOT": return { accent:"#ef4444" }; case "NEW": return { accent:"#8b5cf6" }; default: return { accent:"#10b981" }; }
 }
@@ -855,7 +862,7 @@ function StatTile({ icon: Icon, label, value, accent }: { icon: React.ElementTyp
   );
 }
 function BrandCard({ b }: { b: Brand }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [flip, setFlip] = useState(false);
   const CARD_H = 400;
   const base = tagVisual(b.tag);
@@ -901,8 +908,8 @@ function BrandCard({ b }: { b: Brand }) {
                 <div className="grid grid-cols-4 gap-2">
                   <FancyStat icon={Coins} label={t.card.min} value={b.minDep} accent={acc} />
                   <FancyStat icon={Percent} label={t.card.bonus} value={b.bonus} accent={acc} />
-                  <FancyStat icon={TrendingUp} label={t.card.cashback} value={b.cashback} accent={acc} />
-                  <FancyStat icon={Sparkles} label={t.card.spins} value={b.freeSpins} accent={acc} />
+                  <FancyStat icon={TrendingUp} label={t.card.cashback} value={cap(b.cashback, lang)} accent={acc} />
+                  <FancyStat icon={Sparkles}   label={t.card.spins}    value={cap(b.freeSpins, lang)} accent={acc} />
                 </div>
                  <div className="py-2 text-[11px] font-semibold tracking-wide text-white/75 text-center">
     {t.card.terms}
@@ -930,8 +937,8 @@ function BrandCard({ b }: { b: Brand }) {
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
   <StatTile icon={Coins}      label={t.card.min}      value={b.minDep}    accent={acc} />
   <StatTile icon={Percent}    label={t.card.bonus}    value={b.bonus}     accent={acc} />
-  <StatTile icon={TrendingUp} label={t.card.cashback} value={b.cashback}  accent={acc} />
-  <StatTile icon={Sparkles}   label={t.card.spins}    value={b.freeSpins} accent={acc} />
+  <StatTile icon={TrendingUp} label={t.card.cashback} value={cap(b.cashback, lang)}  accent={acc} />
+  <StatTile icon={Sparkles}   label={t.card.spins}    value={cap(b.freeSpins, lang)} accent={acc} />
 </div>
 
 
