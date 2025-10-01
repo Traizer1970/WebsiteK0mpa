@@ -1192,20 +1192,36 @@ function LanguageToggle({ lang, onChange }: { lang:"PT"|"EN"; onChange:(l:"PT"|"
 /* ---------- Background ---------- */
 function BackgroundLayer() {
   return (
-    <div className="absolute inset-0 -z-10 pointer-events-none"
-      style={{ background: "linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%)" }}>
-      <div aria-hidden
+    <div
+      className="absolute -z-10 pointer-events-none left-0 right-0 top-0 bottom-[-160px]"
+      // ^ estica ~160px para lá do fim da página
+    >
+      {/* gradiente base */}
+      <div
+        className="absolute inset-0"
+        style={{ background: "linear-gradient(180deg,#14070a 0%,#10060a 45%,#0b0507 100%)" }}
+      />
+
+      {/* glows */}
+      <div
+        className="absolute inset-0"
         style={{
-          position: "absolute", inset: 0,
           background:
             "radial-gradient(60% 40% at 15% 5%, rgba(244,63,94,.28) 0%, rgba(244,63,94,0) 70%)," +
             "radial-gradient(55% 45% at 85% 95%, rgba(244,63,94,.22) 0%, rgba(244,63,94,0) 75%)",
           mixBlendMode: "screen",
         }}
       />
+
+      {/* fade suave no rodapé para evitar ‘corte’ */}
+      <div
+        className="absolute left-0 right-0 bottom-0 h-40"
+        style={{ background: "linear-gradient(180deg, transparent, rgba(0,0,0,.35))" }}
+      />
     </div>
   );
 }
+
 
 /* ---------- Root ---------- */
 type Route = "home" | "betify";
