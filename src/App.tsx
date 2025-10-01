@@ -633,40 +633,55 @@ function CommunityModal({ onClose }: { onClose: () => void }) {
 
   const content = (
     <div className="fixed inset-0 z-[9998] flex items-center justify-center" role="dialog" aria-modal="true">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative mx-4 w-full max-w-md rounded-2xl bg-white/10 ring-1 ring-white/15 text-white shadow-[0_20px_80px_rgba(0,0,0,.6)] p-5">
+      {/* overlay: menos opaco */}
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onClick={onClose} />
+
+      {/* card: vidro mais translúcido */}
+      <div className="relative mx-4 w-full max-w-xl rounded-3xl
+                      bg-white/6 backdrop-blur-md ring-1 ring-white/12
+                      text-white shadow-[0_18px_70px_rgba(0,0,0,.45)] p-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold">{t.nav.community}</h3>
-          <button onClick={onClose} className="rounded-md px-3 py-1 text-sm font-semibold hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+          <h3 className="text-2xl font-black">{t.nav.community}</h3>
+          <button
+            onClick={onClose}
+            className="rounded-lg px-3 py-1.5 text-sm font-semibold bg-white/10 hover:bg-white/15
+                       ring-1 ring-white/15 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+          >
             Fechar
           </button>
         </div>
 
-        <p className="mt-1 text-sm text-white/70">Escolhe onde queres entrar:</p>
+        <p className="mt-2 text-[15px] text-white/80">Escolhe onde queres entrar:</p>
 
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          {/* Discord */}
           <a
             href={SOCIAL_LINKS.discord}
-            target="_blank" rel="noreferrer"
-            className="group flex items-center gap-3 rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 hover:bg-white/15"
+            target="_blank"
+            rel="noreferrer"
+            className="group flex items-center gap-3 rounded-2xl bg-white/8 ring-1 ring-white/12
+                       px-4 py-4 hover:bg-white/12 transition"
           >
-            <DiscordIcon className="h-5 w-5" />
+            <DiscordIcon className="h-6 w-6" />
             <div className="flex-1">
-              <div className="text-sm font-bold">Discord</div>
-              <div className="text-xs text-white/60">Chats, roles e anúncios</div>
+              <div className="text-[15px] font-extrabold">Discord</div>
+              <div className="text-xs text-white/70">Chats, roles e anúncios</div>
             </div>
             <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
           </a>
 
+          {/* Telegram */}
           <a
             href={SOCIAL_LINKS.telegram}
-            target="_blank" rel="noreferrer"
-            className="group flex items-center gap-3 rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 hover:bg-white/15"
+            target="_blank"
+            rel="noreferrer"
+            className="group flex items-center gap-3 rounded-2xl bg-white/8 ring-1 ring-white/12
+                       px-4 py-4 hover:bg-white/12 transition"
           >
-            <Send className="h-5 w-5" />
+            <Send className="h-6 w-6" />
             <div className="flex-1">
-              <div className="text-sm font-bold">Telegram</div>
-              <div className="text-xs text-white/60">Canal rápido de updates</div>
+              <div className="text-[15px] font-extrabold">Telegram</div>
+              <div className="text-xs text-white/70">Canal rápido de updates</div>
             </div>
             <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
           </a>
@@ -677,6 +692,7 @@ function CommunityModal({ onClose }: { onClose: () => void }) {
 
   return mounted ? createPortal(content, document.body) : null;
 }
+
 
 /* ---------- Overlay (full-screen) ---------- */
 function StreamOverlay({ channel, onClose }: { channel: string; onClose: () => void }) {
