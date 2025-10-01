@@ -21,26 +21,14 @@ html, body {
     overscroll-behavior-y: none;
   }
 }
-/* ---- SEARCH 100% clean (Safari/Chrome iOS) ---- */
-input[type="search"] {
-  -webkit-appearance: none;
-  appearance: none;
-  background-color: transparent !important;
-  color: #fff;
-}
-
-@font-face {
-  font-family: "Witch Bell";
-  src: url("/fonts/witch-bell.woff2") format("woff2");
-  font-weight: 400 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* classe para texto da marca */
+/* src/index.css ou src/App.css */
+@import url('https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap');
 .brand-font {
-  font-family: "Witch Bell", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue",
-               Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-               "Noto Color Emoji", sans-serif;
-  letter-spacing: .5px;      /* opcional: afina tracking */
+  font-family: "Rock Salt", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+               Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans";
+  font-weight: 400;
+  letter-spacing: 0.02em;     /* ajusta se quiseres mais “logo” */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1;
 }

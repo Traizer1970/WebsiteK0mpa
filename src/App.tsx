@@ -291,8 +291,8 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
         <div className="flex h-12 items-center gap-3 rounded-xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 px-4 sm:px-5 text-white/90 shadow-[0_8px_30px_rgba(0,0,0,.25)]">
           <div className="mr-1.5 flex items-center gap-2.5">
 <span className="brand-font text-white text-[22px] leading-none" title={t.brand}>
-    {t.brand}
-  </span>
+  {t.brand}
+</span>
   {isLive && (
     <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" title="Live na Twitch">
       <TwitchBadge />
@@ -1134,7 +1134,7 @@ function Footer() {
 <div className="flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap max-w-full">
   {/* ESQUERDA */}
   <div className="shrink-0 whitespace-nowrap flex items-center gap-2">
-    <span className="brand-font text-sm tracking-tight text-white">K0MPA</span>
+    <span className="brand-font text-white text-[18px] leading-none">K0MPA</span>
     <span className="text-xs text-white/60">© {year}</span>
   </div>
 
