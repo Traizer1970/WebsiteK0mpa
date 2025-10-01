@@ -928,11 +928,12 @@ function BrandCard({ b }: { b: Brand }) {
 
             <div className="space-y-3 text-white/90">
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <StatTile icon={Coins} label="MIN. DEP." value={b.minDep} accent={acc} />
-                <StatTile icon={Percent} label="BÓNUS" value={b.bonus} accent={acc} />
-                <StatTile icon={TrendingUp} label="CASHBACK" value={b.cashback} accent={acc} />
-                <StatTile icon={Sparkles} label="FREE SPINS" value={b.freeSpins} accent={acc} />
-              </div>
+  <StatTile icon={Coins}      label={t.card.min}      value={b.minDep}    accent={acc} />
+  <StatTile icon={Percent}    label={t.card.bonus}    value={b.bonus}     accent={acc} />
+  <StatTile icon={TrendingUp} label={t.card.cashback} value={b.cashback}  accent={acc} />
+  <StatTile icon={Sparkles}   label={t.card.spins}    value={b.freeSpins} accent={acc} />
+</div>
+
 
               <div className="grid grid-cols-[1fr,auto] items-center gap-3">
                 <div className="h-11 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 flex items-center text-sm text-white/90">
@@ -1220,7 +1221,23 @@ function BackgroundLayer() {
 type Route = "home" | "betify";
 
 export default function CasinoPartnerHub() {
-  const [lang, setLang] = useState<Lang>("PT");
+  const [lang, setLang] = useState<Lang>(() => {
+  // tenta recuperar a escolha anterior
+  const saved = (typeof window !== "undefined"
+    ? (localStorage.getItem("lang") as Lang | null)
+    : null);
+  if (saved === "PT" || saved === "EN") return saved;
+
+  // auto-deteta; default = PT como pediste
+  const nav = typeof navigator !== "undefined" ? navigator.language || "" : "";
+  return nav.toLowerCase().startsWith("pt") ? "PT" : "PT";
+});
+
+// guarda sempre que muda
+useEffect(() => {
+  try { localStorage.setItem("lang", lang); } catch {}
+}, [lang]);
+
   const t = useMemo(() => messages[lang], [lang]);
   const isLive = useLiveAutoTwitch(TWITCH_CHANNEL, 60_000);
   const [showOverlay, setShowOverlay] = useState(false);
