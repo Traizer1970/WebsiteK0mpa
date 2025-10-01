@@ -235,7 +235,7 @@ const brands: Brand[] = [
     tag:"HOT",
     logo:"https://www.ce-at.fr/img/logo.webp",
     image:"https://betify.org/wp-content/uploads/2025/02/betify-app-login.webp",
-    imagePos:"left 10px center",
+    imagePos:"left 2px center",
     minDep:"20€", bonus:"100%", cashback:"Até 20%", freeSpins:"Até 100FS", code:"K0MPA", link: BETIFY_PROMO_URL,
     theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
     payments:["btc","mb","mbb","visa","mc"]
@@ -783,19 +783,23 @@ function BrandCard({ b }: { b: Brand }) {
               </div>
             </div>
 
-<div className="mt-4">
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div className="mt-5">
+  {/* células com a MESMA altura/ocupação */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
+    {/* Secundário */}
     <button
       type="button"
       onClick={() => setFlip(false)}
       className="h-12 w-full rounded-2xl px-4 text-sm font-semibold
-                 text-white/90 bg-white/5 hover:bg-white/10
-                 ring-1 ring-white/12 focus:outline-none focus-visible:outline-none
+                 text-white/90 bg-white/6 hover:bg-white/10
+                 ring-1 ring-white/12
+                 focus:outline-none focus-visible:outline-none
                  focus:ring-2 focus:ring-rose-400/60"
     >
       {t.card.back}
     </button>
 
+    {/* Primário (sem shadow externo) */}
     <a
       href={b.link}
       target="_blank"
@@ -805,18 +809,16 @@ function BrandCard({ b }: { b: Brand }) {
                  hover:brightness-110 focus:outline-none focus-visible:outline-none
                  focus:ring-2 focus:ring-rose-400/60"
       style={{
-        background: `linear-gradient(135deg, ${acc}, ${rgba(acc, 0.88)})`,
-        boxShadow: `0 10px 24px ${rgba(acc, 0.30)}`
+        background: `linear-gradient(135deg, ${acc}, ${rgba(acc, .88)})`,
+        // sombra interna subtil para manter “peso” sem alterar o preenchimento inferior
+        boxShadow: `inset 0 -1px 0 ${rgba('#000', .25)}`
       }}
     >
       {t.card.visit}
     </a>
   </div>
 </div>
-
-
-
-            <div className="pointer-events-none absolute inset-0 -z-10 rounded-3xl opacity-60 blur-2xl" style={{ background:`radial-gradient(80% 60% at 10% 0%, ${rgba(acc,0.13)} 0%, transparent 60%)` }} />
+        <div className="pointer-events-none absolute inset-0 -z-10 rounded-3xl opacity-60 blur-2xl" style={{ background:`radial-gradient(80% 60% at 10% 0%, ${rgba(acc,0.13)} 0%, transparent 60%)` }} />
           </div>
         </div>
       </div>
