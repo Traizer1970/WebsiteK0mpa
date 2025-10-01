@@ -294,19 +294,23 @@ function Sidebar({ onOpenStream, onOpenBetify, onGoHome }: { onOpenStream: () =>
             </button>
 
             {/* Botão Betify: só texto */}
-            <button
+            {/* Betify com badge PROMO à direita (igual ao NOVO) */}
+<button
   type="button"
   onClick={onOpenBetify}
-  className="w-full flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+  className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
 >
-  <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
-  <span className="font-extrabold text-emerald-400 flex items-center gap-2">
-    Betify
-    <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30">
-      VERDE
-    </span>
+  <span className="flex items-center gap-2">
+    <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
+    <span className="font-extrabold text-emerald-400">Betify</span>
   </span>
+
+  {/* badge estilo NOVO, mas verde e com o texto PROMO */}
+  <Badge className="text-white" style={{ background: "#16a34a" }}>
+    PROMO
+  </Badge>
 </button>
+
 
             <div className="my-3 h-px bg-white/10" />
 
