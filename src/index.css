@@ -42,15 +42,20 @@ input:-webkit-autofill:focus {
   -webkit-text-fill-color: #fff !important;
   transition: background-color 9999s ease-out 0s;
 }
-/* Fonte com vibe cartoon parecida ao exemplo */
-@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+@font-face{
+  font-family: "Witch Bell";
+  src: url("/fonts/witch-bell.woff2") format("woff2"),
+       url("/fonts/witch-bell.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 .brand-font{
-  font-family: "Luckiest Guy", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight: 400;              /* essa fonte é display, não usa bolds */
-  letter-spacing: 0;             /* nada de tracking extra */
-  text-transform: none;          /* NÃO forçar uppercase */
-  line-height: 1;                /* tira altura extra */
+  font-family: "Witch Bell", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: 0;        /* nada de tracking extra */
+  text-transform: none;     /* não forçar uppercase */
+  line-height: 1;           /* evita “saltar” */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
