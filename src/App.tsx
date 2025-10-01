@@ -730,7 +730,6 @@ function BrandCard({ b }: { b: Brand }) {
   style={{
     // bleed extra para tapar quaisquer 1px brancos nas bordas
     left: "-3px",
-    right: "-3px",
     width: "calc(100% + 6px)",
 
     // manter a imagem 10px para a esquerda (podes afinar -8/-12)
