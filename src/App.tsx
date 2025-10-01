@@ -843,11 +843,6 @@ function BetifyLanding({ onBack }: { onBack: () => void }) {
   {/* header hero */}
   <div className="flex items-center justify-between gap-4 relative">
     <div className="flex items-center gap-4">
-      <img
-        src="https://www.ce-at.fr/img/logo.webp"
-        alt="Betify"
-        className="h-9 w-9 rounded bg-white/95 ring-1 ring-black/10 object-contain"
-      />
       <div>
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Betify</h1>
         <p className="text-white/70 text-sm">Como jogar na Betify e desbloquear o melhor VIP</p>
