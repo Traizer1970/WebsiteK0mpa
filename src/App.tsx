@@ -539,9 +539,9 @@ function Sidebar({
             </li>
           </ul>
 
-          <div className="mt-3 text-center text-[12px] text-white/55">
-            Copyright © {new Date().getFullYear()} K0MPA
-          </div>
+ <div className="mt-3 text-center text-[12px] text-white/55">
+   Copyright © {new Date().getFullYear()} <span className="brand-font">K0MPA</span>
+ </div>
         </footer>
       </div>
     </aside>
@@ -1134,7 +1134,7 @@ function Footer() {
 <div className="flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap max-w-full">
   {/* ESQUERDA */}
   <div className="shrink-0 whitespace-nowrap flex items-center gap-2">
-    <span className="text-sm font-extrabold tracking-tight text-white">K0MPA</span>
+    <span className="brand-font text-sm tracking-tight text-white">K0MPA</span>
     <span className="text-xs text-white/60">© {year}</span>
   </div>
 

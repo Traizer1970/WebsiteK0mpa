@@ -29,33 +29,18 @@ input[type="search"] {
   color: #fff;
 }
 
-/* remove ícones default do type=search no Safari */
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button {
-  -webkit-appearance: none;
-}
-
-/* evita o overlay azul/amarelo do autofill */
-input:-webkit-autofill,
-input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
-  -webkit-text-fill-color: #fff !important;
-  transition: background-color 9999s ease-out 0s;
-}
-@font-face{
+@font-face {
   font-family: "Witch Bell";
-  src: url("/fonts/witch-bell.woff2") format("woff2"),
-       url("/fonts/witch-bell.woff") format("woff");
-  font-weight: 400;
+  src: url("/fonts/witch-bell.woff2") format("woff2");
+  font-weight: 400 900;
   font-style: normal;
   font-display: swap;
 }
 
-.brand-font{
-  font-family: "Witch Bell", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  letter-spacing: 0;        /* nada de tracking extra */
-  text-transform: none;     /* não forçar uppercase */
-  line-height: 1;           /* evita “saltar” */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* classe para texto da marca */
+.brand-font {
+  font-family: "Witch Bell", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue",
+               Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+               "Noto Color Emoji", sans-serif;
+  letter-spacing: .5px;      /* opcional: afina tracking */
 }
