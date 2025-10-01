@@ -15,4 +15,18 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
+  <style>
+  /* garante que o gradiente cobre a página inteira */
+  html, body, #root { height: 100%; }
+
+  body{
+    background: linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%) fixed;
+    /* o "fixed" evita qualquer quebra quando se faz scroll */
+    background-attachment: fixed;
+  }
+
+  /* não dar cor de fundo ao root, para o gradiente do body aparecer */
+  #root { background: transparent; }
+</style>
+
 </html>
