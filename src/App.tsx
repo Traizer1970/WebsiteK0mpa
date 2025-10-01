@@ -153,34 +153,32 @@ const messages: Record<Lang, Translations> = {
              rg_site:"BeGambleAware.org" },latestVideos: "Últimos vídeos",
 
 
-    betify: {
-      title: "Betify",
-      subtitle: "Como jogar na Betify e desbloquear o melhor VIP",
-      steps: {
-        one: "Cria conta na Betify.",
-        two_prefix: "Usa o código",
-        two_code: "K0MPA",
-        two_suffix: "no registo.",
-        three: "Aproveita promoções, cashback e free spins."
-      },
-      cta_signup: "REGISTAR AGORA",
-      cta_promos: "VER PROMOÇÕES",
-      promo_label: "Promo",
-      promos: {
-        "every-dep": {
-          title: "Bónus em todos os depósitos",
-          blurb: "Recebe bónus extra sempre que depositares usando o meu código.",
-          highlight: "5% em Every Dep."
-        },
-        "fs-monthly": {
-          title: "Campanhas e Free Spins",
-          /* 👉 texto exato que pediste */
-          blurb:
-            "Betify (Depósito Mínimo 20€ — 40FS sem wager na Shaolin Panda); Betify (Depósito 50€ — 100FS sem wager na Shaolin Panda).",
-          highlight: "Até 100FS"
-        }
-      }
+betify: {
+  title: "Betify",
+  subtitle: "Como jogar na Betify e desbloquear o melhor VIP",
+  steps: {
+    one: "Cria conta na Betify.",
+    two_prefix: "Usa o código",
+    two_code: "K0MPA",
+    two_suffix: "no registo.",
+    three: "Aproveita promoções, cashback e free spins."
+  },
+  cta_signup: "REGISTAR AGORA",
+  cta_promos: "VER PROMOÇÕES",
+  promo_label: "Promo",
+  promos: {
+    "every-dep": {
+      title: "Campanhas e Free Spins",
+      blurb: "Betify (Depósito Mínimo 20€ — 40FS sem wager na Shaolin Panda).",
+      highlight: "Até 40FS"
+    },
+    "fs-monthly": {
+      title: "Campanhas e Free Spins",
+      blurb: "Betify (Depósito 50€ — 100FS sem wager na Shaolin Panda).",
+      highlight: "Até 100FS"
     }
+  }
+}
   },
 
   EN: {
@@ -194,34 +192,32 @@ const messages: Record<Lang, Translations> = {
              rg_site:"BeGambleAware.org" },latestVideos: "Latest videos",
 
 
-    betify: {
-      title: "Betify",
-      subtitle: "How to play on Betify and unlock the best VIP",
-      steps: {
-        one: "Create an account on Betify.",
-        two_prefix: "Use the code",
-        two_code: "K0MPA",
-        two_suffix: "during signup.",
-        three: "Enjoy promotions, cashback and free spins."
-      },
-      cta_signup: "SIGN UP NOW",
-      /* este botão vai rolar para as promos na mesma página */
-      cta_promos: "SEE PROMOTIONS",
-      promo_label: "Promo",
-      promos: {
-        "every-dep": {
-          title: "Bonus on every deposit",
-          blurb: "Get extra bonus whenever you deposit using my code.",
-          highlight: "5% on Every Dep."
-        },
-        "fs-monthly": {
-          title: "Campaigns & Free Spins",
-          blurb:
-            "Betify (Min. deposit €20 — 40FS no wager on Shaolin Panda); Betify (Deposit €50 — 100FS no wager on Shaolin Panda).",
-          highlight: "Up to 100FS"
-        }
-      }
+betify: {
+  title: "Betify",
+  subtitle: "How to play on Betify and unlock the best VIP",
+  steps: {
+    one: "Create an account on Betify.",
+    two_prefix: "Use the code",
+    two_code: "K0MPA",
+    two_suffix: "during signup.",
+    three: "Enjoy promotions, cashback and free spins."
+  },
+  cta_signup: "SIGN UP NOW",
+  cta_promos: "SEE PROMOTIONS",
+  promo_label: "Promo",
+  promos: {
+    "every-dep": {
+      title: "Campaigns & Free Spins",
+      blurb: "Betify (Min. deposit €20 — 40FS no wager on Shaolin Panda).",
+      highlight: "Up to 40FS"
+    },
+    "fs-monthly": {
+      title: "Campaigns & Free Spins",
+      blurb: "Betify (Deposit €50 — 100FS no wager on Shaolin Panda).",
+      highlight: "Up to 100FS"
     }
+  }
+}
   }
 };const LangCtx = createContext<{lang:Lang; setLang:(l:Lang)=>void; t:Translations}>({lang:"PT", setLang:()=>{}, t:messages.PT});
 function useLang(){ return useContext(LangCtx); }
