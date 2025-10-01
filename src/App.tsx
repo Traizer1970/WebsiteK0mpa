@@ -1193,7 +1193,6 @@ function LanguageToggle({ lang, onChange }: { lang:"PT"|"EN"; onChange:(l:"PT"|"
 function BackgroundLayer() {
   return (
     <div className="pointer-events-none fixed inset-0 -z-10">
-      {/* glows sobre o gradiente do body */}
       <div
         className="absolute inset-0"
         style={{
@@ -1202,11 +1201,6 @@ function BackgroundLayer() {
             "radial-gradient(55% 45% at 85% 95%, rgba(244,63,94,.22) 0%, rgba(244,63,94,0) 75%)",
           mixBlendMode: "screen",
         }}
-      />
-      {/* pequeno fade opcional junto ao rodapé (suaviza em ecrãs escuros) */}
-      <div
-        className="absolute left-0 right-0 bottom-0 h-40"
-        style={{ background: "linear-gradient(180deg, transparent, rgba(0,0,0,.25))" }}
       />
     </div>
   );

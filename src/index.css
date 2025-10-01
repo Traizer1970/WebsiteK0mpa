@@ -41,16 +41,21 @@ html, body {
 }
 
 
-:root{
-  --bg-a:#14070a;
-  --bg-b:#10060a;
-  --bg-c:#0b0507;
-}
+<style>
+  /* o fundo tem de viver no html e cobrir todo o documento */
+  html {
+    min-height: 100%;
+    background: linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%) fixed;
+    background-attachment: fixed; /* fica preso ao viewport */
+  }
 
-html, body { height: 100%; }
+  body, #root {
+    min-height: 100%;
+    background: transparent; /* para não tapar o gradiente */
+  }
 
-body{
-  /* gradiente base cobre a página toda */
-  background: linear-gradient(180deg, var(--bg-a) 0%, var(--bg-b) 45%, var(--bg-c) 100%) fixed;
-  /* "fixed" evita banding ao rolar e impede cortes */
-}
+  /* iOS tem bug com background-attachment: fixed; fazer fallback */
+  @supports (-webkit-touch-callout: none) {
+    html { background-attachment: scroll; }
+  }
+</style>

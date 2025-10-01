@@ -16,17 +16,22 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
   <style>
-  /* garante que o gradiente cobre a página inteira */
-  html, body, #root { height: 100%; }
-
-  body{
+  /* o fundo tem de viver no html e cobrir todo o documento */
+  html {
+    min-height: 100%;
     background: linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%) fixed;
-    /* o "fixed" evita qualquer quebra quando se faz scroll */
-    background-attachment: fixed;
+    background-attachment: fixed; /* fica preso ao viewport */
   }
 
-  /* não dar cor de fundo ao root, para o gradiente do body aparecer */
-  #root { background: transparent; }
+  body, #root {
+    min-height: 100%;
+    background: transparent; /* para não tapar o gradiente */
+  }
+
+  /* iOS tem bug com background-attachment: fixed; fazer fallback */
+  @supports (-webkit-touch-callout: none) {
+    html { background-attachment: scroll; }
+  }
 </style>
 
 </html>
