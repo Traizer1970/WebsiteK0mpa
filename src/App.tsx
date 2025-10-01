@@ -761,7 +761,7 @@ function PromoCard({ p }: { p: Promo }) {
         <div className="flex-1">
           <div className="text-sm font-semibold text-white/75">Promo</div>
           <h3 className="text-xl font-black tracking-tight text-white">{p.title}</h3>
-          <div className="mt-1.5 text-[13px]">{p.blurb}</div>
+          <div className="mt-1.5 text:[13px] text-[13px]">{p.blurb}</div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-[auto,1fr] sm:items-center">
             <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
@@ -893,25 +893,27 @@ function Footer() {
   return (
     <footer className="mx-auto w-full max-w-7xl px-6 sm:px-8 pb-8">
       <div className="rounded-2xl bg-black/35 backdrop-blur-md ring-1 ring-white/10 text-white/80 px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,.28)]">
-        {/* TUDO CENTRADO */}
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <div className="flex items-center gap-2">
+        {/* 3 colunas: esquerda / centro / direita */}
+        <div className="flex flex-col gap-3 sm:grid sm:grid-cols-3 sm:items-center">
+          {/* ESQUERDA: K0MPA */}
+          <div className="justify-self-start flex items-center gap-2">
             <span className="text-sm font-extrabold tracking-tight text-white">K0MPA</span>
             <span className="text-xs text-white/60">© {year}</span>
           </div>
 
-          <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] font-semibold">
+          {/* CENTRO: links */}
+          <nav className="justify-self-center flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-semibold">
             <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Termos & Condições</span>
             <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Política de Privacidade</span>
             <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Política de Cookies</span>
           </nav>
 
-          {/* 18+ SEM CÍRCULO */}
+          {/* DIREITA: 18+ sem círculo + link */}
           <a
             href="https://www.begambleaware.org/"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 text-xs hover:text-white/90"
+            className="justify-self-end inline-flex items-center gap-2 text-xs hover:text-white/90"
             title="BeGambleAware.org"
           >
             <span className="text-xs font-bold select-none">18+</span>
