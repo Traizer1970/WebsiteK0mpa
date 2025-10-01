@@ -746,21 +746,26 @@ function BrandCard({ b }: { b: Brand }) {
     </Card>
   );
 }
-
 function PromoCard({ p }: { p: Promo }) {
   return (
     <div
-      className="rounded-3xl p-5 sm:p-6 ring-1 ring-white/15 shadow-[0_14px_50px_rgba(0,0,0,.35)] text-white/90"
-      style={{ background: "linear-gradient(180deg,#4c1d95 0%, #3b0a7a 60%, #2a065d 100%)" }}
+      className="
+        rounded-3xl p-5 sm:p-6 ring-1 ring-white/12 text-white/90
+        bg-white/[.06] backdrop-blur-md
+        shadow-[0_14px_50px_rgba(0,0,0,.35)]
+        relative overflow-hidden
+      "
     >
-      <div className="flex items-start gap-3">
+      <span aria-hidden className="absolute inset-x-4 top-0 h-[3px] rounded-b-xl"
+            style={{background:"linear-gradient(90deg,#22c55e,transparent)"}}/>
+      <div className="flex items-start gap-3 relative">
         <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
           <p.icon className="h-5 w-5 text-white" />
         </span>
         <div className="flex-1">
-          <div className="text-sm font-semibold text-white/75">Promo</div>
-          <h3 className="text-xl font-black tracking-tight text-white">{p.title}</h3>
-          <div className="mt-1.5 text:[13px] text-[13px]">{p.blurb}</div>
+          <div className="text-xs font-semibold text-white/60 uppercase">Promo</div>
+          <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">{p.title}</h3>
+          <div className="mt-1.5 text-[13px] text-white/75">{p.blurb}</div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-[auto,1fr] sm:items-center">
             <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
@@ -770,7 +775,7 @@ function PromoCard({ p }: { p: Promo }) {
 
             {p.code ? (
               <div className="grid grid-cols-[1fr,auto] gap-2">
-                <div className="h-10 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 flex items-center text-sm">
+                <div className="h-10 rounded-xl bg-white/8 ring-1 ring-white/12 px-3 flex items-center text-sm">
                   <span className="text-white/60 mr-2">Código:</span>
                   <span className="font-bold tracking-wide">{p.code}</span>
                 </div>
@@ -789,8 +794,11 @@ function PromoCard({ p }: { p: Promo }) {
               href={p.href}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-extrabold text-white"
-              style={{ background: "linear-gradient(135deg,#7c3aed,#6d28d9)", boxShadow: "0 10px 26px rgba(124,58,237,.35)" }}
+              className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-extrabold text-white
+                         ring-1 ring-white/10
+                         bg-[linear-gradient(135deg,#22c55e,#16a34a)]
+                         shadow-[0_10px_26px_rgba(34,197,94,.25)]
+                         hover:brightness-110"
             >
               RECLAMAR AGORA
               <ExternalLink className="h-4 w-4" />
@@ -803,83 +811,113 @@ function PromoCard({ p }: { p: Promo }) {
   );
 }
 
-
 /* ---------- Página Betify ---------- */
 function BetifyLanding({ onBack }: { onBack: () => void }) {
   return (
     <div className="space-y-8">
       {/* Hero com look do site */}
-      <section
-        className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 shadow-[0_16px_60px_rgba(0,0,0,.35)] text-white"
-        style={{ background: "linear-gradient(180deg,#5b21b6 0%, #4c1d95 50%, #3b0764 100%)" }}
-      >
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <img
-              src="https://www.ce-at.fr/img/logo.webp"
-              alt="Betify"
-              className="h-9 w-9 rounded bg-white/90 ring-1 ring-black/10 object-contain"
-            />
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Betify</h1>
-              <p className="text-white/80 text-sm">Como jogar na Betify e desbloquear o melhor VIP</p>
-            </div>
-          </div>
-          <Button onClick={onBack} className="bg-white/10 text-white hover:bg-white/15 ring-1 ring-white/20">
-            <ArrowLeft className="h-4 w-4" /> Voltar
-          </Button>
-        </div>
+<section
+  className="
+    rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white
+    shadow-[0_16px_60px_rgba(0,0,0,.35)]
+    relative overflow-hidden
+    bg-[#0f1013]
+  "
+>
+  {/* glow subtil + pattern */}
+  <div aria-hidden
+    className="pointer-events-none absolute inset-0"
+    style={{
+      background:
+        "radial-gradient(60% 80% at 10% 0%, rgba(139,92,246,.18) 0%, rgba(139,92,246,0) 55%)," + // violet leve
+        "radial-gradient(50% 60% at 85% 100%, rgba(34,197,94,.16) 0%, rgba(34,197,94,0) 60%)",
+      mixBlendMode: "screen",
+    }}
+  />
+  <div aria-hidden className="absolute inset-0 opacity-[.06] bg-[url('data:image/svg+xml;utf8,\
+  <svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 32 32\\' fill=\\'none\\'>\
+  <path d=\\'M0 31h32M0 15h32\\' stroke=\\'#fff\\' stroke-opacity=\\'.6\\'/>\
+  <path d=\\'M1 0v32M17 0v32\\' stroke=\\'#fff\\' stroke-opacity=\\'.4\\'/>\
+  </svg>')]"/>
+  
+  {/* header hero */}
+  <div className="flex items-center justify-between gap-4 relative">
+    <div className="flex items-center gap-4">
+      <img
+        src="https://www.ce-at.fr/img/logo.webp"
+        alt="Betify"
+        className="h-9 w-9 rounded bg-white/95 ring-1 ring-black/10 object-contain"
+      />
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Betify</h1>
+        <p className="text-white/70 text-sm">Como jogar na Betify e desbloquear o melhor VIP</p>
+      </div>
+    </div>
+    <Button className="bg-white/8 text-white hover:bg-white/12 ring-1 ring-white/15">
+      <ArrowLeft className="h-4 w-4" /> Voltar
+    </Button>
+  </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-[1.2fr,.8fr]">
-          {/* Passos + CTAs com vidro */}
-          <div className="rounded-2xl bg-white/10 ring-1 ring-white/15 p-5">
-            <div className="text-lg font-extrabold mb-3">
-              Regista-te com o código <span className="text-lime-300">K0MPA</span>
-            </div>
-            <ol className="space-y-3 text-sm">
-              <li><span className="font-bold">1.</span> Cria conta na Betify.</li>
-              <li><span className="font-bold">2.</span> Usa o código <span className="font-bold">K0MPA</span> no registo.</li>
-              <li><span className="font-bold">3.</span> Aproveita promoções, cashback e free spins.</li>
-            </ol>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              <a
-                href={BETIFY_SIGNUP_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white bg-lime-600 hover:brightness-110 ring-1 ring-white/10"
-              >
-                REGISTAR AGORA <ExternalLink className="h-4 w-4" />
-              </a>
-              <a
-                href={BETIFY_PROMO_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/10 hover:bg-white/15 ring-1 ring-white/15"
-              >
-                VER PROMOÇÕES
-              </a>
-            </div>
-          </div>
+  <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
+    {/* bloco steps (vidro) */}
+    <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
+      <div className="text-lg font-extrabold mb-3">
+        Regista-te com o código <span className="text-emerald-300">K0MPA</span>
+      </div>
+      <ol className="space-y-3 text-sm text-white/90">
+        <li><span className="font-bold">1.</span> Cria conta na Betify.</li>
+        <li><span className="font-bold">2.</span> Usa o código <span className="font-bold">K0MPA</span> no registo.</li>
+        <li><span className="font-bold">3.</span> Aproveita promoções, cashback e free spins.</li>
+      </ol>
 
-          {/* Visual */}
-          <div className="rounded-2xl overflow-hidden ring-1 ring-white/15 bg-black/40">
-            <div className="relative w-full" style={{ paddingTop: "100%" }}>
-              <img
-                src="https://altacdn.com/bf/img/sliders/ca/150746_bf_website_banner_wsb.webp"
-                alt="Betify preview"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            </div>
-          </div>
-        </div>
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        {/* primário: verde Betify com gradiente subtil */}
+        <a
+          href={BETIFY_SIGNUP_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white
+                     ring-1 ring-white/10
+                     shadow-[0_10px_26px_rgba(34,197,94,.25)]
+                     hover:brightness-110 transition
+                     bg-[linear-gradient(180deg,#22c55e,#16a34a)]"
+        >
+          REGISTAR AGORA <ExternalLink className="h-4 w-4" />
+        </a>
 
-        {/* DUAS promoções distintas, alinhadas ao design do site */}
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {betifyPromos.map((p) => (
-            <PromoCard key={p.id} p={p} />
-          ))}
-        </div>
-      </section>
+        {/* secundário: vidro */}
+        <a
+          href={BETIFY_PROMO_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white
+                     bg-white/8 hover:bg-white/12 ring-1 ring-white/15"
+        >
+          VER PROMOÇÕES
+        </a>
+      </div>
+    </div>
+
+    {/* visual */}
+    <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
+      <div className="relative w-full" style={{ paddingTop: "100%" }}>
+        <img
+          src="https://altacdn.com/bf/img/sliders/ca/150746_bf_website_banner_wsb.webp"
+          alt="Betify preview"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      </div>
+    </div>
+  </div>
+
+  {/* promos */}
+  <div className="mt-6 grid gap-4 sm:grid-cols-2">
+    {betifyPromos.map((p) => (
+      <PromoCard key={p.id} p={p} />
+    ))}
+  </div>
+</section>
+
     </div>
   );
 }
