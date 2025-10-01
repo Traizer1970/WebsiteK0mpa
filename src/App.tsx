@@ -848,9 +848,6 @@ function BetifyLanding({ onBack }: { onBack: () => void }) {
         <p className="text-white/70 text-sm">Como jogar na Betify e desbloquear o melhor VIP</p>
       </div>
     </div>
-    <Button className="bg-white/8 text-white hover:bg-white/12 ring-1 ring-white/15">
-      <ArrowLeft className="h-4 w-4" /> Voltar
-    </Button>
   </div>
 
   <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
