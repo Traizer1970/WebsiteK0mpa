@@ -892,8 +892,8 @@ function Footer() {
   return (
     <footer className="mx-auto w-full max-w-7xl px-6 sm:px-8 pb-8">
       <div className="rounded-2xl bg-black/35 backdrop-blur-md ring-1 ring-white/10 text-white/80 px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,.28)]">
-        {/* TOPO: tudo numa linha, sem quebra */}
-<div className="flex items-center justify-between gap-6 flex-nowrap overflow-x-auto">
+        {/* TOPO: tudo numa linha, **centrado** e sem quebra */}
+<div className="flex items-center justify-center gap-6 flex-nowrap overflow-x-auto">
   {/* ESQUERDA */}
   <div className="shrink-0 whitespace-nowrap flex items-center gap-2">
     <span className="text-sm font-extrabold tracking-tight text-white">K0MPA</span>
@@ -902,15 +902,9 @@ function Footer() {
 
   {/* CENTRO */}
   <nav className="shrink-0 whitespace-nowrap flex flex-nowrap items-center gap-x-6 text-[13px] font-semibold">
-    <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none whitespace-nowrap">
-      Termos & Condições
-    </span>
-    <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none whitespace-nowrap">
-      Política de Privacidade
-    </span>
-    <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none whitespace-nowrap">
-      Política de Cookies
-    </span>
+    <span className="text-white/65 cursor-not-allowed select-none whitespace-nowrap">Termos & Condições</span>
+    <span className="text-white/65 cursor-not-allowed select-none whitespace-nowrap">Política de Privacidade</span>
+    <span className="text-white/65 cursor-not-allowed select-none whitespace-nowrap">Política de Cookies</span>
   </nav>
 
   {/* DIREITA */}
