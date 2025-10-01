@@ -189,7 +189,6 @@ const brands: Brand[] = [
     payments:["btc","mb","mbb","visa","mc"]
   },
 ];
-
 /* Ícones inline (TikTok + X) */
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -902,7 +901,7 @@ function Footer() {
           </div>
 
           {/* CENTRO: links */}
-          <nav className="justify-self-center flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-semibold">
+          <nav className="justify-self-center flex flex-nowrap items-center gap-x-6 text-[13px] font-semibold">
             <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Termos & Condições</span>
             <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Política de Privacidade</span>
             <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Política de Cookies</span>
@@ -922,7 +921,9 @@ function Footer() {
         </div>
 
         <div className="my-3 h-px bg-white/10" />
-        <p className="text-[12px] leading-snug text-white/55 text-center">{t.footer.rg_paragraph}</p>
+        <p className="text-[12px] leading-snug text-white/55 text-center whitespace-nowrap overflow-x-auto">
+  {t.footer.rg_paragraph}
+</p>
       </div>
     </footer>
   );
