@@ -892,33 +892,39 @@ function Footer() {
   return (
     <footer className="mx-auto w-full max-w-7xl px-6 sm:px-8 pb-8">
       <div className="rounded-2xl bg-black/35 backdrop-blur-md ring-1 ring-white/10 text-white/80 px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,.28)]">
-        {/* 3 colunas: esquerda / centro / direita */}
-        <div className="flex flex-col gap-3 sm:grid sm:grid-cols-3 sm:items-center">
-          {/* ESQUERDA: K0MPA */}
-          <div className="justify-self-start flex items-center gap-2">
-            <span className="text-sm font-extrabold tracking-tight text-white">K0MPA</span>
-            <span className="text-xs text-white/60">© {year}</span>
-          </div>
+        {/* TOPO: tudo numa linha, sem quebra */}
+<div className="flex items-center justify-between gap-6 flex-nowrap overflow-x-auto">
+  {/* ESQUERDA */}
+  <div className="shrink-0 whitespace-nowrap flex items-center gap-2">
+    <span className="text-sm font-extrabold tracking-tight text-white">K0MPA</span>
+    <span className="text-xs text-white/60">© {year}</span>
+  </div>
 
-          {/* CENTRO: links */}
-          <nav className="justify-self-center flex flex-nowrap items-center gap-x-6 text-[13px] font-semibold">
-            <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Termos & Condições</span>
-            <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Política de Privacidade</span>
-            <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none">Política de Cookies</span>
-          </nav>
+  {/* CENTRO */}
+  <nav className="shrink-0 whitespace-nowrap flex flex-nowrap items-center gap-x-6 text-[13px] font-semibold">
+    <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none whitespace-nowrap">
+      Termos & Condições
+    </span>
+    <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none whitespace-nowrap">
+      Política de Privacidade
+    </span>
+    <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none whitespace-nowrap">
+      Política de Cookies
+    </span>
+  </nav>
 
-          {/* DIREITA: 18+ sem círculo + link */}
-          <a
-            href="https://www.begambleaware.org/"
-            target="_blank"
-            rel="noreferrer"
-            className="justify-self-end inline-flex items-center gap-2 text-xs hover:text-white/90"
-            title="BeGambleAware.org"
-          >
-            <span className="text-xs font-bold select-none">18+</span>
-            BeGambleAware.org
-          </a>
-        </div>
+  {/* DIREITA */}
+  <a
+    href="https://www.begambleaware.org/"
+    target="_blank"
+    rel="noreferrer"
+    className="shrink-0 whitespace-nowrap inline-flex items-center gap-2 text-xs hover:text-white/90"
+    title="BeGambleAware.org"
+  >
+    <span className="text-xs font-bold select-none">18+</span>
+    BeGambleAware.org
+  </a>
+</div>
 
         <div className="my-3 h-px bg-white/10" />
         <p className="text-[12px] leading-snug text-white/55 text-center whitespace-nowrap overflow-x-auto">
