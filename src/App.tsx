@@ -608,6 +608,64 @@ function StreamHero({ channel }: { channel: string }) {
     </section>
   );
 }
+/* ---------- Embeds pequenos lado a lado ---------- */
+function TwitchEmbedMini({ channel }: { channel: string }) {
+  const src = buildTwitchEmbedUrl(channel);
+  return (
+    <section className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_8px_26px_rgba(0,0,0,.35)] bg-black">
+      {/* 16:9 mas em cartão pequeno */}
+      <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+        <iframe
+          title={`twitch-${channel}-mini`}
+          src={src}
+          allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+          allowFullScreen
+          frameBorder="0"
+          scrolling="no"
+          className="absolute inset-0 h-full w-full border-0"
+        />
+      </div>
+    </section>
+  );
+}
+
+function YouTubeLastMini({ channelId }: { channelId: string }) {
+  const [vid, setVid] = React.useState<{ id: string; title: string } | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    const url = `https://r.jina.ai/http://www.youtube.com/channel/${encodeURIComponent(channelId)}/videos`;
+    (async () => {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        const html = await res.text();
+        const m = /href="\/watch\?v=([a-zA-Z0-9_-]{11})"[^>]*\s+title="([^"]+)"/.exec(html);
+        if (!cancelled && m) setVid({ id: m[1], title: m[2] });
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, [channelId]);
+
+  return (
+    <section className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_8px_26px_rgba(0,0,0,.35)] bg-black">
+      <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+        {vid ? (
+          <iframe
+            title={vid.title}
+            src={`https://www.youtube-nocookie.com/embed/${vid.id}`}
+            className="absolute inset-0 h-full w-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+            loading="lazy"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-white/5 animate-pulse" />
+        )}
+      </div>
+    </section>
+  );
+}
 
 /* Twitter (bird) */
 function TwitterIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -624,7 +682,7 @@ function TwitterIcon(props: React.SVGProps<SVGSVGElement>) {
 /* ---------- YouTube GRID (só vídeos, ignora shorts) ---------- */
 type YtItem = { id: string; title: string; thumb: string };
 
-function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: number }) {
+function YouTubeGrid({ channelId, limit = 8, hero = true }: { channelId: string; limit?: number; hero?: boolean }) {
   const { t } = useLang();
   const [items, setItems] = useState<YtItem[] | null>(null);
   const [failed, setFailed] = useState(false);
@@ -672,26 +730,26 @@ function YouTubeGrid({ channelId, limit = 8 }: { channelId: string; limit?: numb
         </div>
       )}
 
-      {!!items && items.length > 0 && (
-        <>
-          {last && (
-            <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
-              <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-                <iframe
-                  title={last.title || "Último vídeo"}
-                  src={`https://www.youtube-nocookie.com/embed/${last.id}`}
-                  className="absolute inset-0 h-full w-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                  loading="lazy"
-                />
-              </div>
-            </div>
-          )}
+{!!items && items.length > 0 && (
+  <>
+    {hero && last && (
+      <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black">
+        <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+          <iframe
+            title={last.title || "Último vídeo"}
+            src={`https://www.youtube-nocookie.com/embed/${last.id}`}
+            className="absolute inset-0 h-full w-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+            loading="lazy"
+          />
+        </div>
+      </div>
+    )}
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {items.slice(1).map((v) => (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {(hero ? items.slice(1) : items).map((v) => (
               <a
                 key={v.id}
                 href={`https://www.youtube.com/watch?v=${v.id}`}
@@ -1142,23 +1200,32 @@ export default function CasinoPartnerHub() {
               onGoHome={() => setRoute("home")}
             />
 
-            <main className="space-y-10">
-              {route === "home" ? (
-                <>
-                  <StreamHero channel={TWITCH_CHANNEL} />
-                  <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
-                    {brands.map((b, i) => (
-                      <React.Fragment key={b.name + i}>
-                        <BrandCard b={b} />
-                      </React.Fragment>
-                    ))}
-                  </div>
-                  <YouTubeGrid channelId={YT_CHANNEL_ID} limit={8} />
-                </>
-              ) : (
-                <BetifyLanding onBack={() => setRoute("home")} />
-              )}
-            </main>
+<main className="space-y-10">
+  {route === "home" ? (
+    <>
+      {/* 1) CARDS NO TOPO */}
+      <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
+        {brands.map((b, i) => (
+          <React.Fragment key={b.name + i}>
+            <BrandCard b={b} />
+          </React.Fragment>
+        ))}
+      </div>
+
+      {/* 2) TWITCH + YOUTUBE REDUZIDOS LADO A LADO */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <TwitchEmbedMini channel={TWITCH_CHANNEL} />
+        <YouTubeLastMini channelId={YT_CHANNEL_ID} />
+      </div>
+
+      {/* 3) LISTA DE VÍDEOS (sem hero grande para não repetir) */}
+      <YouTubeGrid channelId={YT_CHANNEL_ID} limit={8} hero={false} />
+    </>
+  ) : (
+    <BetifyLanding onBack={() => setRoute("home")} />
+  )}
+</main>
+
           </div>
         </div>
 
