@@ -143,29 +143,170 @@ type Translations = {
   card: { min: string; bonus: string; cashback: string; spins: string; code: string; terms: string; showMore: string; back: string; moreInfo: string; visit: string; go: string; copy: string; };
   social: { title: string; youtube: string; instagram: string; twitch: string; telegram: string; tiktok: string; tiktok_val: string; x: string; copyright: (y:number)=>string; };
   footer: { terms: string; privacy: string; cookies: string; rg_paragraph: string; rg_site: string; };
+
+  /* 👇 NOVO: textos específicos da página Betify */
+  betify: {
+    title: string;
+    subtitle: string;
+    steps: { one: string; two_prefix: string; two_code: string; two_suffix: string; three: string; };
+    cta_signup: string;
+    cta_promos: string;
+    promo_label: string; /* “Promo” */
+  };
 };
+
 const messages: Record<Lang, Translations> = {
   PT: {
-    brand: "K0MPA", search: "Pesquisar…",
-    nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
-    promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
-    card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
-    social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
-    footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
-             rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
-             rg_site:"BeGambleAware.org" }
+    brand: "K0MPA",
+    search: "Pesquisar…",
+    nav: {
+      menu: "Menu",
+      casinos: "Casinos",
+      offers: "Ofertas",
+      betify: "Betify",
+      shop: "Loja",
+      community: "Comunidade",
+      slots: "Slots",
+      stream: "Transmissão",
+      minigames: "Mini Jogos",
+      new: "NOVO"
+    },
+    promo: {
+      lootbox: "Lootbox",
+      everyDep: "Every Dep.",
+      bonus: "5% Bonus",
+      giveaways: "Giveaways",
+      monthly: "Monthly",
+      depcode: "Dep. Code",
+      claim: "Claim Bonus"
+    },
+    card: {
+      min: "Min. Dep.",
+      bonus: "Bónus",
+      cashback: "Cashback",
+      spins: "Free Spins",
+      code: "Código:",
+      terms: "+18 | T&C aplicam-se",
+      showMore: "Mais",
+      back: "Voltar",
+      moreInfo: "Mais informações",
+      visit: "Visitar marca",
+      go: "RESGATAR BÓNUS",
+      copy: "Copiar"
+    },
+    social: {
+      title: "Redes",
+      youtube: "Youtube",
+      instagram: "Instagram",
+      twitch: "Twitch",
+      telegram: "Telegram",
+      tiktok: "TikTok",
+      tiktok_val: "TikTok2",
+      x: "X",
+      copyright: (y) => `Copyright © ${y} K0MPA`
+    },
+    footer: {
+      terms: "Termos & Condições",
+      privacy: "Política de Privacidade",
+      cookies: "Política de Cookies",
+      rg_paragraph:
+        "18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
+      rg_site: "BeGambleAware.org"
+    },
+
+    /* 👇 NOVO: textos específicos da página Betify */
+    betify: {
+      title: "Betify",
+      subtitle: "Como jogar na Betify e desbloquear o melhor VIP",
+      steps: {
+        one: "Cria conta na Betify.",
+        two_prefix: "Usa o código",
+        two_code: "K0MPA",
+        two_suffix: "no registo.",
+        three: "Aproveita promoções, cashback e free spins."
+      },
+      cta_signup: "REGISTAR AGORA",
+      cta_promos: "VER PROMOÇÕES",
+      promo_label: "Promo"
+    }
   },
+
   EN: {
-    brand:"K0MPA", search:"Search…",
-    nav:{ menu:"Menu", casinos:"Casinos", offers:"Offers", betify:"Betify", shop:"Shop", community:"Community", slots:"Slots", stream:"Stream", minigames:"Mini Games", new:"NEW" },
-    promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
-    card:{ min:"Min. Dep.", bonus:"Bonus", cashback:"Cashback", spins:"Free Spins", code:"Code:", terms:"+18 | T&C apply", showMore:"More", back:"Back", moreInfo:"More information", visit:"Visit brand", go:"CLAIM BONUS", copy:"Copy" },
-    social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
-    footer:{ terms:"Terms & Conditions", privacy:"Privacy Policy", cookies:"Cookie Policy",
-             rg_paragraph:"18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
-             rg_site:"BeGambleAware.org" }
+    brand: "K0MPA",
+    search: "Search…",
+    nav: {
+      menu: "Menu",
+      casinos: "Casinos",
+      offers: "Offers",
+      betify: "Betify",
+      shop: "Shop",
+      community: "Community",
+      slots: "Slots",
+      stream: "Stream",
+      minigames: "Mini Games",
+      new: "NEW"
+    },
+    promo: {
+      lootbox: "Lootbox",
+      everyDep: "Every Dep.",
+      bonus: "5% Bonus",
+      giveaways: "Giveaways",
+      monthly: "Monthly",
+      depcode: "Dep. Code",
+      claim: "Claim Bonus"
+    },
+    card: {
+      min: "Min. Dep.",
+      bonus: "Bonus",
+      cashback: "Cashback",
+      spins: "Free Spins",
+      code: "Code:",
+      terms: "+18 | T&C apply",
+      showMore: "More",
+      back: "Back",
+      moreInfo: "More information",
+      visit: "Visit brand",
+      go: "CLAIM BONUS",
+      copy: "Copy"
+    },
+    social: {
+      title: "Socials",
+      youtube: "YouTube",
+      instagram: "Instagram",
+      twitch: "Twitch",
+      telegram: "Telegram",
+      tiktok: "TikTok",
+      tiktok_val: "TikTok2",
+      x: "X",
+      copyright: (y) => `Copyright © ${y} K0MPA`
+    },
+    footer: {
+      terms: "Terms & Conditions",
+      privacy: "Privacy Policy",
+      cookies: "Cookie Policy",
+      rg_paragraph:
+        "18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
+      rg_site: "BeGambleAware.org"
+    },
+
+    /* 👇 NOVO: textos específicos da página Betify */
+    betify: {
+      title: "Betify",
+      subtitle: "How to play on Betify and unlock the best VIP",
+      steps: {
+        one: "Create an account on Betify.",
+        two_prefix: "Use the code",
+        two_code: "K0MPA",
+        two_suffix: "during signup.",
+        three: "Enjoy promotions, cashback and free spins."
+      },
+      cta_signup: "SIGN UP NOW",
+      cta_promos: "SEE PROMOTIONS",
+      promo_label: "Promo"
+    }
   }
 };
+
 const LangCtx = createContext<{lang:Lang; setLang:(l:Lang)=>void; t:Translations}>({lang:"PT", setLang:()=>{}, t:messages.PT});
 function useLang(){ return useContext(LangCtx); }
 
@@ -756,23 +897,16 @@ function BrandCard({ b }: { b: Brand }) {
   );
 }
 function PromoCard({ p }: { p: Promo }) {
+  const { t } = useLang();
   return (
-    <div
-      className="
-        rounded-3xl p-5 sm:p-6 ring-1 ring-white/12 text-white/90
-        bg-white/[.06] backdrop-blur-md
-        shadow-[0_14px_50px_rgba(0,0,0,.35)]
-        relative overflow-hidden
-      "
-    >
-      <span aria-hidden className="absolute inset-x-4 top-0 h-[3px] rounded-b-xl"
-            style={{background:"linear-gradient(90deg,#22c55e,transparent)"}}/>
+    <div className="rounded-3xl p-5 sm:p-6 ring-1 ring-white/12 text-white/90 bg-white/[.06] backdrop-blur-md shadow-[0_14px_50px_rgba(0,0,0,.35)] relative overflow-hidden">
+      <span aria-hidden className="absolute inset-x-4 top-0 h-[3px] rounded-b-xl" style={{background:"linear-gradient(90deg,#22c55e,transparent)"}}/>
       <div className="flex items-start gap-3 relative">
         <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
           <p.icon className="h-5 w-5 text-white" />
         </span>
         <div className="flex-1">
-          <div className="text-xs font-semibold text-white/60 uppercase">Promo</div>
+          <div className="text-xs font-semibold text-white/60 uppercase">{t.betify.promo_label}</div>
           <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">{p.title}</h3>
           <div className="mt-1.5 text-[13px] text-white/75">{p.blurb}</div>
 
@@ -785,14 +919,14 @@ function PromoCard({ p }: { p: Promo }) {
             {p.code ? (
               <div className="grid grid-cols-[1fr,auto] gap-2">
                 <div className="h-10 rounded-xl bg-white/8 ring-1 ring-white/12 px-3 flex items-center text-sm">
-                  <span className="text-white/60 mr-2">Código:</span>
+                  <span className="text-white/60 mr-2">{t.card.code}</span>
                   <span className="font-bold tracking-wide">{p.code}</span>
                 </div>
                 <button
                   onClick={async () => { try { await navigator.clipboard.writeText(p.code!); } catch {} }}
                   className="h-10 inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/15 ring-1 ring-white/15 px-3 text-sm font-semibold"
                 >
-                  <Copy className="h-4 w-4" /> Copiar
+                  <Copy className="h-4 w-4" /> {t.card.copy}
                 </button>
               </div>
             ) : null}
@@ -803,22 +937,19 @@ function PromoCard({ p }: { p: Promo }) {
               href={p.href}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-extrabold text-white
-                         ring-1 ring-white/10
-                         bg-[linear-gradient(135deg,#22c55e,#16a34a)]
-                         shadow-[0_10px_26px_rgba(34,197,94,.25)]
-                         hover:brightness-110"
+              className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 bg-[linear-gradient(135deg,#22c55e,#16a34a)] shadow-[0_10px_26px_rgba(34,197,94,.25)] hover:brightness-110"
             >
-              RECLAMAR AGORA
+              {t.card.go}
               <ExternalLink className="h-4 w-4" />
             </a>
-            <span className="text-[11px] text-white/60 self-center">+18 | T&C aplicam-se</span>
+            <span className="text-[11px] text-white/60 self-center">{t.card.terms}</span>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
 
 /* ---------- Página Betify ---------- */
 function BetifyLanding({ onBack }: { onBack: () => void }) {
