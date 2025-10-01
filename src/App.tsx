@@ -612,8 +612,7 @@ function StreamHero({ channel }: { channel: string }) {
 function TwitchEmbedMini({ channel }: { channel: string }) {
   const src = buildTwitchEmbedUrl(channel);
   return (
-    <section className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_8px_26px_rgba(0,0,0,.35)] bg-black">
-      {/* 16:9 mas em cartão pequeno */}
+    <section className="min-w-0 rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_8px_26px_rgba(0,0,0,.35)] bg-black">
       <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
         <iframe
           title={`twitch-${channel}-mini`}
@@ -646,8 +645,8 @@ function YouTubeLastMini({ channelId }: { channelId: string }) {
     return () => { cancelled = true; };
   }, [channelId]);
 
-  return (
-    <section className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_8px_26px_rgba(0,0,0,.35)] bg-black">
+return (
+    <section className="min-w-0 rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_8px_26px_rgba(0,0,0,.35)] bg-black">
       <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
         {vid ? (
           <iframe
@@ -1213,7 +1212,7 @@ export default function CasinoPartnerHub() {
       </div>
 
       {/* 2) TWITCH + YOUTUBE REDUZIDOS LADO A LADO */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2">
         <TwitchEmbedMini channel={TWITCH_CHANNEL} />
         <YouTubeLastMini channelId={YT_CHANNEL_ID} />
       </div>
