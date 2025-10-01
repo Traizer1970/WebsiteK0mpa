@@ -1235,7 +1235,6 @@ export default function CasinoPartnerHub() {
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
       <div className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-hidden">
-        <BackgroundLayer />
         <div style={{ height: "var(--hdr-offset, 68px)" }} aria-hidden />
         <HeaderBar isLive={isLive} />
 

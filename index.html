@@ -11,35 +11,27 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Se tiveres pesos diferentes, podes usar :wght@400;700 -->
     <link href="https://fonts.googleapis.com/css2?family=Asimovian&display=swap" rel="stylesheet">
+<style>
+  html, body, #root { min-height: 100%; }
+  body { position: relative; background: transparent; }
 
-    <style>
-      /* Garante altura mínima de página */
-      html, body, #root { min-height: 100%; }
+  /* ÚNICA camada de fundo */
+  body::before{
+    content:"";
+    position:fixed;
+    z-index:-1;
+    /* bleed extra para nunca cortar (mesmo com zoom) */
+    inset:-30vh -12vw -30vh -12vw;
+    background:
+      /* radiais que tinhas no React */
+      radial-gradient(60% 40% at 15% 5%, rgba(244,63,94,.28) 0%, rgba(244,63,94,0) 70%),
+      radial-gradient(55% 45% at 85% 95%, rgba(244,63,94,.22) 0%, rgba(244,63,94,0) 75%),
+      /* gradiente base */
+      linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%);
+    pointer-events:none;
+  }
+</style>
 
-      /* Deixa o body “transparente” e com posicionamento p/ o ::before */
-      body { position: relative; background: transparent; }
-
-      /*
-        Camada de fundo FIXA.
-        - "inset" negativo dá bleed extra para nunca cortar (mesmo com zoom).
-        - z-index -1 garante que fica atrás de tudo.
-      */
-      body::before {
-        content: "";
-        position: fixed;
-        z-index: -1;
-        inset: -30vh -12vw -30vh -12vw;  /* bleed generoso */
-        background:
-          linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%);
-        /* se quiseres, podes adicionar os teus radiais aqui por cima: 
-           , radial-gradient(60% 40% at 15% 5%, rgba(244,63,94,.28) 0%, rgba(244,63,94,0) 70%)
-           , radial-gradient(55% 45% at 85% 95%, rgba(244,63,94,.22) 0%, rgba(244,63,94,0) 75%)
-        */
-        pointer-events: none;
-      }
-
-      /* iOS: sem hacks de attachment; o ::before já resolve */
-    </style>
   </head>
 
   <body>
