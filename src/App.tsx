@@ -124,6 +124,11 @@ type Translations = {
   card: { min: string; bonus: string; cashback: string; spins: string; code: string; terms: string; showMore: string; back: string; moreInfo: string; visit: string; go: string; copy: string; };
   social: { title: string; youtube: string; instagram: string; twitch: string; telegram: string; tiktok: string; tiktok_val: string; x: string; copyright: (y:number)=>string; };
   footer: { terms: string; privacy: string; cookies: string; rg_paragraph: string; rg_site: string; };
+    communityModal: {
+    close: string;
+    choose: string;
+    discord_sub: string;
+    telegram_sub: string;};
 
   /* NOVO */
   latestVideos: string;
@@ -149,7 +154,12 @@ const messages: Record<Lang, Translations> = {
     social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
     footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
              rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
-             rg_site:"BeGambleAware.org" },latestVideos: "Últimos vídeos",
+             rg_site:"BeGambleAware.org" },latestVideos: "Últimos vídeos", communityModal: {
+  close: "Fechar",
+  choose: "Escolhe onde queres entrar:",
+  discord_sub: "Chats, roles e anúncios",
+  telegram_sub: "Canal rápido de updates",
+},
 
 
 betify: {
@@ -189,6 +199,12 @@ betify: {
     footer:{ terms:"Terms & Conditions", privacy:"Privacy Policy", cookies:"Cookie Policy",
              rg_paragraph:"18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
              rg_site:"BeGambleAware.org" },latestVideos: "Latest videos",
+             communityModal: {
+  close: "Close",
+  choose: "Choose where you want to join:",
+  discord_sub: "Chats, roles and announcements",
+  telegram_sub: "Fast update channel",
+},
 
 
 betify: {
@@ -645,11 +661,11 @@ function CommunityModal({ onClose }: { onClose: () => void }) {
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold">{t.nav.community}</h3>
           <button onClick={onClose} className="rounded-md px-3 py-1 text-sm font-semibold hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
-            Fechar
-          </button>
+           {t.communityModal.close}
+         </button>
         </div>
 
-        <p className="mt-1 text-sm text-white/70">Escolhe onde queres entrar:</p>
+        <p className="mt-1 text-sm text-white/70">{t.communityModal.choose}</p>
 
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <a
@@ -660,7 +676,7 @@ function CommunityModal({ onClose }: { onClose: () => void }) {
             <DiscordIcon className="h-5 w-5" />
             <div className="flex-1">
               <div className="text-sm font-bold">Discord</div>
-              <div className="text-xs text-white/60">Chats, roles e anúncios</div>
+              <div className="text-xs text-white/60">{t.communityModal.discord_sub}</div>
             </div>
             <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
           </a>
@@ -673,7 +689,7 @@ function CommunityModal({ onClose }: { onClose: () => void }) {
             <Send className="h-5 w-5" />
             <div className="flex-1">
               <div className="text-sm font-bold">Telegram</div>
-              <div className="text-xs text-white/60">Canal rápido de updates</div>
+              <div className="text-xs text-white/60">{t.communityModal.telegram_sub}</div>
             </div>
             <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
           </a>
