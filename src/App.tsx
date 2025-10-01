@@ -723,7 +723,20 @@ function BrandCard({ b }: { b: Brand }) {
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
           <TagBadge tag={b.tag} accent={acc} />
           <div className="absolute inset-0 overflow-hidden rounded-3xl">
-            <img src={b.image} alt={b.name} className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: b.imagePos ?? "center" }} />
+            <img
+  src={b.image}
+  alt={b.name}
+  className="absolute inset-0 h-full w-full object-cover"
+  style={{
+    // sangra 1px para cada lado para cobrir qualquer falha de render
+    left: "-1px",
+    right: "-1px",
+    width: "calc(100% + 2px)",
+    // continua “centrada à esquerda”, com +10px (11px no total)
+    objectPosition: b.imagePos === "left" ? "11px center" : (b.imagePos ?? "center"),
+  }}
+/>
+
             <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/50" />
             <div className="absolute right-4 top-4 z-10">
               <button onClick={()=>setFlip(true)} className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60">
