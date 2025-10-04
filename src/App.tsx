@@ -344,12 +344,14 @@ function Sidebar({
   onOpenStream,
   onOpenBetify,
   onGoHome,
-  onOpenCommunity, // ⬅️ novo
+  onOpenCommunity,
+  desiredHeight,                     // 👈 NOVO
 }: {
   onOpenStream: () => void;
   onOpenBetify: () => void;
   onGoHome: () => void;
-  onOpenCommunity: () => void; // ⬅️ novo
+  onOpenCommunity: () => void;
+  desiredHeight?: number;            // 👈 NOVO
 }) {
   const { t, lang } = useLang();
 
@@ -360,7 +362,11 @@ function Sidebar({
     >
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
-        style={{ height: "calc(100vh - var(--sticky-top,112px) - 16px)", overflow: "auto" }}
+        style={{
+          height: desiredHeight ? `${desiredHeight}px` : undefined,          // 👈 usa a altura do main
+          maxHeight: "calc(100vh - var(--sticky-top,112px) - 16px)",         // 👈 mas respeita o viewport
+          overflow: "auto"
+        }}
       >
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
@@ -561,7 +567,6 @@ function Sidebar({
 /* ---------- helpers ---------- */
 function cap(value: string, lang: Lang) {
   const prefix = lang === "PT" ? "Até" : "Up to";
-  // se o valor já vier com "até"/"up to", não duplica
   if (/^\s*(até|up to)\b/i.test(value)) return value;
   return `${prefix} ${value}`;
 }
@@ -583,7 +588,6 @@ function TagBadge({ tag, inline=false, className="", style, accent }: { tag: Bra
 }
 
 /* ---------- Payment logos ---------- */
-// Discord (usa o SVG oficial via URL)
 function DiscordIconImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
   return (
     <img
@@ -784,7 +788,7 @@ React.useEffect(() => {
 
       while ((m = re.exec(html))) {
         const id = m[1], title = m[2];
-        if (!isShorts(title)) { found = { id, title }; break; }  // ⬅️ ignora Shorts
+        if (!isShorts(title)) { found = { id, title }; break; }
       }
 
       if (!cancelled) setVid(found);
@@ -796,7 +800,6 @@ React.useEffect(() => {
   return () => { cancelled = true; };
 }, [channelId]);
 
-  // uploads playlist id = "UU" + channel id sem "UC"
   const uploadsPlaylist = "UU" + channelId.slice(2);
 
   return (
@@ -858,7 +861,7 @@ function FancyStat({ label, value, icon: Icon, accent }: { label: string; value:
 }
 function StatTile({ icon: Icon, label, value, accent }: { icon: React.ElementType; label: string; value: string; accent: string; }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl p-3.5 transition bg-white/5 ring-1 ring-white/10 shadow-[0_2px_10px_rgba(15,23,42,0.06)] focus-within:ring-2 focus-within:ring-rose-400/60" style={{ backgroundImage:"radial-gradient(120% 100% at 10% 0%, rgba(148,163,184,0.10) 0%, rgba(255,255,255,0) 60%)" }}>
+    <div className="group relative overflow-hidden rounded-2xl p-3.5 transition bg-white/5 ring-1 ring-white/10 shadow-[0_2px_10px_rgba(15,23,42,0.06)]" style={{ backgroundImage:"radial-gradient(120% 100% at 10% 0%, rgba(148,163,184,0.10) 0%, rgba(255,255,255,0) 60%)" }}>
       <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background:`linear-gradient(90deg, ${accent}, transparent)` }} />
       <div className="flex items-center gap-2 text-white/70">
         <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg ring-1 ring-white/10" style={{ background:`${accent}14` }}>
@@ -891,14 +894,9 @@ function BrandCard({ b }: { b: Brand }) {
   alt={b.name}
   className="absolute inset-0 h-full w-full object-cover"
   style={{
-    // bleed extra para tapar quaisquer 1px brancos nas bordas
     right: "-3px",
     width: "calc(100% + 6px)",
-
-    // manter a imagem 10px para a esquerda (podes afinar -8/-12)
     objectPosition: b.imagePos === "left" ? "-10px center" : (b.imagePos ?? "center"),
-
-    // evita linhas por sub-pixel em alguns browsers
     transform: "translateZ(0)"
   }}
 />
@@ -964,9 +962,7 @@ function BrandCard({ b }: { b: Brand }) {
             </div>
 
 <div className="mt-5">
-  {/* células com a MESMA altura/ocupação */}
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
-    {/* Secundário */}
     <button
       type="button"
       onClick={() => setFlip(false)}
@@ -979,7 +975,6 @@ function BrandCard({ b }: { b: Brand }) {
       {t.card.back}
     </button>
 
-    {/* Primário (sem shadow externo) */}
     <a
       href={b.link}
       target="_blank"
@@ -990,7 +985,6 @@ function BrandCard({ b }: { b: Brand }) {
                  focus:ring-2 focus:ring-rose-400/60"
       style={{
         background: `linear-gradient(135deg, ${acc}, ${rgba(acc, .88)})`,
-        // sombra interna subtil para manter “peso” sem alterar o preenchimento inferior
         boxShadow: `inset 0 -1px 0 ${rgba('#000', .25)}`
       }}
     >
@@ -1021,7 +1015,6 @@ function PromoCard({ p }: { p: Promo }) {
           <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">{copy.title}</h3>
           <div className="mt-1.5 text-[13px] text-white/75">{copy.blurb}</div>
 
-          {/* destaque do benefício — sem quebra de linha */}
           <div className="mt-4">
             <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
               <Sparkles className="h-4 w-4" />
@@ -1063,7 +1056,6 @@ function BetifyLanding({ onBack }: { onBack: () => void }) {
       <section
         className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]"
       >
-        {/* glow/pattern */}
         <div aria-hidden className="pointer-events-none absolute inset-0"
              style={{background:
                "radial-gradient(60% 80% at 10% 0%, rgba(139,92,246,.18) 0%, rgba(139,92,246,0) 55%)," +
@@ -1075,7 +1067,6 @@ function BetifyLanding({ onBack }: { onBack: () => void }) {
           <path d=\\'M1 0v32M17 0v32\\' stroke=\\'#fff\\' stroke-opacity=\\'.4\\'/>\
           </svg>')]" />
 
-        {/* header hero */}
         <div className="flex items-center justify-between gap-4 relative">
           <div className="flex items-center gap-4">
             <div>
@@ -1086,7 +1077,6 @@ function BetifyLanding({ onBack }: { onBack: () => void }) {
         </div>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
-          {/* steps */}
           <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
             <div className="text-lg font-extrabold mb-3">
               {t.betify.steps.two_prefix} <span className="text-emerald-300">{t.betify.steps.two_code}</span>
@@ -1107,7 +1097,6 @@ function BetifyLanding({ onBack }: { onBack: () => void }) {
                 {t.betify.cta_signup} <ExternalLink className="h-4 w-4" />
               </a>
 
-              {/* 👉 agora rola para a secção de promos */}
               <button
                 type="button"
                 onClick={scrollToPromos}
@@ -1118,7 +1107,6 @@ function BetifyLanding({ onBack }: { onBack: () => void }) {
             </div>
           </div>
 
-          {/* visual */}
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
               <img
@@ -1130,7 +1118,6 @@ function BetifyLanding({ onBack }: { onBack: () => void }) {
           </div>
         </div>
 
-        {/* promos */}
         <div id="betify-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
           {betifyPromos.map((p) => (<PromoCard key={p.id} p={p} />))}
         </div>
@@ -1146,18 +1133,13 @@ function Footer() {
   return (
     <footer className="mx-auto w-full max-w-7xl px-6 sm:px-8 pb-8">
       <div className="rounded-2xl bg-black/35 backdrop-blur-md ring-1 ring-white/10 text-white/80 px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,.28)]">
-        {/* TOPO: tudo numa linha, **centrado** e sem quebra */}
-{/* TOPO: tudo numa linha, sem quebra */}
 <div className="flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap max-w-full">
-  {/* ESQUERDA */}
   <div className="shrink-0 whitespace-nowrap flex items-center gap-2">
     <span className="brand-font text-white text-[18px] leading-none">K0MPA</span>
     <span className="text-xs text-white/60">© {year}</span>
   </div>
 
-  {/* CENTRO */}
 <nav className="shrink-0 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-semibold max-w-full">
-
   <span aria-disabled="true" className="text-white/65 cursor-not-allowed select-none whitespace-nowrap">
     {t.footer.terms}
   </span>
@@ -1169,8 +1151,6 @@ function Footer() {
   </span>
 </nav>
 
-
-  {/* DIREITA */}
   <a
     href="https://www.begambleaware.org/"
     target="_blank"
@@ -1185,7 +1165,6 @@ function Footer() {
 
         <div className="my-3 h-px bg-white/10" />
         <p className="text-[12px] leading-snug text-white/55 text-center whitespace-normal break-words max-w-full">
-
   {t.footer.rg_paragraph}
 </p>
       </div>
@@ -1207,12 +1186,10 @@ function LanguageToggle({ lang, onChange }: { lang:"PT"|"EN"; onChange:(l:"PT"|"
 }
 
 /* ---------- Background ---------- */
-/* BackgroundLayer */
 function BackgroundLayer() {
   return (
     <div
       className="pointer-events-none fixed -z-10"
-      // dá bleed para não cortar em nenhum breakpoint
       style={{
         inset: "-30vh -12vw -30vh -12vw",
         background: "linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%)",
@@ -1238,32 +1215,41 @@ type Route = "home" | "betify";
 
 export default function CasinoPartnerHub() {
   const [lang, setLang] = useState<Lang>(() => {
-  // tenta recuperar a escolha anterior
-  const saved = (typeof window !== "undefined"
-    ? (localStorage.getItem("lang") as Lang | null)
-    : null);
-  if (saved === "PT" || saved === "EN") return saved;
+    const saved = (typeof window !== "undefined"
+      ? (localStorage.getItem("lang") as Lang | null)
+      : null);
+    if (saved === "PT" || saved === "EN") return saved;
+    const nav = typeof navigator !== "undefined" ? navigator.language || "" : "";
+    return nav.toLowerCase().startsWith("pt") ? "PT" : "PT";
+  });
 
-  // auto-deteta; default = PT como pediste
-  const nav = typeof navigator !== "undefined" ? navigator.language || "" : "";
-  return nav.toLowerCase().startsWith("pt") ? "PT" : "PT";
-});
-
-// guarda sempre que muda
-useEffect(() => {
-  try { localStorage.setItem("lang", lang); } catch {}
-}, [lang]);
+  useEffect(() => {
+    try { localStorage.setItem("lang", lang); } catch {}
+  }, [lang]);
 
   const t = useMemo(() => messages[lang], [lang]);
   const isLive = useLiveAutoTwitch(TWITCH_CHANNEL, 60_000);
   const [showOverlay, setShowOverlay] = useState(false);
-  const [showCommunity, setShowCommunity] = useState(false); // ⬅️ novo
-
+  const [showCommunity, setShowCommunity] = useState(false);
   const [route, setRoute] = useState<Route>("home");
 
-  useEffect(() => {
-    if ((import.meta as any)?.env?.DEV && brands.length < 1) console.warn("[TEST] expected >=1 brand");
-  }, []);
+  // --- NOVO: medir altura real da coluna direita e sincronizar com a sidebar
+  const rightColRef = React.useRef<HTMLElement | null>(null);
+  const [rightH, setRightH] = React.useState<number | null>(null);
+
+  React.useEffect(() => {
+    const el = rightColRef.current;
+    if (!el) return;
+
+    const update = () => setRightH(el.scrollHeight);
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    update();
+
+    // Recalcular quando a janela muda (mudança de colunas 16:9)
+    window.addEventListener("resize", update);
+    return () => { ro.disconnect(); window.removeEventListener("resize", update); };
+  }, [route]);
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
@@ -1277,44 +1263,43 @@ useEffect(() => {
               onOpenStream={() => setShowOverlay(true)}
               onOpenBetify={() => setRoute("betify")}
               onGoHome={() => setRoute("home")}
-              onOpenCommunity={() => setShowCommunity(true)}   // ⬅️ adiciona isto
+              onOpenCommunity={() => setShowCommunity(true)}
+              desiredHeight={rightH ?? undefined}      // <-- passa a altura do main
             />
 
-<main className="space-y-10">
-  {route === "home" ? (
-    <>
-      {/* 1) CARDS NO TOPO */}
-      <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
-        {brands.map((b, i) => (
-          <React.Fragment key={b.name + i}>
-            <BrandCard b={b} />
-          </React.Fragment>
-        ))}
-      </div>
+            <main className="space-y-10" ref={rightColRef}>
+              {route === "home" ? (
+                <>
+                  {/* 1) CARDS NO TOPO */}
+                  <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
+                    {brands.map((b, i) => (
+                      <React.Fragment key={b.name + i}>
+                        <BrandCard b={b} />
+                      </React.Fragment>
+                    ))}
+                  </div>
 
-      {/* 2) TWITCH + YOUTUBE REDUZIDOS LADO A LADO */}
-      <div className="grid gap-6 sm:grid-cols-2">
-        <TwitchEmbedMini channel={TWITCH_CHANNEL} />
-        <YouTubeLastMini channelId={YT_CHANNEL_ID} />
-      </div>
-    </>
-  ) : (
-    <BetifyLanding onBack={() => setRoute("home")} />
-  )}
-</main>
-
+                  {/* 2) TWITCH + YOUTUBE REDUZIDOS LADO A LADO */}
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <TwitchEmbedMini channel={TWITCH_CHANNEL} />
+                    <YouTubeLastMini channelId={YT_CHANNEL_ID} />
+                  </div>
+                </>
+              ) : (
+                <BetifyLanding onBack={() => setRoute("home")} />
+              )}
+            </main>
           </div>
         </div>
 
         <Footer />
-{showOverlay && (
-  <StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />
-)}
-{showCommunity && (
-  <CommunityModal onClose={() => setShowCommunity(false)} />   // ⬅️ adiciona isto
-)}
 
-        {showOverlay && <StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />}
+        {showOverlay && (
+          <StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />
+        )}
+        {showCommunity && (
+          <CommunityModal onClose={() => setShowCommunity(false)} />
+        )}
       </div>
     </LangCtx.Provider>
   );
