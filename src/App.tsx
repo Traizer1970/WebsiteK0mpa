@@ -365,7 +365,7 @@ function Sidebar({
 
         {/* Redes */}
         <footer className="pt-4 border-t border-white/10">
-          <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">Socials</div>
+          <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">{t.social.title}</div>
           <ul className="grid grid-cols-2 md:grid-cols-2 gap-x-5 gap-y-3 text-sm">
             <li><a href={SOCIAL_LINKS.twitch}   target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><TwitchIcon className="h-5 w-5" />Twitch</a></li>
             <li><a href={SOCIAL_LINKS.instagram}target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Instagram  className="h-5 w-5" />Instagram</a></li>
@@ -465,21 +465,21 @@ function CommunityModal({ onClose }: { onClose: () => void }) {
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
       <div className="relative mx-4 w-full max-w-md rounded-2xl bg-white/10 ring-1 ring-white/15 text-white shadow-[0_20px_80px_rgba(0,0,0,.6)] p-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold">Comunidade</h3>
-          <button onClick={onClose} className="rounded-md px-3 py-1 text-sm font-semibold hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">Fechar</button>
+          <h3 className="text-lg font-bold">{t.nav.community}</h3>
+          <button onClick={onClose} className="rounded-md px-3 py-1 text-sm font-semibold hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">{t.communityModal.close}</button>
         </div>
 
-        <p className="mt-1 text-sm text-white/70">Escolhe onde queres entrar:</p>
+        <p className="mt-1 text-sm text-white/70">{t.communityModal.choose}</p>
 
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <a href={SOCIAL_LINKS.discord}  target="_blank" rel="noreferrer" className="group flex items-center gap-3 rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 hover:bg-white/15">
             <DiscordIcon className="h-5 w-5" />
-            <div className="flex-1"><div className="text-sm font-bold">Discord</div><div className="text-xs text-white/60">Chats, roles e anúncios</div></div>
+            <div className="flex-1"><div className="text-sm font-bold">Discord</div><div className="text-xs text-white/60">{t.communityModal.discord_sub}</div></div>
             <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
           </a>
           <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="group flex items-center gap-3 rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 hover:bg-white/15">
             <Send className="h-5 w-5" />
-            <div className="flex-1"><div className="text-sm font-bold">Telegram</div><div className="text-xs text-white/60">Canal rápido de updates</div></div>
+            <div className="flex-1"><div className="text-sm font-bold">Telegram</div><div className="text-xs text-white/60">{t.communityModal.telegram_sub}</div></div>
             <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
           </a>
         </div>
@@ -535,7 +535,6 @@ function StreamHero({ channel }: { channel: string }) {
 }
 
 /* ---------- Embeds pequenos lado a lado ---------- */
-/* Agora com forwardRef para podermos medir a BOTTOM do embed da Twitch */
 const TwitchEmbedMini = React.forwardRef<HTMLDivElement, { channel: string }>(
   ({ channel }, ref) => {
     const src = buildTwitchEmbedUrl(channel);
@@ -904,36 +903,39 @@ export default function CasinoPartnerHub() {
   const [showCommunity, setShowCommunity] = useState(false);
   const [route, setRoute] = useState<Route>("home");
 
-  // ----- NOVO: alinhar fim da sidebar com o FIM do embed Twitch (mini)
-  const rightColRef = React.useRef<HTMLElement | null>(null);
-  const twitchRef   = React.useRef<HTMLDivElement | null>(null);
+  // ----- ALTURA DA SIDEBAR: mede até ao FIM do conteúdo da coluna direita (funciona em Home e Betify)
+  const rightColRef   = React.useRef<HTMLElement | null>(null);
+  const endMarkerRef  = React.useRef<HTMLDivElement | null>(null);
   const [rightH, setRightH] = React.useState<number | undefined>(undefined);
 
   const recalcHeights = React.useCallback(() => {
     const main = rightColRef.current;
-    const twitch = twitchRef.current;
-    if (!main || !twitch) { setRightH(undefined); return; }
+    const end  = endMarkerRef.current;
+    if (!main || !end) { setRightH(undefined); return; }
 
-    const mainTop    = main.getBoundingClientRect().top + window.scrollY;
-    const twitchBottom = twitch.getBoundingClientRect().bottom + window.scrollY;
+    const mainTop   = main.getBoundingClientRect().top + window.scrollY;
+    const endBottom = end.getBoundingClientRect().bottom + window.scrollY;
 
-    // Altura necessária para que a sidebar termine no MESMO sítio do embed da Twitch
-    const h = Math.max(0, Math.round(twitchBottom - mainTop));
+    const h = Math.max(0, Math.round(endBottom - mainTop));
     setRightH(h);
   }, []);
 
   useEffect(() => {
     recalcHeights();
+
     const main = rightColRef.current;
-    const twitch = twitchRef.current;
+    const end  = endMarkerRef.current;
     if (!main) return;
+
     const ro = new ResizeObserver(recalcHeights);
     ro.observe(main);
     Array.from(main.children).forEach(ch => ro.observe(ch as Element));
-    if (twitch) ro.observe(twitch);
+    if (end) ro.observe(end);
+
     window.addEventListener("resize", recalcHeights);
     window.addEventListener("load", recalcHeights);
-    const i = setInterval(recalcHeights, 500); // garante após iframes/images
+    const i = setInterval(recalcHeights, 500); // garante após iframes/imagens
+
     return () => {
       ro.disconnect();
       clearInterval(i);
@@ -972,13 +974,16 @@ export default function CasinoPartnerHub() {
 
                   {/* 2) TWITCH + YOUTUBE REDUZIDOS LADO A LADO */}
                   <div className="grid gap-6 sm:grid-cols-2">
-                    <TwitchEmbedMini ref={twitchRef} channel={TWITCH_CHANNEL} />
+                    <TwitchEmbedMini channel={TWITCH_CHANNEL} />
                     <YouTubeLastMini channelId={YT_CHANNEL_ID} />
                   </div>
                 </>
               ) : (
                 <BetifyLanding />
               )}
+
+              {/* Marcador invisível — indica o FIM do conteúdo para alinharmos a sidebar */}
+              <div ref={endMarkerRef} style={{ height: 1 }} />
             </main>
           </div>
         </div>
