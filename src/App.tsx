@@ -621,7 +621,7 @@ function TwitterIcon(props: React.SVGProps<SVGSVGElement>) {
 /* ---------- Brand Card ---------- */
 function FancyStat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: React.ElementType; accent: string; }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl px-3 py-2 text-white ring-1 backdrop-blur shadow-[0_6px_18px_rgba(0,0,0,.28)]" style={{ minHeight:74, background:"linear-gradient(180deg, rgba(15,23,42,.86) 0%, rgba(15,23,42,.78) 100%)", borderColor:"rgba(255,255,255,.08)" }}>
+    <div className="relative overflow-hidden rounded-2xl px-3 py-2 text-white ring-1 backdrop-blur shadow-[0_6px_18px_rgba(0,0,0,.28)]" style={{ minHeight:66, background:"linear-gradient(180deg, rgba(15,23,42,.86) 0%, rgba(15,23,42,.78) 100%)", borderColor:"rgba(255,255,255,.08)" }}>
       <span aria-hidden className="absolute left-2 right-2 top-0 h-[3px]" style={{ background:`linear-gradient(90deg, ${accent}, transparent)` }} />
       <div className="flex h-full flex-col items-center justify-center gap-1 text-center leading-tight">
         <Icon className="h-4 w-4 text-white/85" />
@@ -648,7 +648,7 @@ function StatTile({ icon: Icon, label, value, accent }: { icon: React.ElementTyp
 function BrandCard({ b }: { b: Brand }) {
   const { t, lang } = useLang();
   const [flip, setFlip] = useState(false);
-  const CARD_H = 400;
+  const CARD_H = 360;
   const base = tagVisual(b.tag);
   const acc  = b.theme?.accent ?? base.accent;
   const shadow = b.theme?.shadow ?? rgba(acc, 0.35);
@@ -682,8 +682,8 @@ function BrandCard({ b }: { b: Brand }) {
                   <FancyStat icon={TrendingUp} label={t.card.cashback} value={cap(b.cashback, lang)} accent={acc} />
                   <FancyStat icon={Sparkles}   label={t.card.spins}    value={cap(b.freeSpins, lang)} accent={acc} />
                 </div>
-                <div className="py-2 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
-                <div className="pt-1"><FancyCTA href={b.link} label={t.card.go} accent={acc} /></div>
+                <div className="py-1.5 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
+                <div className="pt-0.5"><FancyCTA href={b.link} label={t.card.go} accent={acc} /></div>
               </div>
             </div>
           </div>
