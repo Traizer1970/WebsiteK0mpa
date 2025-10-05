@@ -314,7 +314,6 @@ function Sidebar({
     <aside className="hidden md:block w-[240px] mx-auto" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
-        // usamos **minHeight** para nunca encolher, apenas crescer até bater certo
         style={{ minHeight: desiredHeight ? `${desiredHeight}px` : undefined, overflow: "auto" }}
       >
         <div>
@@ -765,7 +764,6 @@ function PromoCard({ p }: { p: Promo }) {
 }
 
 /* ---------- Página Betify ---------- */
-/* passa um ref de “fim de conteúdo” para alinharmos a sidebar com o limite da secção Betify */
 function BetifyLanding({ endRef }: { endRef?: React.RefObject<HTMLDivElement> }) {
   const { t } = useLang();
   const scrollToPromos = () => document.getElementById("betify-promos")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -823,7 +821,7 @@ function BetifyLanding({ endRef }: { endRef?: React.RefObject<HTMLDivElement> })
           {betifyPromos.map((p) => (<PromoCard key={p.id} p={p} />))}
         </div>
 
-        {/* SINALIZA o final da secção para medição de altura */}
+        {/* fim da secção para medição */}
         <div ref={endRef} />
       </section>
     </div>
@@ -865,19 +863,36 @@ function Footer() {
 }
 
 /* ---------- Idioma ---------- */
-function LanguageToggle({ lang, onChange }: { lang:"PT"|"EN"; onChange:(l:"PT"|"EN")=>void; }) {
+/* ---------- Idioma ---------- */
+function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "PT" | "EN") => void; }) {
   const base = "text-sm font-semibold tracking-wide transition-colors";
-  const inactive = "text-white/70 hover:text-white/90";
+  const inactive = "text-white/70 hover:text-white/90";   // <- corrigido (const)
   const active = "text-white border-b-2 border-[#9146FF] pb-0.5";
+
   return (
     <div className="inline-flex items-center gap-3">
-      <button type="button" aria-selected={lang==="PT"} onClick={()=>onChange("PT")} className={`${base} ${lang==="PT"?active:inactive}`}>PT</button>
-      <button type="button" aria-selected={lang==="EN"} onClick={()=>onChange("EN")} className={`${base} ${lang==="EN"?active:inactive}`}>EN</button>
+      <button
+        type="button"
+        aria-selected={lang === "PT"}
+        onClick={() => onChange("PT")}
+        className={`${base} ${lang === "PT" ? active : inactive}`}
+      >
+        PT
+      </button>
+      <button
+        type="button"
+        aria-selected={lang === "EN"}
+        onClick={() => onChange("EN")}
+        className={`${base} ${lang === "EN" ? active : inactive}`}
+      >
+        EN
+      </button>
     </div>
   );
 }
 
-/* ---------- Background ---------- */
+
+/* ---------- Background (opcional) ---------- */
 function BackgroundLayer() {
   return (
     <div className="pointer-events-none fixed -z-10" style={{ inset: "-30vh -12vw -30vh -12vw", background: "linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%)" }}>
@@ -909,26 +924,24 @@ export default function CasinoPartnerHub() {
   const [route, setRoute] = useState<Route>("home");
 
   // ----- Alinhamento dinâmico: fim da sidebar bate com o limite do conteúdo da direita
-  const rightColRef   = React.useRef<HTMLElement | null>(null);
-  const twitchRef     = React.useRef<HTMLDivElement | null>(null);
-  const betifyEndRef  = React.useRef<HTMLDivElement | null>(null);
+  const rightColRef  = React.useRef<HTMLElement | null>(null);
+  const homeEndRef   = React.useRef<HTMLDivElement | null>(null);
+  const betifyEndRef = React.useRef<HTMLDivElement | null>(null);
   const [desiredH, setDesiredH] = React.useState<number | undefined>(undefined);
 
   const recalcHeights = React.useCallback(() => {
     const main = rightColRef.current;
     if (!main) { setDesiredH(undefined); return; }
 
-    const target =
-      route === "home" ? twitchRef.current
-      : route === "betify" ? betifyEndRef.current
-      : null;
+    const target = route === "home" ? homeEndRef.current
+                 : route === "betify" ? betifyEndRef.current
+                 : null;
 
     if (!target) { setDesiredH(undefined); return; }
 
-    const mainTop    = main.getBoundingClientRect().top + window.scrollY;
+    const mainTop      = main.getBoundingClientRect().top + window.scrollY;
     const targetBottom = target.getBoundingClientRect().bottom + window.scrollY;
 
-    // altura necessária para que a sidebar cresça até ao limite do conteúdo
     const h = Math.max(0, Math.round(targetBottom - mainTop));
     setDesiredH(h);
   }, [route]);
@@ -940,10 +953,10 @@ export default function CasinoPartnerHub() {
     const ro = new ResizeObserver(recalcHeights);
     ro.observe(main);
     Array.from(main.children).forEach(ch => ro.observe(ch as Element));
-    if (twitchRef.current) ro.observe(twitchRef.current);
+    if (homeEndRef.current)   ro.observe(homeEndRef.current);
     if (betifyEndRef.current) ro.observe(betifyEndRef.current);
     window.addEventListener("resize", recalcHeights);
-    const i = setInterval(recalcHeights, 500); // garante após iframes/imagens
+    const i = setInterval(recalcHeights, 500);
     return () => {
       ro.disconnect();
       clearInterval(i);
@@ -970,7 +983,6 @@ export default function CasinoPartnerHub() {
             <main className="space-y-10" ref={rightColRef}>
               {route === "home" ? (
                 <>
-                  {/* 1) CARDS NO TOPO */}
                   <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
                     {brands.map((b, i) => (
                       <React.Fragment key={b.name + i}>
@@ -979,11 +991,13 @@ export default function CasinoPartnerHub() {
                     ))}
                   </div>
 
-                  {/* 2) TWITCH + YOUTUBE REDUZIDOS LADO A LADO */}
                   <div className="grid gap-6 sm:grid-cols-2">
-                    <TwitchEmbedMini ref={twitchRef} channel={TWITCH_CHANNEL} />
+                    <TwitchEmbedMini channel={TWITCH_CHANNEL} />
                     <YouTubeLastMini channelId={YT_CHANNEL_ID} />
                   </div>
+
+                  {/* fim real do conteúdo da home */}
+                  <div ref={homeEndRef} />
                 </>
               ) : (
                 <BetifyLanding endRef={betifyEndRef} />
