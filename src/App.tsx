@@ -138,7 +138,7 @@ const messages: Record<Lang, Translations> = {
     nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
     promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
     card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
-    social:{ title:"Socials", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
+    social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
     footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
              rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
              rg_site:"BeGambleAware.org" },
@@ -314,8 +314,7 @@ function Sidebar({
     <aside className="hidden md:block w-[240px] mx-auto" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
-        /* altura EXATA para “bater” no fim do conteúdo da direita */
-        style={{ height: desiredHeight ? `${desiredHeight}px` : undefined, overflow: "auto" }}
+        style={{ minHeight: desiredHeight ? `${desiredHeight}px` : undefined, overflow: "auto" }}
       >
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
@@ -375,8 +374,8 @@ function Sidebar({
             <li><a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Send       className="h-5 w-5" />Telegram</a></li>
             <li><a href={SOCIAL_LINKS.discord}  target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><DiscordIcon className="h-5 w-5" />Discord</a></li>
             <li><a href={SOCIAL_LINKS.youtube}  target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Youtube    className="h-5 w-5" />Youtube</a></li>
-            {/* <<< X ICON CORRIGIDO >>> */}
-            <li><a href={SOCIAL_LINKS.x}        target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><XIcon className="h-5 w-5" />Twitter</a></li>
+            {/* --- X/Twitter com o ícone correto --- */}
+            <li><a href={SOCIAL_LINKS.x}        target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><XIcon      className="h-5 w-5" />Twitter</a></li>
           </ul>
 
           <div className="mt-3 text-center text-[12px] text-white/55">
@@ -479,7 +478,7 @@ function CommunityModal({ onClose }: { onClose: () => void }) {
             <div className="flex-1"><div className="text-sm font-bold">Discord</div><div className="text-xs text-white/60">{t.communityModal.discord_sub}</div></div>
             <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
           </a>
-          <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="group flex items-center gap-3 rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 hover:bg-white/15">
+          <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="group flex items-centered gap-3 rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 hover:bg-white/15">
             <Send className="h-5 w-5" />
             <div className="flex-1"><div className="text-sm font-bold">Telegram</div><div className="text-xs text-white/60">{t.communityModal.telegram_sub}</div></div>
             <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
@@ -537,9 +536,6 @@ function StreamHero({ channel }: { channel: string }) {
 }
 
 /* ---------- Embeds pequenos lado a lado ---------- */
-const REFLOW_EVT = "app:reflow";
-const notifyReflow = () => { try { window.dispatchEvent(new Event(REFLOW_EVT)); } catch {} };
-
 const TwitchEmbedMini = React.forwardRef<HTMLDivElement, { channel: string }>(
   ({ channel }, ref) => {
     const src = buildTwitchEmbedUrl(channel);
@@ -553,7 +549,6 @@ const TwitchEmbedMini = React.forwardRef<HTMLDivElement, { channel: string }>(
             allowFullScreen
             frameBorder="0"
             scrolling="no"
-            onLoad={notifyReflow}
             className="absolute inset-0 h-full w-full border-0"
           />
         </div>
@@ -588,8 +583,6 @@ function YouTubeLastMini({ channelId }: { channelId: string }) {
         if (!cancelled && !found) setFailed(true);
       } catch {
         if (!cancelled) setFailed(true);
-      } finally {
-        notifyReflow();
       }
     })();
     return () => { cancelled = true; };
@@ -603,11 +596,11 @@ function YouTubeLastMini({ channelId }: { channelId: string }) {
         {vid ? (
           <iframe title={vid.title} src={`https://www.youtube-nocookie.com/embed/${vid.id}`} className="absolute inset-0 h-full w-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin" allowFullScreen loading="lazy" onLoad={notifyReflow} />
+            referrerPolicy="strict-origin-when-cross-origin" allowFullScreen loading="lazy" />
         ) : failed ? (
           <iframe title="Uploads" src={`https://www.youtube-nocookie.com/embed?listType=playlist&list=${uploadsPlaylist}`} className="absolute inset-0 h-full w-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin" allowFullScreen loading="lazy" onLoad={notifyReflow} />
+            referrerPolicy="strict-origin-when-cross-origin" allowFullScreen loading="lazy" />
         ) : (
           <div className="absolute inset-0 bg-white/5 animate-pulse" />
         )}
@@ -663,7 +656,6 @@ function BrandCard({ b }: { b: Brand }) {
               src={b.image}
               alt={b.name}
               className="absolute inset-0 h-full w-full object-cover"
-              onLoad={notifyReflow}
               style={{ right: "-3px", width: "calc(100% + 6px)", objectPosition: b.imagePos === "left" ? "-10px center" : (b.imagePos ?? "center"), transform: "translateZ(0)" }}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/50" />
@@ -812,7 +804,7 @@ function BetifyLanding({ endRef }: { endRef?: React.RefObject<HTMLDivElement> })
 
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
-              <img src="https://altacdn.com/bf/img/sliders/ca/150746_bf_website_banner_wsb.webp" alt="Betify preview" className="absolute inset-0 h-full w-full object-cover" onLoad={notifyReflow} />
+              <img src="https://altacdn.com/bf/img/sliders/ca/150746_bf_website_banner_wsb.webp" alt="Betify preview" className="absolute inset-0 h-full w-full object-cover" />
             </div>
           </div>
         </div>
@@ -919,58 +911,61 @@ export default function CasinoPartnerHub() {
   const [showCommunity, setShowCommunity] = useState(false);
   const [route, setRoute] = useState<Route>("home");
 
-  // ----- Alinhamento dinâmico
+  // ----- refs para alinhar a sidebar ao píxel com o fim do conteúdo
   const rightColRef  = React.useRef<HTMLElement | null>(null);
   const homeEndRef   = React.useRef<HTMLDivElement | null>(null);
   const betifyEndRef = React.useRef<HTMLDivElement | null>(null);
   const [desiredH, setDesiredH] = React.useState<number | undefined>(undefined);
 
-  const recalcHeights = React.useCallback(() => {
-    const main = rightColRef.current;
-    if (!main) { setDesiredH(undefined); return; }
+  const getStickyTopPx = () => {
+    const v = getComputedStyle(document.documentElement).getPropertyValue("--sticky-top") || "0";
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : 0;
+  };
 
+  const recalcHeights = React.useCallback(() => {
     const target = route === "home" ? homeEndRef.current
                  : route === "betify" ? betifyEndRef.current
                  : null;
+    if (!rightColRef.current || !target) { setDesiredH(undefined); return; }
 
-    if (!target) { setDesiredH(undefined); return; }
+    // posição do fundo do conteúdo (valor absoluto do documento)
+    const targetBottomDoc = target.getBoundingClientRect().bottom + window.scrollY;
 
-    const mainTop      = main.getBoundingClientRect().top + window.scrollY;
-    const targetBottom = target.getBoundingClientRect().bottom + window.scrollY;
+    // topo VISÍVEL da sidebar "sticky" no documento = scrollY + stickyTop
+    const stickyTop = getStickyTopPx();
+    const asideTopDoc = window.scrollY + stickyTop;
 
-    // altura exata do conteúdo visível da coluna direita
-    const h = Math.max(0, Math.round(targetBottom - mainTop));
+    const h = Math.max(0, Math.round(targetBottomDoc - asideTopDoc));
     setDesiredH(h);
   }, [route]);
 
   useEffect(() => {
-    // eventos que podem alterar o layout
     recalcHeights();
-    window.addEventListener("resize", recalcHeights);
-    window.addEventListener("load", recalcHeights);
-    window.addEventListener(REFLOW_EVT, recalcHeights);
-    const i = setInterval(recalcHeights, 600); // fallback para iframes/imagens tardias
 
     const main = rightColRef.current;
-    if (main) {
-      const ro = new ResizeObserver(recalcHeights);
-      ro.observe(main);
-      Array.from(main.children).forEach(ch => ro.observe(ch as Element));
-      if (homeEndRef.current)   ro.observe(homeEndRef.current);
-      if (betifyEndRef.current) ro.observe(betifyEndRef.current);
-      return () => {
-        ro.disconnect();
-        clearInterval(i);
-        window.removeEventListener("resize", recalcHeights);
-        window.removeEventListener("load", recalcHeights);
-        window.removeEventListener(REFLOW_EVT, recalcHeights);
-      };
-    }
+    if (!main) return;
+
+    const ro = new ResizeObserver(recalcHeights);
+    ro.observe(main);
+    Array.from(main.children).forEach(ch => ro.observe(ch as Element));
+    if (homeEndRef.current)   ro.observe(homeEndRef.current);
+    if (betifyEndRef.current) ro.observe(betifyEndRef.current);
+
+    const onScroll = () => recalcHeights();
+    const onResize = () => recalcHeights();
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+
+    // fallback leve para variações de layout/iframes
+    const i = setInterval(recalcHeights, 400);
+
     return () => {
+      ro.disconnect();
       clearInterval(i);
-      window.removeEventListener("resize", recalcHeights);
-      window.removeEventListener("load", recalcHeights);
-      window.removeEventListener(REFLOW_EVT, recalcHeights);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, [route, recalcHeights]);
 
