@@ -294,32 +294,33 @@ function DiscordIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-/* ---------- Sidebar ---------- */
+/* ---------- Sidebar (FIXA AO FUNDO DA JANELA) ---------- */
 function Sidebar({
   onOpenStream,
   onOpenBetify,
   onGoHome,
   onOpenCommunity,
-  desiredHeight,
 }: {
   onOpenStream: () => void;
   onOpenBetify: () => void;
   onGoHome: () => void;
   onOpenCommunity: () => void;
-  desiredHeight?: number;
 }) {
   const { t, lang } = useLang();
 
   return (
-    <aside className="hidden md:block w-[240px] mx-auto" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
- <div
-   className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
-   style={{
-     height: desiredHeight ? `${desiredHeight}px` : undefined,   // <- altura fixa
-     overflow: "auto",
-     willChange: "height",                                       // <- ajuda a estabilizar
-   }}
- >
+    <aside
+      className="hidden md:block w-[240px] mx-auto sticky"
+      style={{ top: "var(--sticky-top,112px)", alignSelf: "start" }}
+    >
+      <div
+        className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
+        style={{
+          /* ocupa a janela visível por baixo do header ⇒ “cola” ao limite inferior */
+          height: "calc(100dvh - var(--sticky-top,112px) - 16px)",
+          overflow: "auto",
+        }}
+      >
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
             <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
@@ -378,7 +379,6 @@ function Sidebar({
             <li><a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Send       className="h-5 w-5" />Telegram</a></li>
             <li><a href={SOCIAL_LINKS.discord}  target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><DiscordIcon className="h-5 w-5" />Discord</a></li>
             <li><a href={SOCIAL_LINKS.youtube}  target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Youtube    className="h-5 w-5" />Youtube</a></li>
-            {/* --- X/Twitter com o ícone correto --- */}
             <li><a href={SOCIAL_LINKS.x}        target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><XIcon      className="h-5 w-5" />Twitter</a></li>
           </ul>
 
@@ -760,7 +760,7 @@ function PromoCard({ p }: { p: Promo }) {
 }
 
 /* ---------- Página Betify ---------- */
-function BetifyLanding({ endRef }: { endRef?: React.RefObject<HTMLDivElement> }) {
+function BetifyLanding() {
   const { t } = useLang();
   const scrollToPromos = () => document.getElementById("betify-promos")?.scrollIntoView({ behavior: "smooth", block: "start" });
 
@@ -816,9 +816,6 @@ function BetifyLanding({ endRef }: { endRef?: React.RefObject<HTMLDivElement> })
         <div id="betify-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
           {betifyPromos.map((p) => (<PromoCard key={p.id} p={p} />))}
         </div>
-
-        {/* fim da secção para medição */}
-        <div ref={endRef} />
       </section>
     </div>
   );
@@ -915,61 +912,6 @@ export default function CasinoPartnerHub() {
   const [showCommunity, setShowCommunity] = useState(false);
   const [route, setRoute] = useState<Route>("home");
 
-  // ----- refs para alinhar a sidebar ao píxel com o fim do conteúdo
-  const rightColRef  = React.useRef<HTMLElement | null>(null);
-  const homeEndRef   = React.useRef<HTMLDivElement | null>(null);
-  const betifyEndRef = React.useRef<HTMLDivElement | null>(null);
-  const [desiredH, setDesiredH] = React.useState<number | undefined>(undefined);
-
-  const getStickyTopPx = () => {
-    const v = getComputedStyle(document.documentElement).getPropertyValue("--sticky-top") || "0";
-    const n = parseFloat(v);
-    return Number.isFinite(n) ? n : 0;
-  };
-
-  const recalcHeights = React.useCallback(() => {
-    const target = route === "home" ? homeEndRef.current
-                 : route === "betify" ? betifyEndRef.current
-                 : null;
-    if (!rightColRef.current || !target) { setDesiredH(undefined); return; }
-
-    // posição do fundo do conteúdo (valor absoluto do documento)
-    const targetBottomDoc = target.getBoundingClientRect().bottom + window.scrollY;
-
-    // topo VISÍVEL da sidebar "sticky" no documento = scrollY + stickyTop
-    const stickyTop = getStickyTopPx();
-    const asideTopDoc = window.scrollY + stickyTop;
-
-  const h = Math.max(0, Math.round(targetBottomDoc - asideTopDoc));
-   setDesiredH(prev => (prev == null || Math.abs(prev - h) >= 2 ? h : prev));
-  }, [route]);
-
-  useEffect(() => {
-    recalcHeights();
-
-    const main = rightColRef.current;
-    if (!main) return;
-
-    const ro = new ResizeObserver(recalcHeights);
-    ro.observe(main);
-    Array.from(main.children).forEach(ch => ro.observe(ch as Element));
-    if (homeEndRef.current)   ro.observe(homeEndRef.current);
-    if (betifyEndRef.current) ro.observe(betifyEndRef.current);
-
-    const onResize = () => recalcHeights();
-
-    window.addEventListener("resize", onResize);
-
-    // fallback leve para variações de layout/iframes
-    const i = setInterval(recalcHeights, 400);
-
-    return () => {
-      ro.disconnect();
-      clearInterval(i);
-      window.removeEventListener("resize", onResize);
-    };
-  }, [route, recalcHeights]);
-
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
       <div className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-hidden">
@@ -977,16 +919,15 @@ export default function CasinoPartnerHub() {
         <HeaderBar isLive={isLive} />
 
         <div className="flex-1">
-          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-start">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 pt-8 pb-12 sm:px-8 md:grid-cols-[240px,1fr] items-start">
             <Sidebar
               onOpenStream={() => setShowOverlay(true)}
               onOpenBetify={() => setRoute("betify")}
               onGoHome={() => setRoute("home")}
               onOpenCommunity={() => setShowCommunity(true)}
-              desiredHeight={desiredH}
             />
 
-            <main className="space-y-10" ref={rightColRef}>
+            <main className="space-y-10">
               {route === "home" ? (
                 <>
                   <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
@@ -1001,12 +942,9 @@ export default function CasinoPartnerHub() {
                     <TwitchEmbedMini channel={TWITCH_CHANNEL} />
                     <YouTubeLastMini channelId={YT_CHANNEL_ID} />
                   </div>
-
-                  {/* fim real do conteúdo da home */}
-                  <div ref={homeEndRef} />
                 </>
               ) : (
-                <BetifyLanding endRef={betifyEndRef} />
+                <BetifyLanding />
               )}
             </main>
           </div>
