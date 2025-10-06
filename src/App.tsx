@@ -138,7 +138,7 @@ const messages: Record<Lang, Translations> = {
     nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
     promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
     card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
-    social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
+    social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"Twitter", copyright:(y)=>`Copyright © ${y} K0MPA` },
     footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
              rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
              rg_site:"BeGambleAware.org" },
@@ -174,7 +174,7 @@ const messages: Record<Lang, Translations> = {
     nav:{ menu:"Menu", casinos:"Casinos", offers:"Offers", betify:"Betify", shop:"Shop", community:"Community", slots:"Slots", stream:"Stream", minigames:"Mini Games", new:"NEW" },
     promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
     card:{ min:"Min. Dep.", bonus:"Bonus", cashback:"Cashback", spins:"Free Spins", code:"Code:", terms:"+18 | T&C apply", showMore:"More", back:"Back", moreInfo:"More information", visit:"Visit brand", go:"CLAIM BONUS", copy:"Copy" },
-    social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
+    social:{ title:"Socials", youtube:"YouTube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"Twitter", copyright:(y)=>`Copyright © ${y} K0MPA` },
     footer:{ terms:"Terms & Conditions", privacy:"Privacy Policy", cookies:"Cookie Policy",
              rg_paragraph:"18+ | Play responsibly. Most people play for fun and enjoyment. Don’t think of gambling as a way to make money. Only play with money you can afford to lose. Set time and money limits in advance. Never chase losses. Don’t use gambling to escape everyday problems.",
              rg_site:"BeGambleAware.org" },
@@ -314,8 +314,8 @@ function Sidebar({
     <aside className="hidden md:block w-[240px] mx-auto" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
-        /* compensar padding vertical (p-4 = 32px) para bater no final do conteúdo */
-        style={{ minHeight: desiredHeight ? `${Math.max(0, desiredHeight - 32)}px` : undefined, overflow: "auto" }}
+        /* altura EXATA para bater no final do conteúdo à direita */
+        style={{ height: desiredHeight ? `${desiredHeight}px` : undefined, overflow: "hidden" }}
       >
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
@@ -375,8 +375,8 @@ function Sidebar({
             <li><a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Send       className="h-5 w-5" />Telegram</a></li>
             <li><a href={SOCIAL_LINKS.discord}  target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><DiscordIcon className="h-5 w-5" />Discord</a></li>
             <li><a href={SOCIAL_LINKS.youtube}  target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Youtube    className="h-5 w-5" />Youtube</a></li>
-            {/* Ícone X corrigido */}
-            <li><a href={SOCIAL_LINKS.x}        target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><XIcon className="h-5 w-5" />Twitter</a></li>
+            {/* Ícone X e label vindos do i18n */}
+            <li><a href={SOCIAL_LINKS.x}        target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><XIcon className="h-5 w-5" />{t.social.x}</a></li>
           </ul>
 
           <div className="mt-3 text-center text-[12px] text-white/55">
@@ -411,9 +411,6 @@ function TagBadge({ tag, inline=false, className="", style, accent }: { tag: Bra
 }
 
 /* ---------- Payment logos ---------- */
-function DiscordIconImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
-  return (<img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Discord_logo.svg" alt="Discord" {...props} className={cn("h-5 w-5 object-contain", props.className)} draggable={false} loading="lazy" decoding="async" />);
-}
 function PaymentIcon({ type }: { type: PaymentType }) {
   const src = PAYMENT_ICON_URLS[type];
   const alt = type === "btc" ? "Bitcoin" : type === "mbw" ? "MB WAY" : type === "mb" ? "Multibanco" : type === "visa" ? "VISA" : "Mastercard";
@@ -609,16 +606,6 @@ function YouTubeLastMini({ channelId }: { channelId: string }) {
     </section>
   );
 }
-
-/* Twitter antigo (bird) — mantido caso precises noutro sítio
-function TwitterIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
-      <path fill="currentColor" d="M23 4.8c-.8.4-1.7.7-2.6.8a4.55 4.55 0 0 0 2-2.5 9.06 9.06 0 0 1-2.9 1.1 4.51 4.51 0 0 0-7.8 4.1A12.8 12.8 0 0 1 3 3.6a4.5 4.5 0 0 0 1.4 6 4.48 4.48 0 0 1-2-.6v.1a4.52 4.52 0 0 0 3.6 4.4c-.5.1-1 .2-1.6.1.4 1.3 1.7 2.3 3.3 2.3A9.05 9.05 0 0 1 2 19.5a12.77 12.77 0 0 0 6.9 2c8.3 0 12.9-6.9 12.6-13 0-.2 0-.4 0-.6A9.12 9.12 0 0 0 23 4.8z" />
-    </svg>
-  );
-}
-*/
 
 /* ---------- Brand Card ---------- */
 function FancyStat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: React.ElementType; accent: string; }) {
@@ -872,22 +859,8 @@ function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "
 
   return (
     <div className="inline-flex items-center gap-3">
-      <button
-        type="button"
-        aria-selected={lang === "PT"}
-        onClick={() => onChange("PT")}
-        className={`${base} ${lang === "PT" ? active : inactive}`}
-      >
-        PT
-      </button>
-      <button
-        type="button"
-        aria-selected={lang === "EN"}
-        onClick={() => onChange("EN")}
-        className={`${base} ${lang === "EN" ? active : inactive}`}
-      >
-        EN
-      </button>
+      <button type="button" aria-selected={lang === "PT"} onClick={() => onChange("PT")} className={`${base} ${lang === "PT" ? active : inactive}`}>PT</button>
+      <button type="button" aria-selected={lang === "EN"} onClick={() => onChange("EN")} className={`${base} ${lang === "EN" ? active : inactive}`}>EN</button>
     </div>
   );
 }
@@ -922,7 +895,7 @@ export default function CasinoPartnerHub() {
   const [showCommunity, setShowCommunity] = useState(false);
   const [route, setRoute] = useState<Route>("home");
 
-  // ----- Alinhamento dinâmico: fim da sidebar bate com o limite do conteúdo da direita
+  // ----- refs para alinhar a sidebar com o fim do conteúdo da direita
   const rightColRef  = React.useRef<HTMLElement | null>(null);
   const homeEndRef   = React.useRef<HTMLDivElement | null>(null);
   const betifyEndRef = React.useRef<HTMLDivElement | null>(null);
@@ -941,28 +914,35 @@ export default function CasinoPartnerHub() {
     const mainTop      = main.getBoundingClientRect().top + window.scrollY;
     const targetBottom = target.getBoundingClientRect().bottom + window.scrollY;
 
+    // altura exata do conteúdo da coluna direita
     const h = Math.max(0, Math.round(targetBottom - mainTop));
     setDesiredH(h);
   }, [route]);
 
   useEffect(() => {
     recalcHeights();
-
-    // observar redimensionamentos + fontes (para evitar “saltos” e bater mesmo no final)
     const main = rightColRef.current;
     if (!main) return;
+
     const ro = new ResizeObserver(recalcHeights);
     ro.observe(main);
+    // observar filhos e marcadores de fim
     Array.from(main.children).forEach(ch => ro.observe(ch as Element));
     if (homeEndRef.current)   ro.observe(homeEndRef.current);
     if (betifyEndRef.current) ro.observe(betifyEndRef.current);
+
+    // recalc ao redimensionar e depois de media carregar
     window.addEventListener("resize", recalcHeights);
+    window.addEventListener("load", recalcHeights);
+
+    // pequeno “tick” para iframes/embeds
     const i = setInterval(recalcHeights, 500);
-    if ((document as any).fonts?.ready) { (document as any).fonts.ready.then(recalcHeights).catch(()=>{}); }
+
     return () => {
       ro.disconnect();
       clearInterval(i);
       window.removeEventListener("resize", recalcHeights);
+      window.removeEventListener("load", recalcHeights);
     };
   }, [route, recalcHeights]);
 
