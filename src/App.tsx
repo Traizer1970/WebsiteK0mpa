@@ -861,8 +861,6 @@ function Footer() {
     </footer>
   );
 }
-
-/* ---------- Idioma ---------- */
 /* ---------- Idioma ---------- */
 function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "PT" | "EN") => void; }) {
   const base = "text-sm font-semibold tracking-wide transition-colors";
@@ -890,8 +888,6 @@ function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "
     </div>
   );
 }
-
-
 /* ---------- Background (opcional) ---------- */
 function BackgroundLayer() {
   return (
