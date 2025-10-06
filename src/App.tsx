@@ -312,10 +312,14 @@ function Sidebar({
 
   return (
     <aside className="hidden md:block w-[240px] mx-auto" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
-      <div
-        className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
-        style={{ minHeight: desiredHeight ? `${desiredHeight}px` : undefined, overflow: "auto" }}
-      >
+ <div
+   className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
+   style={{
+     height: desiredHeight ? `${desiredHeight}px` : undefined,   // <- altura fixa
+     overflow: "auto",
+     willChange: "height",                                       // <- ajuda a estabilizar
+   }}
+ >
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
             <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
@@ -936,8 +940,8 @@ export default function CasinoPartnerHub() {
     const stickyTop = getStickyTopPx();
     const asideTopDoc = window.scrollY + stickyTop;
 
-    const h = Math.max(0, Math.round(targetBottomDoc - asideTopDoc));
-    setDesiredH(h);
+  const h = Math.max(0, Math.round(targetBottomDoc - asideTopDoc));
+   setDesiredH(prev => (prev == null || Math.abs(prev - h) >= 2 ? h : prev));
   }, [route]);
 
   useEffect(() => {
@@ -952,10 +956,8 @@ export default function CasinoPartnerHub() {
     if (homeEndRef.current)   ro.observe(homeEndRef.current);
     if (betifyEndRef.current) ro.observe(betifyEndRef.current);
 
-    const onScroll = () => recalcHeights();
     const onResize = () => recalcHeights();
 
-    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
 
     // fallback leve para variações de layout/iframes
@@ -964,7 +966,6 @@ export default function CasinoPartnerHub() {
     return () => {
       ro.disconnect();
       clearInterval(i);
-      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
   }, [route, recalcHeights]);
