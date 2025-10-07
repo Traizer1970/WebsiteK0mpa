@@ -14,6 +14,8 @@ const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 /* URLs Betify — troca para os teus links reais */
 const BETIFY_SIGNUP_URL = "https://betify.com/?ref=k0mpa";      // <- altera
 const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
+const SHOP_URL = "https://streamelements.com/k0mpa/store";
+
 
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
@@ -338,11 +340,18 @@ function Sidebar({
 
             <div className="my-3 h-px bg-white/10" />
 
-            <div className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/45 pointer-events-none select-none" aria-disabled="true" title={lang === "PT" ? "Em breve" : "Coming soon"}>
-              <Store className="h-4 w-4 opacity-70" />
-              <span>{t.nav.shop}</span>
-              <span className="ml-auto text-[10px] text-white/35">{lang === "PT" ? "em breve" : "coming soon"}</span>
-            </div>
+            <a
+  href={SHOP_URL} // ou usar a URL direta
+  target="_blank"
+  rel="noreferrer"
+  className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+  title={t.nav.shop}
+>
+  <Store className="h-4 w-4" />
+  <span>{t.nav.shop}</span>
+  <ExternalLink className="h-4 w-4 ml-auto opacity-70" />
+</a>
+
 
             <button type="button" onClick={onOpenCommunity} className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
               <Users className="h-4 w-4" />
