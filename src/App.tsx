@@ -199,8 +199,8 @@ const messages: Record<Lang, Translations> = {
       cta_promos: "SEE PROMOTIONS",
       promo_label: "Promo",
       promos: {
-        "every-dep": { title: "Campaigns & Free Spins", blurb: "Betify (Min. deposit €20 — 40FS no wager on Shaolin Panda).", highlight: "Up to 40FS" },
-        "fs-monthly": { title: "Campaigns & Free Spins", blurb: "Betify (Deposit €50 — 100FS no wager on Shaolin Panda).", highlight: "Up to 100FS" }
+        "every-dep": { title: "Campaigns & Free Spins", blurb: "Min. deposit €20 — 40FS no wager on Shaolin Panda.", highlight: "Up to 40FS" },
+        "fs-monthly": { title: "Campaigns & Free Spins", blurb: "Deposit €50 — 100FS no wager on Shaolin Panda.", highlight: "Up to 100FS" }
       }
     }
   }
@@ -300,13 +300,13 @@ function Sidebar({
   onOpenBetify,
   onGoHome,
   onOpenCommunity,
-  fixedHeight,
+  desiredHeight,
 }: {
   onOpenStream: () => void;
   onOpenBetify: () => void;
   onGoHome: () => void;
   onOpenCommunity: () => void;
-  fixedHeight?: number;
+  desiredHeight?: number;
 }) {
   const { t, lang } = useLang();
 
@@ -315,9 +315,9 @@ function Sidebar({
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
         style={{
-          height: fixedHeight ? `${fixedHeight}px` : undefined, // altura fixa (não varia com scroll)
+          height: desiredHeight ? `${desiredHeight}px` : undefined, // altura fixa calculada
           overflow: "auto",
-          willChange: "auto",
+          willChange: "height",
         }}
       >
         <div>
@@ -756,13 +756,16 @@ function PromoCard({ p }: { p: Promo }) {
 }
 
 /* ---------- Página Betify ---------- */
-function BetifyLanding({ endRef }: { endRef?: React.RefObject<HTMLDivElement> }) {
+function BetifyLanding({ sectionRef }: { sectionRef?: React.RefObject<HTMLElement> }) {
   const { t } = useLang();
   const scrollToPromos = () => document.getElementById("betify-promos")?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   return (
     <div className="space-y-8">
-      <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
+      <section
+        ref={sectionRef}
+        className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]"
+      >
         <div aria-hidden className="pointer-events-none absolute inset-0" style={{background:
           "radial-gradient(60% 80% at 10% 0%, rgba(139,92,246,.18) 0%, rgba(139,92,246,0) 55%)," +
           "radial-gradient(50% 60% at 85% 100%, rgba(34,197,94,.16) 0%, rgba(34,197,94,0) 60%)", mixBlendMode:"screen"}} />
@@ -812,9 +815,6 @@ function BetifyLanding({ endRef }: { endRef?: React.RefObject<HTMLDivElement> })
         <div id="betify-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
           {betifyPromos.map((p) => (<PromoCard key={p.id} p={p} />))}
         </div>
-
-        {/* fim da secção para medição */}
-        <div ref={endRef} />
       </section>
     </div>
   );
@@ -861,26 +861,11 @@ function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "
 
   return (
     <div className="inline-flex items-center gap-3">
-      <button
-        type="button"
-        aria-selected={lang === "PT"}
-        onClick={() => onChange("PT")}
-        className={`${base} ${lang === "PT" ? active : inactive}`}
-      >
-        PT
-      </button>
-      <button
-        type="button"
-        aria-selected={lang === "EN"}
-        onClick={() => onChange("EN")}
-        className={`${base} ${lang === "EN" ? active : inactive}`}
-      >
-        EN
-      </button>
+      <button type="button" aria-selected={lang === "PT"} onClick={() => onChange("PT")} className={`${base} ${lang === "PT" ? active : inactive}`}>PT</button>
+      <button type="button" aria-selected={lang === "EN"} onClick={() => onChange("EN")} className={`${base} ${lang === "EN" ? active : inactive}`}>EN</button>
     </div>
   );
 }
-
 /* ---------- Background (opcional) ---------- */
 function BackgroundLayer() {
   return (
@@ -912,15 +897,11 @@ export default function CasinoPartnerHub() {
   const [showCommunity, setShowCommunity] = useState(false);
   const [route, setRoute] = useState<Route>("home");
 
-  // ----- refs para alinhar a sidebar ao píxel com o fim do conteúdo (altura fixa, sem scroll listener)
+  // ----- refs para alinhar a sidebar com o fim do conteúdo
   const rightColRef  = React.useRef<HTMLElement | null>(null);
   const homeEndRef   = React.useRef<HTMLDivElement | null>(null);
-  const betifyEndRef = React.useRef<HTMLDivElement | null>(null);
-  const [sidebarH, setSidebarH] = React.useState<number | undefined>(undefined);
-
-  // guardamos os valores “do momento da medição” para a altura ficar estável
-  const initialScrollYRef = React.useRef<number>(0);
-  const stickyTopRef      = React.useRef<number>(0);
+  const betifySectionRef = React.useRef<HTMLElement | null>(null); // secção/moldura do Betify
+  const [desiredH, setDesiredH] = React.useState<number | undefined>(undefined);
 
   const getStickyTopPx = () => {
     const v = getComputedStyle(document.documentElement).getPropertyValue("--sticky-top") || "0";
@@ -928,46 +909,37 @@ export default function CasinoPartnerHub() {
     return Number.isFinite(n) ? n : 0;
   };
 
-  const measureOnce = React.useCallback(() => {
-    const target = route === "home" ? homeEndRef.current
-                 : route === "betify" ? betifyEndRef.current
-                 : null;
-    if (!rightColRef.current || !target) { setSidebarH(undefined); return; }
+  const recalcHeights = React.useCallback(() => {
+    const targetEl =
+      route === "betify" ? betifySectionRef.current
+    : route === "home"   ? homeEndRef.current
+    : null;
 
-    // stickyTop “congelado” para esta medição
+    if (!rightColRef.current || !targetEl) { setDesiredH(undefined); return; }
+
+    const targetBottomDoc = targetEl.getBoundingClientRect().bottom + window.scrollY;
     const stickyTop = getStickyTopPx();
-    stickyTopRef.current = stickyTop;
-    initialScrollYRef.current = window.scrollY;
+    const asideTopDoc = window.scrollY + stickyTop;
 
-    const targetBottomDoc = target.getBoundingClientRect().bottom + window.scrollY;
-    const asideTopDoc     = initialScrollYRef.current + stickyTopRef.current;
-    const h = Math.max(0, Math.round(targetBottomDoc - asideTopDoc));
-    setSidebarH(h);
+    const PAD = route === "betify" ? 10 : 0; // afina se precisares
+    const h = Math.max(0, Math.round(targetBottomDoc - asideTopDoc + PAD));
+    setDesiredH(h);
   }, [route]);
 
+  // sem listeners de scroll — só resize/rota/timeouts p/ estabilizar
   useEffect(() => {
-    // mede quando entra/ muda rota
-    measureOnce();
-
-    const main = rightColRef.current;
-    if (!main) return;
-
-    // se o conteúdo da coluna direita mudar de tamanho (por exemplo iframe do Twitch/YT),
-    // voltamos a medir. (SEM listener de scroll)
-    const ro = new ResizeObserver(() => measureOnce());
-    ro.observe(main);
-    Array.from(main.children).forEach(ch => ro.observe(ch as Element));
-    if (homeEndRef.current)   ro.observe(homeEndRef.current);
-    if (betifyEndRef.current) ro.observe(betifyEndRef.current);
-
-    const onResize = () => measureOnce();
+    recalcHeights();
+    const onResize = () => recalcHeights();
     window.addEventListener("resize", onResize);
 
+    const t1 = setTimeout(recalcHeights, 120);
+    const t2 = setTimeout(recalcHeights, 350);
+
     return () => {
-      ro.disconnect();
       window.removeEventListener("resize", onResize);
+      clearTimeout(t1); clearTimeout(t2);
     };
-  }, [route, measureOnce]);
+  }, [route, recalcHeights]);
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
@@ -982,7 +954,7 @@ export default function CasinoPartnerHub() {
               onOpenBetify={() => setRoute("betify")}
               onGoHome={() => setRoute("home")}
               onOpenCommunity={() => setShowCommunity(true)}
-              fixedHeight={sidebarH}
+              desiredHeight={desiredH}
             />
 
             <main className="space-y-10" ref={rightColRef}>
@@ -1005,7 +977,7 @@ export default function CasinoPartnerHub() {
                   <div ref={homeEndRef} />
                 </>
               ) : (
-                <BetifyLanding endRef={betifyEndRef} />
+                <BetifyLanding sectionRef={betifySectionRef} />
               )}
             </main>
           </div>
@@ -1015,6 +987,7 @@ export default function CasinoPartnerHub() {
 
         {showOverlay && (<StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />)}
         {showCommunity && (<CommunityModal onClose={() => setShowCommunity(false)} />)}
+        {/* Opcional: <BackgroundLayer /> */}
       </div>
     </LangCtx.Provider>
   );
