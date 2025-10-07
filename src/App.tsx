@@ -387,7 +387,8 @@ function Sidebar({
 }
 
 /* ---------- helpers ---------- */
-function cap(value: string, lang: Lang) {
+type LangType = Lang;
+function cap(value: string, lang: LangType) {
   const prefix = lang === "PT" ? "Até" : "Up to";
   if (/^\s*(até|up to)\b/i.test(value)) return value;
   return `${prefix} ${value}`;
@@ -874,10 +875,8 @@ export default function CasinoPartnerHub() {
   const [showCommunity, setShowCommunity] = useState(false);
   const [route, setRoute] = useState<Route>("home");
 
-  // ----- refs para alinhar a sidebar com o fim VISUAL do conteúdo
+  // ----- refs para alinhar a sidebar com o fim VISUAL do conteúdo (coluna da direita)
   const rightColRef  = React.useRef<HTMLElement | null>(null);
-  const homeEndRef   = React.useRef<HTMLDivElement | null>(null);
-  const betifyEndRef = React.useRef<HTMLDivElement | null>(null);
   const [fixedHeight, setFixedHeight] = React.useState<number | undefined>(undefined);
 
   const getStickyTopPx = () => {
@@ -886,75 +885,58 @@ export default function CasinoPartnerHub() {
     return Number.isFinite(n) ? n : 0;
   };
 
-const measureOnce = React.useCallback(() => {
-  const main = rightColRef.current;
-  if (!main) { setFixedHeight(undefined); return; }
-
-  const stickyTop = getStickyTopPx();
-  let targetEl: HTMLElement | null = null;
-  let extraBottom = 0;
-
-  // Escolher o elemento de referência consoante a rota
-  if (route === "betify") {
-    const marker = betifyEndRef.current;
-    if (marker) {
-      const sectionEl = marker.closest("section") as HTMLElement | null;
-      if (sectionEl) {
-        targetEl = sectionEl;
-        const cs = getComputedStyle(sectionEl);
-        const padBottom = parseFloat(cs.paddingBottom || "0") || 0;
-        const micro = 2; // pequeno ajuste para o glow
-        extraBottom = padBottom - micro;
-      } else {
-        targetEl = marker;
-      }
-    }
-  } else if (route === "home" || route === "main") {
-    // aqui tratamos da página com embed Twitch
-    const twitchEmbed = main.querySelector("iframe[src*='twitch.tv']") as HTMLElement | null;
-    if (twitchEmbed) {
-      targetEl = twitchEmbed;
-      // Compensa o pequeno gap abaixo do iframe
-      extraBottom = 4;
-    } else if (homeEndRef.current) {
-      targetEl = homeEndRef.current;
-    }
-  }
-
-  if (!targetEl) { setFixedHeight(undefined); return; }
-
-  const bottomDoc = targetEl.getBoundingClientRect().bottom + window.scrollY;
-  const asideTopDoc = window.scrollY + stickyTop;
-
-  const h = Math.max(0, Math.round(bottomDoc + extraBottom - asideTopDoc));
-  setFixedHeight(h);
-}, [route]);
-
-
+  // mede SEMPRE pelo bottom do <main> (coluna direita)
+  const measureOnce = React.useCallback(() => {
+    const main = rightColRef.current;
+    if (!main) { setFixedHeight(undefined); return; }
+    const stickyTop = getStickyTopPx();
+    const rect = main.getBoundingClientRect();
+    const bottomDoc = rect.bottom + window.scrollY;     // fim do conteúdo da página (coluna direita)
+    const asideTopDoc = window.scrollY + stickyTop;     // topo sticky da sidebar
+    const h = Math.max(0, Math.round(bottomDoc - asideTopDoc));
+    setFixedHeight(h);
+  }, []);
 
   useEffect(() => {
-    // mede depois do layout estabilizar e em resize — nunca em scroll
+    // dispara várias vezes para apanhar layout, fontes e imagens
     const t1 = setTimeout(measureOnce, 0);
-    const t2 = setTimeout(measureOnce, 200);
-    const t3 = setTimeout(measureOnce, 600);
+    const t2 = setTimeout(measureOnce, 150);
+    const t3 = setTimeout(measureOnce, 450);
 
     const onResize = () => measureOnce();
     window.addEventListener("resize", onResize);
 
+    // Observa mudanças de tamanho
     const ro = new ResizeObserver(() => measureOnce());
+    // Observa mudanças no DOM (entrada/saída de nós)
+    const mo = new MutationObserver(() => measureOnce());
+
     if (rightColRef.current) {
       ro.observe(rightColRef.current);
       Array.from(rightColRef.current.children).forEach(ch => ro.observe(ch as Element));
+      mo.observe(rightColRef.current, { childList: true, subtree: true });
+      // Recalcular quando imagens/iframes carregarem
+      rightColRef.current.querySelectorAll("img,iframe,video").forEach(el => {
+        el.addEventListener("load", measureOnce, { once: false });
+        el.addEventListener("loadedmetadata", measureOnce as any, { once: false });
+      });
     }
-    if (homeEndRef.current)   ro.observe(homeEndRef.current);
-    if (betifyEndRef.current) ro.observe(betifyEndRef.current);
 
     return () => {
       clearTimeout(t1); clearTimeout(t2); clearTimeout(t3);
       window.removeEventListener("resize", onResize);
-      ro.disconnect();
+      ro.disconnect(); mo.disconnect();
+      if (rightColRef.current) {
+        rightColRef.current.querySelectorAll("img,iframe,video").forEach(el => {
+          el.removeEventListener("load", measureOnce as any);
+          el.removeEventListener("loadedmetadata", measureOnce as any);
+        });
+      }
     };
   }, [route, measureOnce]);
+
+  // re-medir ao trocar de rota
+  useEffect(() => { measureOnce(); }, [route, measureOnce]);
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
@@ -987,12 +969,9 @@ const measureOnce = React.useCallback(() => {
                     <TwitchEmbedMini channel={TWITCH_CHANNEL} />
                     <YouTubeLastMini channelId={YT_CHANNEL_ID} />
                   </div>
-
-                  {/* fim real do conteúdo da home */}
-                  <div ref={homeEndRef} />
                 </>
               ) : (
-                <BetifyLanding endRef={betifyEndRef} />
+                <BetifyLanding />
               )}
             </main>
           </div>
