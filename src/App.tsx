@@ -949,27 +949,6 @@ const measureOnce = React.useCallback(() => {
     };
   }, [route, measureOnce]);
 
-  // re-medir ao trocar de rota
-// re-medir ao trocar de rota (duplo RAF para esperar o layout final)
-useEffect(() => {
-  // evita flash enquanto a coluna direita monta
-  setFixedHeight(undefined);
-
-  const raf1 = requestAnimationFrame(() => {
-    const raf2 = requestAnimationFrame(() => {
-      measureOnce();        // mede quando o DOM já está estável
-    });
-    (window as any).__raf2 = raf2;
-  });
-  (window as any).__raf1 = raf1;
-
-  return () => {
-    cancelAnimationFrame((window as any).__raf1 || 0);
-    cancelAnimationFrame((window as any).__raf2 || 0);
-  };
-}, [route, measureOnce]);
-
-
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
       <div className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-hidden">
