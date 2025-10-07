@@ -1,4 +1,3 @@
-// CasinoPartnerHub.tsx
 import React, { useEffect, useMemo, useState, createContext, useContext } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -9,9 +8,12 @@ import {
 
 /* ---------- CONFIG ---------- */
 const TWITCH_CHANNEL = "k0mpa";
+/* YouTube (UC…) — @k0mpa */
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
-const BETIFY_SIGNUP_URL = "https://betify.com/?ref=k0mpa";
-const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/";
+
+/* URLs Betify — troca para os teus links reais */
+const BETIFY_SIGNUP_URL = "https://betify.com/?ref=k0mpa";      // <- altera
+const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
 
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
@@ -30,7 +32,7 @@ const betifyPromos: Promo[] = [
   { id: "fs-monthly", icon: Sparkles, href: BETIFY_PROMO_URL },
 ];
 
-/* ---------- links ---------- */
+/* links das redes */
 const SOCIAL_LINKS = {
   youtube:  "https://youtube.com/@k0mpa",
   instagram:"https://www.instagram.com/k0mpa_",
@@ -227,7 +229,7 @@ const brands: Brand[] = [
   },
 ];
 
-/* Ícones inline */
+/* Ícones inline (TikTok + X) */
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
   return (<svg viewBox="0 0 24 24" aria-hidden="true" {...props}><path d="M16 3v4.2c1.9 1.3 3.2 1.9 5 2v3c-2.2-.1-3.8-.8-5-1.7v4.8c0 3.2-2.6 5.9-6.2 5.9S3.9 18.5 3.9 15.1c0-3.1 2.3-5.6 5.3-6v3c-1.3.3-2.3 1.5-2.3 3 0 1.7 1.3 3 3 3s3-1.4 3-3.1V3H16z" fill="currentColor"/></svg>);
 }
@@ -292,33 +294,30 @@ function DiscordIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-/* ---------- Sidebar (sticky + altura controlada) ---------- */
+/* ---------- Sidebar ---------- */
 function Sidebar({
   onOpenStream,
   onOpenBetify,
   onGoHome,
   onOpenCommunity,
-  desiredHeight,
+  fixedHeight,
 }: {
   onOpenStream: () => void;
   onOpenBetify: () => void;
   onGoHome: () => void;
   onOpenCommunity: () => void;
-  desiredHeight?: number;
+  fixedHeight?: number;
 }) {
   const { t, lang } = useLang();
 
   return (
-    <aside
-      className="hidden md:block w-[240px] mx-auto"
-      style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
-    >
+    <aside className="hidden md:block w-[240px] mx-auto" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
         style={{
-          height: desiredHeight ? `${desiredHeight}px` : undefined,  // cola ao fundo do conteúdo
+          height: fixedHeight ? `${fixedHeight}px` : undefined, // altura fixa (não varia com scroll)
           overflow: "auto",
-          willChange: "height",
+          willChange: "auto",
         }}
       >
         <div>
@@ -448,7 +447,7 @@ function buildTwitchEmbedUrl(channel: string) {
   return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&autoplay=1&muted=1&${qsParents}`;
 }
 
-/* ---------- Modals ---------- */
+/* ---------- Overlay/Modals ---------- */
 function CommunityModal({ onClose }: { onClose: () => void }) {
   const { t } = useLang();
   const [mounted, setMounted] = React.useState(false);
@@ -536,7 +535,7 @@ function StreamHero({ channel }: { channel: string }) {
   );
 }
 
-/* ---------- Embeds pequenos ---------- */
+/* ---------- Embeds pequenos lado a lado ---------- */
 const TwitchEmbedMini = React.forwardRef<HTMLDivElement, { channel: string }>(
   ({ channel }, ref) => {
     const src = buildTwitchEmbedUrl(channel);
@@ -854,7 +853,6 @@ function Footer() {
     </footer>
   );
 }
-
 /* ---------- Idioma ---------- */
 function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "PT" | "EN") => void; }) {
   const base = "text-sm font-semibold tracking-wide transition-colors";
@@ -863,8 +861,22 @@ function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "
 
   return (
     <div className="inline-flex items-center gap-3">
-      <button type="button" aria-selected={lang === "PT"} onClick={() => onChange("PT")} className={`${base} ${lang === "PT" ? active : inactive}`}>PT</button>
-      <button type="button" aria-selected={lang === "EN"} onClick={() => onChange("EN")} className={`${base} ${lang === "EN" ? active : inactive}`}>EN</button>
+      <button
+        type="button"
+        aria-selected={lang === "PT"}
+        onClick={() => onChange("PT")}
+        className={`${base} ${lang === "PT" ? active : inactive}`}
+      >
+        PT
+      </button>
+      <button
+        type="button"
+        aria-selected={lang === "EN"}
+        onClick={() => onChange("EN")}
+        className={`${base} ${lang === "EN" ? active : inactive}`}
+      >
+        EN
+      </button>
     </div>
   );
 }
@@ -900,11 +912,15 @@ export default function CasinoPartnerHub() {
   const [showCommunity, setShowCommunity] = useState(false);
   const [route, setRoute] = useState<Route>("home");
 
-  // refs para alinhar a sidebar ao píxel com o fim do conteúdo
+  // ----- refs para alinhar a sidebar ao píxel com o fim do conteúdo (altura fixa, sem scroll listener)
   const rightColRef  = React.useRef<HTMLElement | null>(null);
   const homeEndRef   = React.useRef<HTMLDivElement | null>(null);
   const betifyEndRef = React.useRef<HTMLDivElement | null>(null);
-  const [desiredH, setDesiredH] = React.useState<number | undefined>(undefined);
+  const [sidebarH, setSidebarH] = React.useState<number | undefined>(undefined);
+
+  // guardamos os valores “do momento da medição” para a altura ficar estável
+  const initialScrollYRef = React.useRef<number>(0);
+  const stickyTopRef      = React.useRef<number>(0);
 
   const getStickyTopPx = () => {
     const v = getComputedStyle(document.documentElement).getPropertyValue("--sticky-top") || "0";
@@ -912,53 +928,46 @@ export default function CasinoPartnerHub() {
     return Number.isFinite(n) ? n : 0;
   };
 
-  const recalcHeights = React.useCallback(() => {
+  const measureOnce = React.useCallback(() => {
     const target = route === "home" ? homeEndRef.current
                  : route === "betify" ? betifyEndRef.current
                  : null;
-    if (!rightColRef.current || !target) { setDesiredH(undefined); return; }
+    if (!rightColRef.current || !target) { setSidebarH(undefined); return; }
 
-    // fundo do conteúdo (coordenada absoluta do documento)
-    const targetBottomDoc = target.getBoundingClientRect().bottom + window.scrollY;
-
-    // topo visível da área sticky no documento
+    // stickyTop “congelado” para esta medição
     const stickyTop = getStickyTopPx();
-    const asideTopDoc = window.scrollY + stickyTop;
+    stickyTopRef.current = stickyTop;
+    initialScrollYRef.current = window.scrollY;
 
-    // +1 para garantir que não fica 1px acima
-    const h = Math.max(0, Math.round(targetBottomDoc - asideTopDoc + 1));
-
-    setDesiredH(prev => (prev == null || Math.abs(prev - h) >= 2 ? h : prev));
+    const targetBottomDoc = target.getBoundingClientRect().bottom + window.scrollY;
+    const asideTopDoc     = initialScrollYRef.current + stickyTopRef.current;
+    const h = Math.max(0, Math.round(targetBottomDoc - asideTopDoc));
+    setSidebarH(h);
   }, [route]);
 
   useEffect(() => {
-    recalcHeights();
+    // mede quando entra/ muda rota
+    measureOnce();
 
     const main = rightColRef.current;
     if (!main) return;
 
-    const ro = new ResizeObserver(recalcHeights);
+    // se o conteúdo da coluna direita mudar de tamanho (por exemplo iframe do Twitch/YT),
+    // voltamos a medir. (SEM listener de scroll)
+    const ro = new ResizeObserver(() => measureOnce());
     ro.observe(main);
     Array.from(main.children).forEach(ch => ro.observe(ch as Element));
     if (homeEndRef.current)   ro.observe(homeEndRef.current);
     if (betifyEndRef.current) ro.observe(betifyEndRef.current);
 
-    const onScroll = () => recalcHeights();
-    const onResize = () => recalcHeights();
-
-    window.addEventListener("scroll", onScroll, { passive: true });
+    const onResize = () => measureOnce();
     window.addEventListener("resize", onResize);
-
-    // fallback suave para iframes/embeds que mexem post-load
-    const i = setInterval(recalcHeights, 500);
 
     return () => {
       ro.disconnect();
-      clearInterval(i);
-      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
-  }, [route, recalcHeights]);
+  }, [route, measureOnce]);
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
@@ -973,7 +982,7 @@ export default function CasinoPartnerHub() {
               onOpenBetify={() => setRoute("betify")}
               onGoHome={() => setRoute("home")}
               onOpenCommunity={() => setShowCommunity(true)}
-              desiredHeight={desiredH}
+              fixedHeight={sidebarH}
             />
 
             <main className="space-y-10" ref={rightColRef}>
