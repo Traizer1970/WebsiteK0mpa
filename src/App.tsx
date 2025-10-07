@@ -886,35 +886,51 @@ export default function CasinoPartnerHub() {
     return Number.isFinite(n) ? n : 0;
   };
 
-  /** mede uma vez por rota/resize e fixa a altura da sidebar (não reage a scroll) */
-  const measureOnce = React.useCallback(() => {
-    const marker = route === "home" ? homeEndRef.current : route === "betify" ? betifyEndRef.current : null;
-    const main = rightColRef.current;
-    if (!marker || !main) { setFixedHeight(undefined); return; }
+const measureOnce = React.useCallback(() => {
+  const main = rightColRef.current;
+  if (!main) { setFixedHeight(undefined); return; }
 
-    const stickyTop = getStickyTopPx();
+  const stickyTop = getStickyTopPx();
+  let targetEl: HTMLElement | null = null;
+  let extraBottom = 0;
 
-    // — Alinhamento específico para o "modal" Betify: usa o <section> que o contém
-    let bottomDoc: number;
-    if (route === "betify") {
+  // Escolher o elemento de referência consoante a rota
+  if (route === "betify") {
+    const marker = betifyEndRef.current;
+    if (marker) {
       const sectionEl = marker.closest("section") as HTMLElement | null;
-      const targetEl = sectionEl ?? marker;
-      bottomDoc = targetEl.getBoundingClientRect().bottom + window.scrollY;
-    } else {
-      bottomDoc = marker.getBoundingClientRect().bottom + window.scrollY;
+      if (sectionEl) {
+        targetEl = sectionEl;
+        const cs = getComputedStyle(sectionEl);
+        const padBottom = parseFloat(cs.paddingBottom || "0") || 0;
+        const micro = 2; // pequeno ajuste para o glow
+        extraBottom = padBottom - micro;
+      } else {
+        targetEl = marker;
+      }
     }
+  } else if (route === "home" || route === "main") {
+    // aqui tratamos da página com embed Twitch
+    const twitchEmbed = main.querySelector("iframe[src*='twitch.tv']") as HTMLElement | null;
+    if (twitchEmbed) {
+      targetEl = twitchEmbed;
+      // Compensa o pequeno gap abaixo do iframe
+      extraBottom = 4;
+    } else if (homeEndRef.current) {
+      targetEl = homeEndRef.current;
+    }
+  }
 
-    const asideTopDoc = window.scrollY + stickyTop;
+  if (!targetEl) { setFixedHeight(undefined); return; }
 
-    // Ajuste fino: compensa cantos/anel/blur do container da Betify
-    const BETIFY_FUDGE = -2;  // mexe aqui se precisares (-3, -1, 0…)
-    const HOME_FUDGE   = 0;
+  const bottomDoc = targetEl.getBoundingClientRect().bottom + window.scrollY;
+  const asideTopDoc = window.scrollY + stickyTop;
 
-    const fudge = route === "betify" ? BETIFY_FUDGE : HOME_FUDGE;
+  const h = Math.max(0, Math.round(bottomDoc + extraBottom - asideTopDoc));
+  setFixedHeight(h);
+}, [route]);
 
-    const h = Math.max(0, Math.round(bottomDoc - asideTopDoc + fudge));
-    setFixedHeight(h);
-  }, [route]);
+
 
   useEffect(() => {
     // mede depois do layout estabilizar e em resize — nunca em scroll
