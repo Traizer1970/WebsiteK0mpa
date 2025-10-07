@@ -577,7 +577,7 @@ function YouTubeLastMini({ channelId }: { channelId: string }) {
 
   const uploadsPlaylist = "UU" + channelId.slice(2);
 
-  return (
+  return 
     <section className="min-w-0 rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_8px_26px_rgba(0,0,0,.35)] bg-black">
       <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
         {vid ? (
