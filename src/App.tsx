@@ -915,7 +915,7 @@ const measureOnce = React.useCallback(() => {
   const asideTopDoc = window.scrollY + stickyTop;
 
   // compensação para ring/bordas e sub-píxeis
-  const fudge = 10; // se ainda sobra 1px, pode pôr 3
+  const fudge = 8; // se ainda sobra 1px, pode pôr 3
   const h = Math.max(0, Math.floor(bottomDoc - asideTopDoc) - fudge);
 
   setFixedHeight(h);
