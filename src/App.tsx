@@ -8,11 +8,12 @@ import {
 
 /* ---------- CONFIG ---------- */
 const TWITCH_CHANNEL = "k0mpa";
+/* YouTube (UC…) — @k0mpa */
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 
 /* URLs Betify — troca para os teus links reais */
-const BETIFY_SIGNUP_URL = "https://betify.com/?ref=k0mpa";
-const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/";
+const BETIFY_SIGNUP_URL = "https://betify.com/?ref=k0mpa";      // <- altera
+const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
 
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
@@ -408,12 +409,12 @@ function TagBadge({ tag, inline=false, className="", style, accent }: { tag: Bra
 }
 
 /* ---------- Payment logos ---------- */
-function PaymentIcon({ type }: { type: PaymentType }) {
+function PaymentIcon({ type }: { type: keyof typeof PAYMENT_ICON_URLS }) {
   const src = PAYMENT_ICON_URLS[type];
   const alt = type === "btc" ? "Bitcoin" : type === "mbw" ? "MB WAY" : type === "mb" ? "Multibanco" : type === "visa" ? "VISA" : "Mastercard";
   return <img src={src} alt={alt} loading="lazy" decoding="async" className="h-5 w-5 sm:h-6 sm:w-6 object-contain" draggable={false} />;
 }
-function PaymentBadge({ type }: { type: PaymentType }) { return (<div className="h-10 w-11 sm:h-11 sm:w-12 rounded-xl bg-white ring-1 ring-black/10 shadow-sm flex items-center justify-center"><PaymentIcon type={type} /></div>); }
+function PaymentBadge({ type }: { type: keyof typeof PAYMENT_ICON_URLS }) { return (<div className="h-10 w-11 sm:h-11 sm:w-12 rounded-xl bg-white ring-1 ring-black/10 shadow-sm flex items-center justify-center"><PaymentIcon type={type} /></div>); }
 function PaymentRibbon({ methods }: { methods: string[] }) {
   return (
     <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-30 flex gap-2 sm:gap-3">
@@ -470,12 +471,12 @@ function CommunityModal({ onClose }: { onClose: () => void }) {
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <a href={SOCIAL_LINKS.discord}  target="_blank" rel="noreferrer" className="group flex items-center gap-3 rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 hover:bg-white/15">
             <DiscordIcon className="h-5 w-5" />
-            <div className="flex-1"><div className="text-sm font-bold">Discord</div><div className="text-xs text-white/60">Chats, roles e anúncios</div></div>
+            <div className="flex-1"><div className="text-sm font-bold">Discord</div><div className="text-xs text-white/60">{t.communityModal.discord_sub}</div></div>
             <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
           </a>
           <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="group flex items-centered gap-3 rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 hover:bg-white/15">
             <Send className="h-5 w-5" />
-            <div className="flex-1"><div className="text-sm font-bold">Telegram</div><div className="text-xs text-white/60">Canal rápido de updates</div></div>
+            <div className="flex-1"><div className="text-sm font-bold">Telegram</div><div className="text-xs text-white/60">{t.communityModal.telegram_sub}</div></div>
             <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
           </a>
         </div>
@@ -530,22 +531,14 @@ function StreamHero({ channel }: { channel: string }) {
   );
 }
 
-/* ---------- Embeds pequenos lado a lado ---------- */
+/* ---------- Embeds pequenos ---------- */
 const TwitchEmbedMini = React.forwardRef<HTMLDivElement, { channel: string }>(
   ({ channel }, ref) => {
     const src = buildTwitchEmbedUrl(channel);
     return (
       <section ref={ref} className="min-w-0 rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_8px_26px_rgba(0,0,0,.35)] bg-black">
         <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-          <iframe
-            title={`twitch-${channel}-mini`}
-            src={src}
-            allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-            allowFullScreen
-            frameBorder="0"
-            scrolling="no"
-            className="absolute inset-0 h-full w-full border-0"
-          />
+          <iframe title={`twitch-${channel}-mini`} src={src} allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowFullScreen frameBorder="0" scrolling="no" className="absolute inset-0 h-full w-full border-0" />
         </div>
       </section>
     );
@@ -847,6 +840,7 @@ function Footer() {
     </footer>
   );
 }
+
 /* ---------- Idioma ---------- */
 function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "PT" | "EN") => void; }) {
   const base = "text-sm font-semibold tracking-wide transition-colors";
@@ -857,17 +851,6 @@ function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "
     <div className="inline-flex items-center gap-3">
       <button type="button" aria-selected={lang === "PT"} onClick={() => onChange("PT")} className={`${base} ${lang === "PT" ? active : inactive}`}>PT</button>
       <button type="button" aria-selected={lang === "EN"} onClick={() => onChange("EN")} className={`${base} ${lang === "EN" ? active : inactive}`}>EN</button>
-    </div>
-  );
-}
-/* ---------- Background (opcional) ---------- */
-function BackgroundLayer() {
-  return (
-    <div className="pointer-events-none fixed -z-10" style={{ inset: "-30vh -12vw -30vh -12vw", background: "linear-gradient(180deg, #14070a 0%, #10060a 45%, #0b0507 100%)" }}>
-      <div aria-hidden style={{ position: "absolute", inset: 0, background:
-        "radial-gradient(60% 40% at 15% 5%, rgba(244,63,94,.28) 0%, rgba(244,63,94,0) 70%)," +
-        "radial-gradient(55% 45% at 85% 95%, rgba(244,63,94,.22) 0%, rgba(244,63,94,0) 75%)",
-        mixBlendMode: "screen" }} />
     </div>
   );
 }
@@ -891,7 +874,7 @@ export default function CasinoPartnerHub() {
   const [showCommunity, setShowCommunity] = useState(false);
   const [route, setRoute] = useState<Route>("home");
 
-  // ----- refs para alinhar a sidebar com o fim do conteúdo (sem variar com o scroll)
+  // ----- refs para alinhar a sidebar com o fim VISUAL do conteúdo
   const rightColRef  = React.useRef<HTMLElement | null>(null);
   const homeEndRef   = React.useRef<HTMLDivElement | null>(null);
   const betifyEndRef = React.useRef<HTMLDivElement | null>(null);
@@ -903,33 +886,45 @@ export default function CasinoPartnerHub() {
     return Number.isFinite(n) ? n : 0;
   };
 
-  /** mede uma vez por rota/resize e fixa a altura da sidebar */
+  /** mede uma vez por rota/resize e fixa a altura da sidebar (não reage a scroll) */
   const measureOnce = React.useCallback(() => {
-    const main = rightColRef.current;
     const marker = route === "home" ? homeEndRef.current : route === "betify" ? betifyEndRef.current : null;
-    if (!main || !marker) { setFixedHeight(undefined); return; }
+    const main = rightColRef.current;
+    if (!marker || !main) { setFixedHeight(undefined); return; }
 
     const stickyTop = getStickyTopPx();
-    const markerBottomDoc = marker.getBoundingClientRect().bottom + window.scrollY;
+
+    // — Alinhamento específico para o "modal" Betify: usa o <section> que o contém
+    let bottomDoc: number;
+    if (route === "betify") {
+      const sectionEl = marker.closest("section") as HTMLElement | null;
+      const targetEl = sectionEl ?? marker;
+      bottomDoc = targetEl.getBoundingClientRect().bottom + window.scrollY;
+    } else {
+      bottomDoc = marker.getBoundingClientRect().bottom + window.scrollY;
+    }
+
     const asideTopDoc = window.scrollY + stickyTop;
 
-    // ajuste visual para cantos/sombras — podes mexer nestes valores
-    const VISUAL_FUDGE = route === "betify" ? 8 : 6;
+    // Ajuste fino: compensa cantos/anel/blur do container da Betify
+    const BETIFY_FUDGE = -2;  // mexe aqui se precisares (-3, -1, 0…)
+    const HOME_FUDGE   = 0;
 
-    const h = Math.max(0, Math.round(markerBottomDoc - asideTopDoc + VISUAL_FUDGE));
+    const fudge = route === "betify" ? BETIFY_FUDGE : HOME_FUDGE;
+
+    const h = Math.max(0, Math.round(bottomDoc - asideTopDoc + fudge));
     setFixedHeight(h);
   }, [route]);
 
   useEffect(() => {
-    // mede depois do layout estabilizar
+    // mede depois do layout estabilizar e em resize — nunca em scroll
     const t1 = setTimeout(measureOnce, 0);
-    const t2 = setTimeout(measureOnce, 200);   // imagens/iframes
-    const t3 = setTimeout(measureOnce, 600);   // fallback
+    const t2 = setTimeout(measureOnce, 200);
+    const t3 = setTimeout(measureOnce, 600);
 
     const onResize = () => measureOnce();
     window.addEventListener("resize", onResize);
 
-    // observa mudanças de tamanho do main/children (não no scroll)
     const ro = new ResizeObserver(() => measureOnce());
     if (rightColRef.current) {
       ro.observe(rightColRef.current);
@@ -989,6 +984,7 @@ export default function CasinoPartnerHub() {
 
         <Footer />
 
+        {/* Overlays */}
         {showOverlay && (<StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />)}
         {showCommunity && (<CommunityModal onClose={() => setShowCommunity(false)} />)}
       </div>
