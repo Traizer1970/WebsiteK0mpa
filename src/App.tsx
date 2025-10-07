@@ -894,17 +894,16 @@ export default function CasinoPartnerHub() {
     return Number.isFinite(n) ? n : 0;
   };
 
-  // mede SEMPRE pelo bottom do <main> (coluna direita)
-// mede SEMPRE pelo fim "real" da coluna direita (scrollHeight + margin-bottom do último filho)
 const measureOnce = React.useCallback(() => {
   const main = rightColRef.current;
   if (!main) { setFixedHeight(undefined); return; }
 
   const stickyTop = getStickyTopPx();
 
+  // topo do main em coordenadas do documento
   const rectTopDoc = main.getBoundingClientRect().top + window.scrollY;
 
-  // inclui o margin-bottom do último filho (scrollHeight não inclui margens)
+  // inclui a margin-bottom do último filho (scrollHeight não inclui margens)
   let extraMb = 0;
   const last = main.lastElementChild as HTMLElement | null;
   if (last) {
@@ -915,9 +914,13 @@ const measureOnce = React.useCallback(() => {
   const bottomDoc = rectTopDoc + main.scrollHeight + extraMb;
   const asideTopDoc = window.scrollY + stickyTop;
 
-  const h = Math.max(0, Math.round(bottomDoc - asideTopDoc));
+  // compensação para ring/bordas e sub-píxeis
+  const fudge = 2; // se ainda sobra 1px, pode pôr 3
+  const h = Math.max(0, Math.floor(bottomDoc - asideTopDoc) - fudge);
+
   setFixedHeight(h);
 }, []);
+
 
 // re-medir ao trocar de rota (duplo RAF para esperar o layout final)
 useEffect(() => {
