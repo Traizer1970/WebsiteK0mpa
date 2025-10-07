@@ -910,44 +910,25 @@ const measureOnce = React.useCallback(() => {
   setFixedHeight(h);
 }, []);
 
+// re-medir ao trocar de rota (duplo RAF para esperar o layout final)
+useEffect(() => {
+  // evita flash enquanto a coluna direita monta
+  setFixedHeight(undefined);
 
-  useEffect(() => {
-    // dispara várias vezes para apanhar layout, fontes e imagens
-    const t1 = setTimeout(measureOnce, 0);
-    const t2 = setTimeout(measureOnce, 150);
-    const t3 = setTimeout(measureOnce, 450);
+  const raf1 = requestAnimationFrame(() => {
+    const raf2 = requestAnimationFrame(() => {
+      measureOnce();        // mede quando o DOM já está estável
+    });
+    (window as any).__raf2 = raf2;
+  });
+  (window as any).__raf1 = raf1;
 
-    const onResize = () => measureOnce();
-    window.addEventListener("resize", onResize);
+  return () => {
+    cancelAnimationFrame((window as any).__raf1 || 0);
+    cancelAnimationFrame((window as any).__raf2 || 0);
+  };
+}, [route, measureOnce]);
 
-    // Observa mudanças de tamanho
-    const ro = new ResizeObserver(() => measureOnce());
-    // Observa mudanças no DOM (entrada/saída de nós)
-    const mo = new MutationObserver(() => measureOnce());
-
-    if (rightColRef.current) {
-      ro.observe(rightColRef.current);
-      Array.from(rightColRef.current.children).forEach(ch => ro.observe(ch as Element));
-      mo.observe(rightColRef.current, { childList: true, subtree: true });
-      // Recalcular quando imagens/iframes carregarem
-      rightColRef.current.querySelectorAll("img,iframe,video").forEach(el => {
-        el.addEventListener("load", measureOnce, { once: false });
-        el.addEventListener("loadedmetadata", measureOnce as any, { once: false });
-      });
-    }
-
-    return () => {
-      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3);
-      window.removeEventListener("resize", onResize);
-      ro.disconnect(); mo.disconnect();
-      if (rightColRef.current) {
-        rightColRef.current.querySelectorAll("img,iframe,video").forEach(el => {
-          el.removeEventListener("load", measureOnce as any);
-          el.removeEventListener("loadedmetadata", measureOnce as any);
-        });
-      }
-    };
-  }, [route, measureOnce]);
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
