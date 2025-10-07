@@ -886,16 +886,30 @@ export default function CasinoPartnerHub() {
   };
 
   // mede SEMPRE pelo bottom do <main> (coluna direita)
-  const measureOnce = React.useCallback(() => {
-    const main = rightColRef.current;
-    if (!main) { setFixedHeight(undefined); return; }
-    const stickyTop = getStickyTopPx();
-    const rect = main.getBoundingClientRect();
-    const bottomDoc = rect.bottom + window.scrollY;     // fim do conteúdo da página (coluna direita)
-    const asideTopDoc = window.scrollY + stickyTop;     // topo sticky da sidebar
-    const h = Math.max(0, Math.round(bottomDoc - asideTopDoc));
-    setFixedHeight(h);
-  }, []);
+// mede SEMPRE pelo fim "real" da coluna direita (scrollHeight + margin-bottom do último filho)
+const measureOnce = React.useCallback(() => {
+  const main = rightColRef.current;
+  if (!main) { setFixedHeight(undefined); return; }
+
+  const stickyTop = getStickyTopPx();
+
+  const rectTopDoc = main.getBoundingClientRect().top + window.scrollY;
+
+  // inclui o margin-bottom do último filho (scrollHeight não inclui margens)
+  let extraMb = 0;
+  const last = main.lastElementChild as HTMLElement | null;
+  if (last) {
+    const cs = getComputedStyle(last);
+    extraMb = parseFloat(cs.marginBottom || "0") || 0;
+  }
+
+  const bottomDoc = rectTopDoc + main.scrollHeight + extraMb;
+  const asideTopDoc = window.scrollY + stickyTop;
+
+  const h = Math.max(0, Math.round(bottomDoc - asideTopDoc));
+  setFixedHeight(h);
+}, []);
+
 
   useEffect(() => {
     // dispara várias vezes para apanhar layout, fontes e imagens
@@ -936,7 +950,25 @@ export default function CasinoPartnerHub() {
   }, [route, measureOnce]);
 
   // re-medir ao trocar de rota
-  useEffect(() => { measureOnce(); }, [route, measureOnce]);
+// re-medir ao trocar de rota (duplo RAF para esperar o layout final)
+useEffect(() => {
+  // evita flash enquanto a coluna direita monta
+  setFixedHeight(undefined);
+
+  const raf1 = requestAnimationFrame(() => {
+    const raf2 = requestAnimationFrame(() => {
+      measureOnce();        // mede quando o DOM já está estável
+    });
+    (window as any).__raf2 = raf2;
+  });
+  (window as any).__raf1 = raf1;
+
+  return () => {
+    cancelAnimationFrame((window as any).__raf1 || 0);
+    cancelAnimationFrame((window as any).__raf2 || 0);
+  };
+}, [route, measureOnce]);
+
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
