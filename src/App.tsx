@@ -8,12 +8,11 @@ import {
 
 /* ---------- CONFIG ---------- */
 const TWITCH_CHANNEL = "k0mpa";
-/* YouTube (UC…) — @k0mpa */
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 
 /* URLs Betify — troca para os teus links reais */
-const BETIFY_SIGNUP_URL = "https://betify.com/?ref=k0mpa";      // <- altera
-const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
+const BETIFY_SIGNUP_URL = "https://betify.com/?ref=k0mpa";
+const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/";
 
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
@@ -199,8 +198,8 @@ const messages: Record<Lang, Translations> = {
       cta_promos: "SEE PROMOTIONS",
       promo_label: "Promo",
       promos: {
-        "every-dep": { title: "Campaigns & Free Spins", blurb: "Min. deposit €20 — 40FS no wager on Shaolin Panda.", highlight: "Up to 40FS" },
-        "fs-monthly": { title: "Campaigns & Free Spins", blurb: "Deposit €50 — 100FS no wager on Shaolin Panda.", highlight: "Up to 100FS" }
+        "every-dep": { title: "Campaigns & Free Spins", blurb: "Betify (Min. deposit €20 — 40FS no wager on Shaolin Panda).", highlight: "Up to 40FS" },
+        "fs-monthly": { title: "Campaigns & Free Spins", blurb: "Betify (Deposit €50 — 100FS no wager on Shaolin Panda).", highlight: "Up to 100FS" }
       }
     }
   }
@@ -300,13 +299,13 @@ function Sidebar({
   onOpenBetify,
   onGoHome,
   onOpenCommunity,
-  desiredHeight,
+  fixedHeight,
 }: {
   onOpenStream: () => void;
   onOpenBetify: () => void;
   onGoHome: () => void;
   onOpenCommunity: () => void;
-  desiredHeight?: number;
+  fixedHeight?: number;
 }) {
   const { t, lang } = useLang();
 
@@ -314,11 +313,7 @@ function Sidebar({
     <aside className="hidden md:block w-[240px] mx-auto" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
-        style={{
-          height: desiredHeight ? `${desiredHeight}px` : undefined, // altura fixa calculada
-          overflow: "auto",
-          willChange: "height",
-        }}
+        style={{ height: fixedHeight ? `${fixedHeight}px` : undefined, overflow: "auto", willChange: "height" }}
       >
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
@@ -475,12 +470,12 @@ function CommunityModal({ onClose }: { onClose: () => void }) {
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <a href={SOCIAL_LINKS.discord}  target="_blank" rel="noreferrer" className="group flex items-center gap-3 rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 hover:bg-white/15">
             <DiscordIcon className="h-5 w-5" />
-            <div className="flex-1"><div className="text-sm font-bold">Discord</div><div className="text-xs text-white/60">{t.communityModal.discord_sub}</div></div>
+            <div className="flex-1"><div className="text-sm font-bold">Discord</div><div className="text-xs text-white/60">Chats, roles e anúncios</div></div>
             <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
           </a>
           <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="group flex items-centered gap-3 rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 hover:bg-white/15">
             <Send className="h-5 w-5" />
-            <div className="flex-1"><div className="text-sm font-bold">Telegram</div><div className="text-xs text-white/60">{t.communityModal.telegram_sub}</div></div>
+            <div className="flex-1"><div className="text-sm font-bold">Telegram</div><div className="text-xs text-white/60">Canal rápido de updates</div></div>
             <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100" />
           </a>
         </div>
@@ -570,7 +565,6 @@ function YouTubeLastMini({ channelId }: { channelId: string }) {
       try {
         const res = await fetch(url, { cache: "no-store" });
         const html = await res.text();
-
         const re = /href="\/watch\?v=([a-zA-Z0-9_-]{11})"[^>]*\s+title="([^"]+)"/g;
         let m: RegExpExecArray | null, found: { id: string; title: string } | null = null;
 
@@ -756,16 +750,13 @@ function PromoCard({ p }: { p: Promo }) {
 }
 
 /* ---------- Página Betify ---------- */
-function BetifyLanding({ sectionRef }: { sectionRef?: React.RefObject<HTMLElement> }) {
+function BetifyLanding({ endRef }: { endRef?: React.RefObject<HTMLDivElement> }) {
   const { t } = useLang();
   const scrollToPromos = () => document.getElementById("betify-promos")?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   return (
     <div className="space-y-8">
-      <section
-        ref={sectionRef}
-        className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]"
-      >
+      <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
         <div aria-hidden className="pointer-events-none absolute inset-0" style={{background:
           "radial-gradient(60% 80% at 10% 0%, rgba(139,92,246,.18) 0%, rgba(139,92,246,0) 55%)," +
           "radial-gradient(50% 60% at 85% 100%, rgba(34,197,94,.16) 0%, rgba(34,197,94,0) 60%)", mixBlendMode:"screen"}} />
@@ -815,6 +806,9 @@ function BetifyLanding({ sectionRef }: { sectionRef?: React.RefObject<HTMLElemen
         <div id="betify-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
           {betifyPromos.map((p) => (<PromoCard key={p.id} p={p} />))}
         </div>
+
+        {/* fim da secção para medição */}
+        <div ref={endRef} />
       </section>
     </div>
   );
@@ -897,11 +891,11 @@ export default function CasinoPartnerHub() {
   const [showCommunity, setShowCommunity] = useState(false);
   const [route, setRoute] = useState<Route>("home");
 
-  // ----- refs para alinhar a sidebar com o fim do conteúdo
+  // ----- refs para alinhar a sidebar com o fim do conteúdo (sem variar com o scroll)
   const rightColRef  = React.useRef<HTMLElement | null>(null);
   const homeEndRef   = React.useRef<HTMLDivElement | null>(null);
-  const betifySectionRef = React.useRef<HTMLElement | null>(null); // secção/moldura do Betify
-  const [desiredH, setDesiredH] = React.useState<number | undefined>(undefined);
+  const betifyEndRef = React.useRef<HTMLDivElement | null>(null);
+  const [fixedHeight, setFixedHeight] = React.useState<number | undefined>(undefined);
 
   const getStickyTopPx = () => {
     const v = getComputedStyle(document.documentElement).getPropertyValue("--sticky-top") || "0";
@@ -909,37 +903,47 @@ export default function CasinoPartnerHub() {
     return Number.isFinite(n) ? n : 0;
   };
 
-  const recalcHeights = React.useCallback(() => {
-    const targetEl =
-      route === "betify" ? betifySectionRef.current
-    : route === "home"   ? homeEndRef.current
-    : null;
+  /** mede uma vez por rota/resize e fixa a altura da sidebar */
+  const measureOnce = React.useCallback(() => {
+    const main = rightColRef.current;
+    const marker = route === "home" ? homeEndRef.current : route === "betify" ? betifyEndRef.current : null;
+    if (!main || !marker) { setFixedHeight(undefined); return; }
 
-    if (!rightColRef.current || !targetEl) { setDesiredH(undefined); return; }
-
-    const targetBottomDoc = targetEl.getBoundingClientRect().bottom + window.scrollY;
     const stickyTop = getStickyTopPx();
+    const markerBottomDoc = marker.getBoundingClientRect().bottom + window.scrollY;
     const asideTopDoc = window.scrollY + stickyTop;
 
-    const PAD = route === "betify" ? 10 : 0; // afina se precisares
-    const h = Math.max(0, Math.round(targetBottomDoc - asideTopDoc + PAD));
-    setDesiredH(h);
+    // ajuste visual para cantos/sombras — podes mexer nestes valores
+    const VISUAL_FUDGE = route === "betify" ? 8 : 6;
+
+    const h = Math.max(0, Math.round(markerBottomDoc - asideTopDoc + VISUAL_FUDGE));
+    setFixedHeight(h);
   }, [route]);
 
-  // sem listeners de scroll — só resize/rota/timeouts p/ estabilizar
   useEffect(() => {
-    recalcHeights();
-    const onResize = () => recalcHeights();
+    // mede depois do layout estabilizar
+    const t1 = setTimeout(measureOnce, 0);
+    const t2 = setTimeout(measureOnce, 200);   // imagens/iframes
+    const t3 = setTimeout(measureOnce, 600);   // fallback
+
+    const onResize = () => measureOnce();
     window.addEventListener("resize", onResize);
 
-    const t1 = setTimeout(recalcHeights, 120);
-    const t2 = setTimeout(recalcHeights, 350);
+    // observa mudanças de tamanho do main/children (não no scroll)
+    const ro = new ResizeObserver(() => measureOnce());
+    if (rightColRef.current) {
+      ro.observe(rightColRef.current);
+      Array.from(rightColRef.current.children).forEach(ch => ro.observe(ch as Element));
+    }
+    if (homeEndRef.current)   ro.observe(homeEndRef.current);
+    if (betifyEndRef.current) ro.observe(betifyEndRef.current);
 
     return () => {
+      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3);
       window.removeEventListener("resize", onResize);
-      clearTimeout(t1); clearTimeout(t2);
+      ro.disconnect();
     };
-  }, [route, recalcHeights]);
+  }, [route, measureOnce]);
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
@@ -954,7 +958,7 @@ export default function CasinoPartnerHub() {
               onOpenBetify={() => setRoute("betify")}
               onGoHome={() => setRoute("home")}
               onOpenCommunity={() => setShowCommunity(true)}
-              desiredHeight={desiredH}
+              fixedHeight={fixedHeight}
             />
 
             <main className="space-y-10" ref={rightColRef}>
@@ -977,7 +981,7 @@ export default function CasinoPartnerHub() {
                   <div ref={homeEndRef} />
                 </>
               ) : (
-                <BetifyLanding sectionRef={betifySectionRef} />
+                <BetifyLanding endRef={betifyEndRef} />
               )}
             </main>
           </div>
@@ -987,7 +991,6 @@ export default function CasinoPartnerHub() {
 
         {showOverlay && (<StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />)}
         {showCommunity && (<CommunityModal onClose={() => setShowCommunity(false)} />)}
-        {/* Opcional: <BackgroundLayer /> */}
       </div>
     </LangCtx.Provider>
   );
