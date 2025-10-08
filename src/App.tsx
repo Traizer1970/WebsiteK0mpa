@@ -666,38 +666,39 @@ function BrandCard({ b }: { b: Brand }) {
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
           <TagBadge tag={b.tag} accent={acc} />
           <div className="absolute inset-0 overflow-hidden rounded-3xl">
-            {/* Destaque só para Wazbee (seguro em z-index e cliques) */}
+            {/* Destaque só para Wazbee */}
 {isWazbee && (
   <>
-    {/* selo no topo direito — abaixo do TagBadge/“Mais” */}
+    {/* selo topo-direito, sem sombras e sem bloquear cliques */}
     <div
-      className="pointer-events-none absolute right-3 top-3 z-[5]"
+      className="pointer-events-none absolute right-3 top-3 z-[6]"
       aria-hidden
     >
       <img
         src={b.logo}
         alt=""
-        className="h-8 sm:h-10 object-contain"
-        style={{ filter: "drop-shadow(0 6px 14px rgba(0,0,0,.35))" }}
+        className="h-9 sm:h-11 object-contain"
+        style={{ filter: "none" }} // <- remove sombra
       />
     </div>
 
-    {/* watermark suave no fundo */}
-    <img
-      src={b.logo}
-      alt=""
+    {/* watermark grande no fundo (sem sombras) */}
+    <div
       aria-hidden
-      className="pointer-events-none absolute right-2 bottom-10 select-none"
+      className="pointer-events-none absolute -right-1 bottom-8 z-[1] select-none"
       style={{
-        height: 140,
-        opacity: 0.08,                     // + suave
-        filter: "drop-shadow(0 10px 24px rgba(0,0,0,.28))",
-        transform: "rotate(-4deg)",
+        width: 280,              // ajusta se quiseres
+        height: 160,
+        backgroundImage: `url(${b.logo})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "contain",
+        backgroundPosition: "right bottom",
+        opacity: 0.14,           // mais visível
+        mixBlendMode: "screen",  // dá destaque sem “pesar”
         maskImage:
-          "linear-gradient(180deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,.85) 60%, rgba(0,0,0,0) 100%)",
+          "linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.85) 65%, rgba(0,0,0,0) 100%)",
         WebkitMaskImage:
-          "linear-gradient(180deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,.85) 60%, rgba(0,0,0,0) 100%)",
-        zIndex: 0,                         // fica atrás de tudo nesta face
+          "linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.85) 65%, rgba(0,0,0,0) 100%)",
       }}
     />
   </>
