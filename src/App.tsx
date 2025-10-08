@@ -14,6 +14,9 @@ const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 /* URLs Betify — troca para os teus links reais */
 const BETIFY_SIGNUP_URL = "https://betify.com/?ref=k0mpa";      // <- altera
 const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
+const WAZBEE_SIGNUP_URL = "https://wazbee.com/?ref=k0mpa"; // <- troca para o teu real
+const WAZBEE_PROMO_URL  = "https://wazbee.com/promo?k0mpa"; // <- troca para o teu real
+
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
 
@@ -33,6 +36,13 @@ const betifyPromos: Promo[] = [
   { id: "every-dep", icon: Percent, href: BETIFY_PROMO_URL },
   { id: "fs-monthly", icon: Sparkles, href: BETIFY_PROMO_URL },
 ];
+
+/* ---------- Wazbee: promoções ---------- */
+const wazbeePromos: Promo[] = [
+  { id: "every-dep", icon: Percent,  href: WAZBEE_PROMO_URL },
+  { id: "fs-monthly", icon: Sparkles, href: WAZBEE_PROMO_URL },
+];
+
 
 /* links das redes */
 const SOCIAL_LINKS = {
@@ -132,44 +142,73 @@ type Translations = {
       "fs-monthly": { title: string; blurb: string; highlight: string; };
     };
   };
+  wazbee: {
+    title: string; subtitle: string;
+    steps: { one: string; two_prefix: string; two_code: string; two_suffix: string; three: string; };
+    cta_signup: string; cta_promos: string; promo_label: string;
+    promos: {
+      "every-dep": { title: string; blurb: string; highlight: string; };
+      "fs-monthly": { title: string; blurb: string; highlight: string; };
+    };
+  };
 };
 
+
 const messages: Record<Lang, Translations> = {
-  PT: {
-    brand: "K0MPA", search: "Pesquisar…",
-    nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
-    promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
-    card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
-    social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
-    footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
-             rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
-             rg_site:"BeGambleAware.org" },
-    latestVideos: "Últimos vídeos",
-    communityModal: {
-      close: "Fechar",
-      choose: "Escolhe onde queres entrar:",
-      discord_sub: "Chats, roles e anúncios",
-      telegram_sub: "Canal rápido de updates",
+PT: {
+  brand: "K0MPA", search: "Pesquisar…",
+  nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO" },
+  promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
+  card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
+  social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
+  footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
+           rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
+           rg_site:"BeGambleAware.org" },
+  latestVideos: "Últimos vídeos",
+  communityModal: {
+    close: "Fechar",
+    choose: "Escolhe onde queres entrar:",
+    discord_sub: "Chats, roles e anúncios",
+    telegram_sub: "Canal rápido de updates",
+  },
+  betify: {
+    title: "Betify",
+    subtitle: "Como jogar na Betify e desbloquear o melhor VIP",
+    steps: {
+      one: "Cria conta na Betify.",
+      two_prefix: "Usa o código",
+      two_code: "K0MPA",
+      two_suffix: "no registo.",
+      three: "Aproveita promoções, cashback e free spins."
     },
-    betify: {
-      title: "Betify",
-      subtitle: "Como jogar na Betify e desbloquear o melhor VIP",
-      steps: {
-        one: "Cria conta na Betify.",
-        two_prefix: "Usa o código",
-        two_code: "K0MPA",
-        two_suffix: "no registo.",
-        three: "Aproveita promoções, cashback e free spins."
-      },
-      cta_signup: "REGISTAR AGORA",
-      cta_promos: "VER PROMOÇÕES",
-      promo_label: "Promo",
-      promos: {
-        "every-dep": { title: "Campanhas e Free Spins", blurb: "Betify (Depósito Mínimo 20€ — 40FS sem wager na Shaolin Panda).", highlight: "Até 40FS" },
-        "fs-monthly": { title: "Campanhas e Free Spins", blurb: "Betify (Depósito 50€ — 100FS sem wager na Shaolin Panda).", highlight: "Até 100FS" }
-      }
+    cta_signup: "REGISTAR AGORA",
+    cta_promos: "VER PROMOÇÕES",
+    promo_label: "Promo",
+    promos: {
+      "every-dep": { title: "Campanhas e Free Spins", blurb: "Betify (Depósito Mínimo 20€ — 40FS sem wager na Shaolin Panda).", highlight: "Até 40FS" },
+      "fs-monthly": { title: "Campanhas e Free Spins", blurb: "Betify (Depósito 50€ — 100FS sem wager na Shaolin Panda).", highlight: "Até 100FS" }
     }
   },
+  wazbee: {
+    title: "Wazbee",
+    subtitle: "Como jogar na Wazbee e aproveitar o bónus de boas-vindas",
+    steps: {
+      one: "Cria conta na Wazbee.",
+      two_prefix: "Usa o código",
+      two_code: "K0MPA",
+      two_suffix: "no registo.",
+      three: "Aproveita o bónus 125%, wager x30 e free spins."
+    },
+    cta_signup: "REGISTAR AGORA",
+    cta_promos: "VER PROMOÇÕES",
+    promo_label: "Promo",
+    promos: {
+      "every-dep": { title: "Bónus de Boas-Vindas", blurb: "Wazbee (Bónus 125% — wager x30).", highlight: "125% + x30" },
+      "fs-monthly": { title: "Free Spins", blurb: "Wazbee (50FS na seleção mensal).", highlight: "Até 50FS" }
+    }
+  }
+},
+
 
   EN: {
     brand:"K0MPA", search:"Search…",
@@ -204,7 +243,25 @@ const messages: Record<Lang, Translations> = {
         "every-dep": { title: "Campaigns & Free Spins", blurb: "Betify (Min. deposit €20 — 40FS no wager on Shaolin Panda).", highlight: "Up to 40FS" },
         "fs-monthly": { title: "Campaigns & Free Spins", blurb: "Betify (Deposit €50 — 100FS no wager on Shaolin Panda).", highlight: "Up to 100FS" }
       }
-    }
+    },
+    wazbee: {
+  title: "Wazbee",
+  subtitle: "How to play on Wazbee and grab the welcome bonus",
+  steps: {
+    one: "Create an account on Wazbee.",
+    two_prefix: "Use the code",
+    two_code: "K0MPA",
+    two_suffix: "during signup.",
+    three: "Enjoy 125% bonus, x30 wager and free spins."
+  },
+  cta_signup: "SIGN UP NOW",
+  cta_promos: "SEE PROMOTIONS",
+  promo_label: "Promo",
+  promos: {
+    "every-dep": { title: "Welcome Bonus", blurb: "Wazbee (125% bonus — x30 wager).", highlight: "125% + x30" },
+    "fs-monthly": { title: "Free Spins", blurb: "Wazbee (50FS on monthly selection).", highlight: "Up to 50FS" }
+  }
+}
   }
 };
 const LangCtx = createContext<{lang:Lang; setLang:(l:Lang)=>void; t:Translations}>({lang:"PT", setLang:()=>{}, t:messages.PT});
@@ -484,6 +541,123 @@ function FancyCTA({ href, label, accent }: { href: string; label: string; accent
 }
 
 /* ---------- Twitch embed helpers ---------- */
+/* ---------- Página Wazbee ---------- */
+function WazbeeLanding() {
+  const { t } = useLang();
+  const scrollToPromos = () =>
+    document.getElementById("wazbee-promos")?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  const indigo = "#6366f1"; // tema Wazbee
+
+  return (
+    <div className="space-y-8">
+      <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
+        {/* glow em roxo/indigo */}
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{
+          background:
+            "radial-gradient(60% 80% at 10% 0%, rgba(99,102,241,.20) 0%, rgba(99,102,241,0) 55%)," +
+            "radial-gradient(50% 60% at 85% 100%, rgba(168,85,247,.16) 0%, rgba(168,85,247,0) 60%)",
+          mixBlendMode: "screen"
+        }} />
+        <div aria-hidden className="absolute inset-0 opacity-[.06] bg-[url('data:image/svg+xml;utf8,\
+          <svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 32 32\\' fill=\\'none\\'>\
+          <path d=\\'M0 31h32M0 15h32\\' stroke=\\'#fff\\' stroke-opacity=\\'.6\\'/>\
+          <path d=\\'M1 0v32M17 0v32\\' stroke=\\'#fff\\' stroke-opacity=\\'.4\\'/>\
+          </svg>')]" />
+
+        <div className="flex items-center justify-between gap-4 relative">
+          <div className="flex items-center gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">{t.wazbee.title}</h1>
+              <p className="text-white/70 text-sm">{t.wazbee.subtitle}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
+          {/* bloco com passos + CTAs */}
+          <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
+            <div className="text-lg font-extrabold mb-3">
+              {t.wazbee.steps.two_prefix} <span className="text-indigo-300">{t.wazbee.steps.two_code}</span>
+            </div>
+            <ol className="space-y-3 text-sm text-white/90">
+              <li><span className="font-bold">1.</span> {t.wazbee.steps.one}</li>
+              <li><span className="font-bold">2.</span> {t.wazbee.steps.two_prefix} <span className="font-bold">{t.wazbee.steps.two_code}</span> {t.wazbee.steps.two_suffix}</li>
+              <li><span className="font-bold">3.</span> {t.wazbee.steps.three}</li>
+            </ol>
+
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <a
+                href={WAZBEE_SIGNUP_URL}
+                target="_blank" rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 transition hover:brightness-110"
+                style={{ background: `linear-gradient(180deg, ${indigo}, #4f46e5)`, boxShadow: "0 10px 26px rgba(99,102,241,.28)" }}
+              >
+                {t.wazbee.cta_signup} <ExternalLink className="h-4 w-4" />
+              </a>
+
+              <button
+                type="button"
+                onClick={scrollToPromos}
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/8 hover:bg-white/12 ring-1 ring-white/15"
+              >
+                {t.wazbee.cta_promos}
+              </button>
+            </div>
+          </div>
+
+          {/* imagem/hero à direita */}
+          <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
+            <div className="relative w-full" style={{ paddingTop: "100%" }}>
+              <img
+                src="https://casinolt.com/wp-content/uploads/2025/01/Wazbee-Casino-hero-image.png"
+                alt="Wazbee preview"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* promos */}
+        <div id="wazbee-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
+          {wazbeePromos.map((p) => (
+            <div key={p.id} className="rounded-3xl p-5 sm:p-6 ring-1 ring-white/12 text-white/90 bg-white/[.06] backdrop-blur-md shadow-[0_14px_50px_rgba(0,0,0,.35)] relative overflow-hidden">
+              <span aria-hidden className="absolute inset-x-4 top-0 h-[3px] rounded-b-xl"
+                    style={{ background: "linear-gradient(90deg,#6366f1,transparent)" }} />
+              <div className="flex items-start gap-3 relative">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
+                  <p.icon className="h-5 w-5 text-white" />
+                </span>
+                <div className="flex-1">
+                  <div className="text-xs font-semibold text-white/60 uppercase">{t.wazbee.promo_label}</div>
+                  <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">{t.wazbee.promos[p.id].title}</h3>
+                  <div className="mt-1.5 text-[13px] text-white/75">{t.wazbee.promos[p.id].blurb}</div>
+
+                  <div className="mt-4">
+                    <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
+                      <Sparkles className="h-4 w-4" />
+                      <span className="text-sm font-extrabold text-white whitespace-nowrap">{t.wazbee.promos[p.id].highlight}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <a href={p.href} target="_blank" rel="noreferrer"
+                       className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 hover:brightness-110"
+                       style={{ background: "linear-gradient(135deg,#6366f1,#4f46e5)", boxShadow: "0 10px 26px rgba(99,102,241,.25)" }}>
+                      {t.card.go} <ExternalLink className="h-4 w-4" />
+                    </a>
+                    <span className="text-[11px] text-white/60 self-center">{t.card.terms}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function buildTwitchEmbedUrl(channel: string) {
   const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
   const parents = new Set<string>([
@@ -686,7 +860,8 @@ function BrandCard({ b }: { b: Brand }) {
   const methods = b.payments && b.payments.length ? b.payments : ["btc","mbw","mb","visa","mc"];
 
   const isWazbee = /wazbee/i.test(b.name); // <- ADD
-  const cashbackLabel = isWazbee ? "Wager" : t.card.cashback;
+  const cashbackLabel = isWazbee ? (lang === "PT" ? "Wager" : "Wager") : t.card.cashback;
+
 
 
   return (
@@ -936,7 +1111,8 @@ function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "
 }
 
 /* ---------- Root ---------- */
-type Route = "home" | "betify";
+type Route = "home" | "betify" | "wazbee";
+
 
 export default function CasinoPartnerHub() {
   const [lang, setLang] = useState<Lang>(() => {
@@ -1021,39 +1197,40 @@ useEffect(() => {
         <div className="flex-1">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-start">
             <Sidebar
-              onOpenStream={() => setShowOverlay(true)}
-              onOpenBetify={() => setRoute("betify")}
-              onOpenWazbee={() => {               // <-- NOVO
-    setRoute("home");
-    scrollToBrand("Wazbee");
-  }}
-              onGoHome={() => setRoute("home")}
-              onOpenCommunity={() => setShowCommunity(true)}
-              fixedHeight={fixedHeight}
-            />
+  onOpenStream={() => setShowOverlay(true)}
+  onOpenBetify={() => setRoute("betify")}
+  onOpenWazbee={() => setRoute("wazbee")}
+  onGoHome={() => setRoute("home")}
+  onOpenCommunity={() => setShowCommunity(true)}
+  fixedHeight={fixedHeight}
+/>
 
-            <main className="space-y-10" ref={rightColRef}>
-              {route === "home" ? (
-                <>
-                  <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
-               {brands.map((b, i) => (
-  <React.Fragment key={b.name + i}>
-    <div id={`brand-${slug(b.name)}`}>
-      <BrandCard b={b} />
-    </div>
-  </React.Fragment>
-                    ))}
-                  </div>
 
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <TwitchEmbedMini channel={TWITCH_CHANNEL} />
-                    <YouTubeLastMini channelId={YT_CHANNEL_ID} />
-                  </div>
-                </>
-              ) : (
-                <BetifyLanding />
-              )}
-            </main>
+<main className="space-y-10" ref={rightColRef}>
+  {route === "home" ? (
+    <>
+      <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
+        {brands.map((b, i) => (
+          <React.Fragment key={b.name + i}>
+            <div id={`brand-${slug(b.name)}`}>
+              <BrandCard b={b} />
+            </div>
+          </React.Fragment>
+        ))}
+      </div>
+
+      <div className="grid gap-6 sm:grid-cols-2">
+        <TwitchEmbedMini channel={TWITCH_CHANNEL} />
+        <YouTubeLastMini channelId={YT_CHANNEL_ID} />
+      </div>
+    </>
+  ) : route === "betify" ? (
+    <BetifyLanding />
+  ) : (
+    <WazbeeLanding />
+  )}
+</main>
+
           </div>
         </div>
 
