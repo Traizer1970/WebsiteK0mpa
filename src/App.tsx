@@ -666,32 +666,43 @@ function BrandCard({ b }: { b: Brand }) {
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
           <TagBadge tag={b.tag} accent={acc} />
           <div className="absolute inset-0 overflow-hidden rounded-3xl">
-            {isWazbee && (
+            {/* Destaque só para Wazbee (seguro em z-index e cliques) */}
+{isWazbee && (
   <>
-    {/* Selo no topo direito */}
-    <div className="absolute right-4 top-3 z-30">
+    {/* selo no topo direito — abaixo do TagBadge/“Mais” */}
+    <div
+      className="pointer-events-none absolute right-3 top-3 z-[5]"
+      aria-hidden
+    >
       <img
         src={b.logo}
-        alt="Wazbee logo"
-        className="h-10 sm:h-12 object-contain"
-        style={{ filter: "drop-shadow(0 8px 18px rgba(0,0,0,.45))" }}
+        alt=""
+        className="h-8 sm:h-10 object-contain"
+        style={{ filter: "drop-shadow(0 6px 14px rgba(0,0,0,.35))" }}
       />
     </div>
 
-    {/* Watermark grande, sem fundo, a dar presença */}
+    {/* watermark suave no fundo */}
     <img
       src={b.logo}
       alt=""
       aria-hidden
-      className="pointer-events-none absolute -right-5 bottom-8 opacity-[.16] select-none"
+      className="pointer-events-none absolute right-2 bottom-10 select-none"
       style={{
-        height: 160,
-        filter: `drop-shadow(0 18px 38px ${rgba(acc, 0.35)})`,
-        transform: "rotate(-6deg)",
+        height: 140,
+        opacity: 0.08,                     // + suave
+        filter: "drop-shadow(0 10px 24px rgba(0,0,0,.28))",
+        transform: "rotate(-4deg)",
+        maskImage:
+          "linear-gradient(180deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,.85) 60%, rgba(0,0,0,0) 100%)",
+        WebkitMaskImage:
+          "linear-gradient(180deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,.85) 60%, rgba(0,0,0,0) 100%)",
+        zIndex: 0,                         // fica atrás de tudo nesta face
       }}
     />
   </>
 )}
+
             <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/50" />
             <div className="absolute right-4 top-4 z-10">
               <button onClick={()=>setFlip(true)} className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60">{t.card.showMore}</button>
