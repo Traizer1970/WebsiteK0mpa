@@ -361,7 +361,7 @@ function Sidebar({
         <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
         <span className="font-extrabold text-white">Wazbee</span>
       </span>
-      <Badge className="text-white" style={{ background: "#16a34a" }}>Promo</Badge>
+       <Badge className="text-white" style={{ background: "#9146FF" }}>{t.nav.new}</Badge>
     </button>
             <div className="my-3 h-px bg-white/10" />
 
