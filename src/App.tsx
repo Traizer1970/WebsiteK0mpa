@@ -363,7 +363,7 @@ function Sidebar({
       </span>
        <Badge
   className="text-white flex items-center gap-1.5"
-  style={{ background: "#9146FF" }}  // mesma cor roxa do "NOVO"
+  style={{ background: "#6062df" }}  // mesma cor roxa do "NOVO"
 >
   <Sparkles className="h-3.5 w-3.5" />
   {t.nav.new}
