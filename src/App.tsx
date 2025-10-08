@@ -203,8 +203,8 @@ PT: {
     cta_promos: "VER PROMOÇÕES",
     promo_label: "Promo",
     promos: {
-      "every-dep": { title: "Bónus de Boas-Vindas", blurb: "Wazbee (Bónus 125% — wager x30).", highlight: "125% + x30" },
-      "fs-monthly": { title: "Free Spins", blurb: "Wazbee (50FS na seleção mensal).", highlight: "Até 50FS" }
+      "every-dep": { title: "Bónus de Boas-Vindas", blurb: "Wazbee (Min. depósito €20 — 50FS Wager x30 na Sweet Swarms).", highlight: "Até 50FS" },
+      "fs-monthly": { title: "Bónus de Segundo Depósito", blurb: "Wazbee (Min. depósito €20 — 50FS Wager x30 na Golden Sting).", highlight: "Até 50FS" }
     }
   }
 },
@@ -258,8 +258,8 @@ PT: {
   cta_promos: "SEE PROMOTIONS",
   promo_label: "Promo",
   promos: {
-    "every-dep": { title: "Welcome Bonus", blurb: "Wazbee (125% bonus — x30 wager).", highlight: "125% + x30" },
-    "fs-monthly": { title: "Free Spins", blurb: "Wazbee (50FS on monthly selection).", highlight: "Up to 50FS" }
+    "every-dep": { title: "Welcome Bonus", blurb: "Wazbee (Min. deposit €20 — 50FS Wager x30 on Sweet Swarms).", highlight: "Up to 50FS" },
+    "fs-monthly": { title: "2nd Deposit Bonus", blurb: "Wazbee (Min. deposit €20 — 50FS Wager x30 on Golden Sting).", highlight: "Up to 50FS" }
   }
 }
   }
