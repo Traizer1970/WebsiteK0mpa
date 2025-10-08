@@ -658,6 +658,8 @@ function BrandCard({ b }: { b: Brand }) {
   const methods = b.payments && b.payments.length ? b.payments : ["btc","mbw","mb","visa","mc"];
 
   const isWazbee = /wazbee/i.test(b.name); // <- ADD
+  const cashbackLabel = isWazbee ? "Wager" : t.card.cashback;
+
 
   return (
     <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height:CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
@@ -706,7 +708,7 @@ function BrandCard({ b }: { b: Brand }) {
       <div className="grid grid-cols-4 gap-2">
         <FancyStat icon={Coins} label={t.card.min} value={b.minDep} accent={acc} />
         <FancyStat icon={Percent} label={t.card.bonus} value={b.bonus} accent={acc} />
-        <FancyStat icon={TrendingUp} label={t.card.cashback} value={cap(b.cashback, lang)} accent={acc} />
+        <FancyStat icon={TrendingUp} label={cashbackLabel} value={cap(b.cashback, lang)} accent={acc} />
         <FancyStat icon={Sparkles} label={t.card.spins} value={cap(b.freeSpins, lang)} accent={acc} />
       </div>
       <div className="py-1.5 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
@@ -729,7 +731,7 @@ function BrandCard({ b }: { b: Brand }) {
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <StatTile icon={Coins}      label={t.card.min}      value={b.minDep}    accent={acc} />
                 <StatTile icon={Percent}    label={t.card.bonus}    value={b.bonus}     accent={acc} />
-                <StatTile icon={TrendingUp} label={t.card.cashback} value={cap(b.cashback, lang)}  accent={acc} />
+                <StatTile icon={TrendingUp} label={cashbackLabel} value={cap(b.cashback, lang)} accent={acc} />
                 <StatTile icon={Sparkles}   label={t.card.spins}    value={cap(b.freeSpins, lang)} accent={acc} />
               </div>
 
