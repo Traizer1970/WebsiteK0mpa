@@ -229,6 +229,21 @@ const brands: Brand[] = [
     theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
     payments:["btc","mb","mbb","visa","mc"]
   },
+  {
+  name: "Wazbee",
+  tag: "NEW",
+  logo: "https://playtoday.co/wp-content/uploads/2024/10/6840_500x250_dark1.png",
+  image: "https://casinolt.com/wp-content/uploads/2025/01/Wazbee-Casino-hero-image.png",
+  imagePos: "center",
+  minDep: "10€",
+  bonus: "200%",
+  cashback: "25%",
+  freeSpins: "200FS",
+  code: "K0MPA",
+  link: "https://example.com/spincity", // <- troca para o teu link real
+  theme: { accent: "#6366f1", shadow: "rgba(99,102,241,0.45)", ring: "rgba(99,102,241,.45)" },
+  payments: ["mb", "mbb", "visa", "mc", "btc"],
+},
 ];
 
 /* Ícones inline (TikTok + X) */
