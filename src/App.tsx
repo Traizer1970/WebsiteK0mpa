@@ -665,65 +665,56 @@ function BrandCard({ b }: { b: Brand }) {
         {/* FRONT */}
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
           <TagBadge tag={b.tag} accent={acc} />
-          <div className="absolute inset-0 overflow-hidden rounded-3xl">
-            {/* Destaque só para Wazbee */}
-{isWazbee && (
-  <>
-    {/* selo topo-direito, sem sombras e sem bloquear cliques */}
-    <div
-      className="pointer-events-none absolute right-3 top-3 z-[6]"
-      aria-hidden
-    >
+<div className="absolute inset-0 overflow-hidden rounded-3xl">
+  {/* Fundo (volta a usar a imagem do brand) */}
+  <img
+    src={b.image}
+    alt=""
+    className="absolute inset-0 h-full w-full object-cover"
+    style={{ objectPosition: b.imagePos || "center" }}
+  />
+
+  {/* Overlay suave para leitura */}
+  <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/55" />
+
+  {/* Wazbee: logo centrado no topo */}
+  {isWazbee && (
+    <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 z-10">
       <img
         src={b.logo}
-        alt=""
-        className="h-9 sm:h-11 object-contain"
-        style={{ filter: "none" }} // <- remove sombra
+        alt="Wazbee"
+        className="h-10 sm:h-12 object-contain"
       />
     </div>
+  )}
 
-    {/* watermark grande no fundo (sem sombras) */}
-    <div
-      aria-hidden
-      className="pointer-events-none absolute -right-1 bottom-8 z-[1] select-none"
-      style={{
-        width: 280,              // ajusta se quiseres
-        height: 160,
-        backgroundImage: `url(${b.logo})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "contain",
-        backgroundPosition: "right bottom",
-        opacity: 0.14,           // mais visível
-        mixBlendMode: "screen",  // dá destaque sem “pesar”
-        maskImage:
-          "linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.85) 65%, rgba(0,0,0,0) 100%)",
-        WebkitMaskImage:
-          "linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.85) 65%, rgba(0,0,0,0) 100%)",
-      }}
-    />
-  </>
-)}
+  {/* Botão "Mais" acima do logo */}
+  <div className="absolute right-4 top-4 z-20">
+    <button
+      onClick={() => setFlip(true)}
+      className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+    >
+      {t.card.showMore}
+    </button>
+  </div>
 
-            <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/50" />
-            <div className="absolute right-4 top-4 z-10">
-              <button onClick={()=>setFlip(true)} className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60">{t.card.showMore}</button>
-            </div>
+  {/* Conteúdo de stats/cta */}
+  <div className="absolute inset-x-4 bottom-4">
+    <div className="relative rounded-2xl bg-black/35 p-4 backdrop-blur-md ring-1 ring-white/10 overflow-visible">
+      <PaymentRibbon methods={methods} />
+      <div className="pointer-events-none absolute left-6 right-6 -top-2 h-2 rounded-b-xl bg-gradient-to-b from-black/40 to-transparent" />
+      <div className="grid grid-cols-4 gap-2">
+        <FancyStat icon={Coins} label={t.card.min} value={b.minDep} accent={acc} />
+        <FancyStat icon={Percent} label={t.card.bonus} value={b.bonus} accent={acc} />
+        <FancyStat icon={TrendingUp} label={t.card.cashback} value={cap(b.cashback, lang)} accent={acc} />
+        <FancyStat icon={Sparkles} label={t.card.spins} value={cap(b.freeSpins, lang)} accent={acc} />
+      </div>
+      <div className="py-1.5 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
+      <div className="pt-0.5"><FancyCTA href={b.link} label={t.card.go} accent={acc} /></div>
+    </div>
+  </div>
+</div>
 
-            <div className="absolute inset-x-4 bottom-4">
-              <div className="relative rounded-2xl bg-black/35 p-4 backdrop-blur-md ring-1 ring-white/10 overflow-visible">
-                <PaymentRibbon methods={methods} />
-                <div className="pointer-events-none absolute left-6 right-6 -top-2 h-2 rounded-b-xl bg-gradient-to-b from-black/40 to-transparent" />
-                <div className="grid grid-cols-4 gap-2">
-                  <FancyStat icon={Coins} label={t.card.min} value={b.minDep} accent={acc} />
-                  <FancyStat icon={Percent} label={t.card.bonus} value={b.bonus} accent={acc} />
-                  <FancyStat icon={TrendingUp} label={t.card.cashback} value={cap(b.cashback, lang)} accent={acc} />
-                  <FancyStat icon={Sparkles}   label={t.card.spins}    value={cap(b.freeSpins, lang)} accent={acc} />
-                </div>
-                <div className="py-1.5 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
-                <div className="pt-0.5"><FancyCTA href={b.link} label={t.card.go} accent={acc} /></div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* BACK */}
