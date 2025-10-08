@@ -315,12 +315,14 @@ function DiscordIcon(props: React.SVGProps<SVGSVGElement>) {
 function Sidebar({
   onOpenStream,
   onOpenBetify,
+  onOpenWazbee,
   onGoHome,
   onOpenCommunity,
   fixedHeight,
 }: {
   onOpenStream: () => void;
   onOpenBetify: () => void;
+  onOpenWazbee: () => void;
   onGoHome: () => void;
   onOpenCommunity: () => void;
   fixedHeight?: number;
@@ -353,6 +355,14 @@ function Sidebar({
               <Badge className="text-white" style={{ background: "#16a34a" }}>{t.betify.promo_label}</Badge>
             </button>
 
+
+<button type="button" onClick={onOpenWazbee} className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+      <span className="flex items-center gap-2">
+        <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
+        <span className="font-extrabold text-white">Wazbee</span>
+      </span>
+      <Badge className="text-white" style={{ background: "#16a34a" }}>Promo</Badge>
+    </button>
             <div className="my-3 h-px bg-white/10" />
 
             <a
@@ -432,6 +442,17 @@ function TagBadge({ tag, inline=false, className="", style, accent }: { tag: Bra
     </div>
   );
 }
+
+// helpers
+const slug = (s: string) => s.toLowerCase().replace(/\s+/g, "-");
+const scrollToBrand = (name: string) => {
+  const id = `brand-${slug(name)}`;
+  // pequeno atraso para garantir que a home está renderizada
+  requestAnimationFrame(() =>
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
+  );
+};
+
 
 /* ---------- Payment logos ---------- */
 function PaymentIcon({ type }: { type: keyof typeof PAYMENT_ICON_URLS }) {
@@ -995,6 +1016,10 @@ useEffect(() => {
             <Sidebar
               onOpenStream={() => setShowOverlay(true)}
               onOpenBetify={() => setRoute("betify")}
+              onOpenWazbee={() => {               // <-- NOVO
+    setRoute("home");
+    scrollToBrand("Wazbee");
+  }}
               onGoHome={() => setRoute("home")}
               onOpenCommunity={() => setShowCommunity(true)}
               fixedHeight={fixedHeight}
@@ -1004,10 +1029,12 @@ useEffect(() => {
               {route === "home" ? (
                 <>
                   <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
-                    {brands.map((b, i) => (
-                      <React.Fragment key={b.name + i}>
-                        <BrandCard b={b} />
-                      </React.Fragment>
+               {brands.map((b, i) => (
+  <React.Fragment key={b.name + i}>
+    <div id={`brand-${slug(b.name)}`}>
+      <BrandCard b={b} />
+    </div>
+  </React.Fragment>
                     ))}
                   </div>
 
