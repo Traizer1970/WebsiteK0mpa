@@ -12,10 +12,10 @@ const TWITCH_CHANNEL = "k0mpa";
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 
 /* URLs Betify — troca para os teus links reais */
-const BETIFY_SIGNUP_URL = "https://betify.com/?ref=k0mpa";      // <- altera
+const BETIFY_SIGNUP_URL = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/";      // <- altera
 const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
-const WAZBEE_SIGNUP_URL = "https://wazbee.com/?ref=k0mpa"; // <- troca para o teu real
-const WAZBEE_PROMO_URL  = "https://wazbee.com/promo?k0mpa"; // <- troca para o teu real
+const WAZBEE_SIGNUP_URL = "https://wazbee33.casino/auth/sign-up"; // <- troca para o teu real
+const WAZBEE_PROMO_URL  = "https://wazbee33.casino/auth/sign-up"; // <- troca para o teu real
 
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
