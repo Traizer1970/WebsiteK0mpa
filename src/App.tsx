@@ -250,7 +250,7 @@ PT: {
   steps: {
     one: "Create an account on Wazbee.",
     two_prefix: "Use the code",
-    two_code: "K0MPA",
+    two_code: "KMPA",
     two_suffix: "during signup.",
     three: "Enjoy 125% bonus, x30 wager and free spins."
   },
@@ -409,7 +409,7 @@ function Sidebar({
                 <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
                 <span className="font-extrabold text-white">{t.nav.betify}</span>
               </span>
-              <Badge className="text-white" style={{ background: "#16a34a" }}>{t.betify.promo_label}</Badge>
+              <Badge className="text-white" style={{ background: "#16a34a" }}><Flame className="h-3.5 w-3.5" />{t.betify.promo_label}</Badge>
             </button>
 
 
