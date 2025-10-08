@@ -232,7 +232,7 @@ const brands: Brand[] = [
   {
   name: "Wazbee",
   tag: "NEW",
-  logo: "https://playtoday.co/wp-content/uploads/2024/10/6840_500x250_dark1.png",
+  logo: "https://casinolt.com/wp-content/uploads/2024/01/Wazbee-Casino-Casino.svg",
   image: "https://casinolt.com/wp-content/uploads/2025/01/Wazbee-Casino-hero-image.png",
   imagePos: "center",
   minDep: "10€",
@@ -657,6 +657,8 @@ function BrandCard({ b }: { b: Brand }) {
   const shadow = b.theme?.shadow ?? rgba(acc, 0.35);
   const methods = b.payments && b.payments.length ? b.payments : ["btc","mbw","mb","visa","mc"];
 
+  const isWazbee = /wazbee/i.test(b.name); // <- ADD
+
   return (
     <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height:CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
       <div className="absolute inset-0 transition-transform duration-500" style={{ transformStyle:"preserve-3d", transform: flip ? "rotateY(180deg)" : "none" }}>
@@ -664,12 +666,32 @@ function BrandCard({ b }: { b: Brand }) {
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
           <TagBadge tag={b.tag} accent={acc} />
           <div className="absolute inset-0 overflow-hidden rounded-3xl">
-            <img
-              src={b.image}
-              alt={b.name}
-              className="absolute inset-0 h-full w-full object-cover"
-              style={{ right: "-3px", width: "calc(100% + 6px)", objectPosition: b.imagePos === "left" ? "-10px center" : (b.imagePos ?? "center"), transform: "translateZ(0)" }}
-            />
+            {isWazbee && (
+  <>
+    {/* Selo no topo direito */}
+    <div className="absolute right-4 top-3 z-30">
+      <img
+        src={b.logo}
+        alt="Wazbee logo"
+        className="h-10 sm:h-12 object-contain"
+        style={{ filter: "drop-shadow(0 8px 18px rgba(0,0,0,.45))" }}
+      />
+    </div>
+
+    {/* Watermark grande, sem fundo, a dar presença */}
+    <img
+      src={b.logo}
+      alt=""
+      aria-hidden
+      className="pointer-events-none absolute -right-5 bottom-8 opacity-[.16] select-none"
+      style={{
+        height: 160,
+        filter: `drop-shadow(0 18px 38px ${rgba(acc, 0.35)})`,
+        transform: "rotate(-6deg)",
+      }}
+    />
+  </>
+)}
             <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/50" />
             <div className="absolute right-4 top-4 z-10">
               <button onClick={()=>setFlip(true)} className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60">{t.card.showMore}</button>
