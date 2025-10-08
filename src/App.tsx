@@ -409,7 +409,7 @@ function Sidebar({
                 <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
                 <span className="font-extrabold text-white">{t.nav.betify}</span>
               </span>
-              <Badge className="text-white" style={{ background: "#16a34a" }}><Flame className="h-3.5 w-3.5" />{t.betify.promo_label}</Badge>
+              <Badge className="text-white" style={{ background: "#16a34a" }}><Flame className="h-3.5 w-3.5" />HOT</Badge>
             </button>
 
 
