@@ -195,7 +195,7 @@ PT: {
     steps: {
       one: "Cria conta na Wazbee.",
       two_prefix: "Usa o código",
-      two_code: "K0MPA",
+      two_code: "KMPA",
       two_suffix: "no registo.",
       three: "Aproveita o bónus 125%, wager x30 e free spins."
     },
