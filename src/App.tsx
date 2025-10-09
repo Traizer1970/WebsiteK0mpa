@@ -296,7 +296,7 @@ const brands: Brand[] = [
   bonus: "125%",
   cashback: "x30",
   freeSpins: "50FS",
-  code: "K0MPA",
+  code: "KMPA",
   link: "https://wazbee33.casino/auth/sign-up", // <- troca para o teu link real
   theme: { accent: "#6366f1", shadow: "rgba(99,102,241,0.45)", ring: "rgba(99,102,241,.45)" },
   payments: ["mb", "mbb", "visa", "mc", "btc"],
