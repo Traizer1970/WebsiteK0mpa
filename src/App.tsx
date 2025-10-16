@@ -14,8 +14,8 @@ const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 /* URLs Betify — troca para os teus links reais */
 const BETIFY_SIGNUP_URL = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/";      // <- altera
 const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
-const WAZBEE_SIGNUP_URL = "https://wazbee33.casino/auth/sign-up"; // <- troca para o teu real
-const WAZBEE_PROMO_URL  = "https://wazbee33.casino/auth/sign-up"; // <- troca para o teu real
+const WAZBEE_SIGNUP_URL = "https://wazbeecasino.com/auth/sign-up/?faff=1273"; // <- troca para o teu real
+const WAZBEE_PROMO_URL  = "https://wazbeecasino.com/auth/sign-up/?faff=1273"; // <- troca para o teu real
 
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
@@ -297,7 +297,7 @@ const brands: Brand[] = [
   cashback: "x30",
   freeSpins: "50FS",
   code: "KMPA",
-  link: "https://wazbee33.casino/auth/sign-up", // <- troca para o teu link real
+  link: "https://wazbeecasino.com/auth/sign-up/?faff=1273", // <- troca para o teu link real
   theme: { accent: "#6366f1", shadow: "rgba(99,102,241,0.45)", ring: "rgba(99,102,241,.45)" },
   payments: ["mb", "mbb", "visa", "mc", "btc"],
 },
