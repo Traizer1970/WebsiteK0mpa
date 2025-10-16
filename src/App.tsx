@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useMemo, useState, createContext, useContext } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -1114,7 +1115,7 @@ function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "
 type Route = "home" | "betify" | "wazbee";
 
 
-export default function CasinoPartnerHub() {
+export default function App() {
   const [lang, setLang] = useState<Lang>(() => {
     const saved = (typeof window !== "undefined" ? (localStorage.getItem("lang") as Lang | null) : null);
     if (saved === "PT" || saved === "EN") return saved;
