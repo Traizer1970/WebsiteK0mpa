@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useMemo, useState, createContext, useContext } from "react";
+import { Routes, Route, Link, NavLink, useLocation } from 'react-router-dom'
 import { createPortal } from "react-dom";
 import {
   ChevronRight, Gift, Store, Users, Tv,
@@ -372,90 +373,140 @@ function DiscordIcon(props: React.SVGProps<SVGSVGElement>) {
 /* ---------- Sidebar ---------- */
 function Sidebar({
   onOpenStream,
-  onOpenBetify,
-  onOpenWazbee,
-  onGoHome,
   onOpenCommunity,
   fixedHeight,
 }: {
   onOpenStream: () => void;
-  onOpenBetify: () => void;
-  onOpenWazbee: () => void;
-  onGoHome: () => void;
   onOpenCommunity: () => void;
   fixedHeight?: number;
 }) {
-  const { t, lang } = useLang();
+  const { t } = useLang();
+
+  const baseItem =
+    "w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rose-400/60";
+  const linkClasses = ({ isActive }: { isActive: boolean }) =>
+    [
+      baseItem,
+      "hover:bg-white/10",
+      isActive ? "ring-1 ring-white/25 bg-white/5" : "",
+    ].join(" ");
 
   return (
-    <aside className="hidden md:block w-[240px] mx-auto" style={{ position: "sticky", top: "var(--sticky-top,112px)" }}>
+    <aside
+      className="hidden md:block w-[240px] mx-auto"
+      style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
+    >
       <div
         className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
-        style={{ height: fixedHeight ? `${fixedHeight}px` : undefined, overflow: "auto", willChange: "height" }}
+        style={{
+          height: fixedHeight ? `${fixedHeight}px` : undefined,
+          overflow: "auto",
+          willChange: "height",
+        }}
       >
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
-            <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
+            <span className="text-sm font-semibold text-white">
+              {t.nav?.menu ?? "Menu"}
+            </span>
             <ChevronRight className="h-4 w-4 text-white/70" />
           </div>
 
           <nav className="space-y-2">
-            <button type="button" onClick={onGoHome} className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
-              <span className="flex items-center gap-2"><Gift className="h-4 w-4" />{t.nav.offers}</span>
-              <Badge className="text-white" style={{ background: "#9146FF" }}>{t.nav.new}</Badge>
-            </button>
-
-            <button type="button" onClick={onOpenBetify} className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
+            {/* Home (/ ) */}
+            <NavLink to="/" end className={linkClasses}>
               <span className="flex items-center gap-2">
-                <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
+                <Gift className="h-4 w-4" />
+                {t.nav.offers}
+              </span>
+              <Badge className="text-white" style={{ background: "#9146FF" }}>
+                {t.nav.new}
+              </Badge>
+            </NavLink>
+
+            {/* Betify (/betify) */}
+            <NavLink to="/betify" className={linkClasses}>
+              <span className="flex items-center gap-2">
+                <span
+                  className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15"
+                  aria-hidden
+                />
                 <span className="font-extrabold text-white">{t.nav.betify}</span>
               </span>
-              <Badge className="text-white" style={{ background: "#16a34a" }}><Flame className="h-3.5 w-3.5" />HOT</Badge>
-            </button>
+              <Badge className="text-white" style={{ background: "#16a34a" }}>
+                <Flame className="h-3.5 w-3.5" />
+                HOT
+              </Badge>
+            </NavLink>
 
+            {/* Wazbee (/wazbee) */}
+            <NavLink to="/wazbee" className={linkClasses}>
+              <span className="flex items-center gap-2">
+                <span
+                  className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15"
+                  aria-hidden
+                />
+                <span className="font-extrabold text-white">Wazbee</span>
+              </span>
+              <Badge
+                className="text-white flex items-center gap-1.5"
+                style={{ background: "#6062df" }}
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                {t.nav.new}
+              </Badge>
+            </NavLink>
 
-<button type="button" onClick={onOpenWazbee} className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
-      <span className="flex items-center gap-2">
-        <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
-        <span className="font-extrabold text-white">Wazbee</span>
-      </span>
-       <Badge
-  className="text-white flex items-center gap-1.5"
-  style={{ background: "#6062df" }}  // mesma cor roxa do "NOVO"
->
-  <Sparkles className="h-3.5 w-3.5" />
-  {t.nav.new}
-</Badge>
-
-    </button>
             <div className="my-3 h-px bg-white/10" />
 
+            {/* Loja (externo) */}
             <a
-  href={SHOP_URL} // ou usar a URL direta
-  target="_blank"
-  rel="noreferrer"
-  className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-  title={t.nav.shop}
->
-  <Store className="h-4 w-4" />
-  <span>{t.nav.shop}</span>
-  <ExternalLink className="h-4 w-4 ml-auto opacity-70" />
-</a>
+              href={SHOP_URL}
+              target="_blank"
+              rel="noreferrer"
+              className={baseItem}
+              title={t.nav.shop}
+            >
+              <span className="flex items-center gap-2">
+                <Store className="h-4 w-4" />
+                {t.nav.shop}
+              </span>
+              <ExternalLink className="h-4 w-4 ml-auto opacity-70" />
+            </a>
 
-
-            <button type="button" onClick={onOpenCommunity} className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
-              <Users className="h-4 w-4" />
-              <span>{t.nav.community}</span>
+            {/* Modais (mantêm botão) */}
+            <button
+              type="button"
+              onClick={onOpenCommunity}
+              className={baseItem + " text-left"}
+            >
+              <span className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                {t.nav.community}
+              </span>
             </button>
 
-            <button type="button" onClick={onOpenStream} className="w-full text-left flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
-              <Tv className="h-4 w-4" />
-              <span>{t.nav.stream}</span>
+            <button
+              type="button"
+              onClick={onOpenStream}
+              className={baseItem + " text-left"}
+            >
+              <span className="flex items-center gap-2">
+                <Tv className="h-4 w-4" />
+                {t.nav.stream}
+              </span>
             </button>
 
-            <a href={SOCIAL_LINKS.instantGaming} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-rose-400/60">
-              <Sparkles className="h-4 w-4" />
-              <span>Instant Gaming</span>
+            <a
+              href={SOCIAL_LINKS.instantGaming}
+              target="_blank"
+              rel="noreferrer"
+              className={baseItem}
+            >
+              <span className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Instant Gaming
+              </span>
             </a>
           </nav>
         </div>
@@ -464,20 +515,103 @@ function Sidebar({
 
         {/* Redes */}
         <footer className="pt-4 border-t border-white/10">
-          <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">Socials</div>
+          <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">
+            Socials
+          </div>
           <ul className="grid grid-cols-2 md:grid-cols-2 gap-x-5 gap-y-3 text-sm">
-            <li><a href={SOCIAL_LINKS.twitch}   target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><TwitchIcon className="h-5 w-5" />Twitch</a></li>
-            <li><a href={SOCIAL_LINKS.instagram}target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Instagram  className="h-5 w-5" />Instagram</a></li>
-            <li><a href={SOCIAL_LINKS.tiktok}   target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><TikTokIcon className="h-5 w-5" />TikTok</a></li>
-            <li><a href={SOCIAL_LINKS.tiktokValorant} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><TikTokIcon className="h-5 w-5" />TikTok2</a></li>
-            <li><a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Send       className="h-5 w-5" />Telegram</a></li>
-            <li><a href={SOCIAL_LINKS.discord}  target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><DiscordIcon className="h-5 w-5" />Discord</a></li>
-            <li><a href={SOCIAL_LINKS.youtube}  target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Youtube    className="h-5 w-5" />Youtube</a></li>
-            <li><a href={SOCIAL_LINKS.x}        target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><XIcon      className="h-5 w-5" />Twitter</a></li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.twitch}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <TwitchIcon className="h-5 w-5" />
+                Twitch
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.instagram}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <Instagram className="h-5 w-5" />
+                Instagram
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.tiktok}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <TikTokIcon className="h-5 w-5" />
+                TikTok
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.tiktokValorant}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <TikTokIcon className="h-5 w-5" />
+                TikTok2
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.telegram}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <Send className="h-5 w-5" />
+                Telegram
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.discord}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <DiscordIcon className="h-5 w-5" />
+                Discord
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.youtube}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <Youtube className="h-5 w-5" />
+                Youtube
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL_LINKS.x}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:underline"
+              >
+                <XIcon className="h-5 w-5" />
+                Twitter
+              </a>
+            </li>
           </ul>
 
           <div className="mt-3 text-center text-[12px] text-white/55">
-            Copyright © {new Date().getFullYear()} <span className="brand-font">K0MPA</span>
+            Copyright © {new Date().getFullYear()}{" "}
+            <span className="brand-font">K0MPA</span>
           </div>
         </footer>
       </div>
@@ -758,6 +892,28 @@ function StreamHero({ channel }: { channel: string }) {
     </section>
   );
 }
+
+function Home() {
+  return (
+    <>
+      <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
+        {brands.map((b, i) => (
+          <React.Fragment key={b.name + i}>
+            <div id={`brand-${slug(b.name)}`}>
+              <BrandCard b={b} />
+            </div>
+          </React.Fragment>
+        ))}
+      </div>
+
+      <div className="grid gap-6 sm:grid-cols-2">
+        <TwitchEmbedMini channel={TWITCH_CHANNEL} />
+        <YouTubeLastMini channelId={YT_CHANNEL_ID} />
+      </div>
+    </>
+  );
+}
+
 
 /* ---------- Embeds pequenos ---------- */
 const TwitchEmbedMini = React.forwardRef<HTMLDivElement, { channel: string }>(
@@ -1112,9 +1268,6 @@ function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "
 }
 
 /* ---------- Root ---------- */
-type Route = "home" | "betify" | "wazbee";
-
-
 export default function App() {
   const [lang, setLang] = useState<Lang>(() => {
     const saved = (typeof window !== "undefined" ? (localStorage.getItem("lang") as Lang | null) : null);
@@ -1129,10 +1282,12 @@ export default function App() {
   const isLive = useLiveAutoTwitch(TWITCH_CHANNEL, 60_000);
   const [showOverlay, setShowOverlay] = useState(false);
   const [showCommunity, setShowCommunity] = useState(false);
-  const [route, setRoute] = useState<Route>("home");
 
-  // ----- refs para alinhar a sidebar com o fim VISUAL do conteúdo (coluna da direita)
-  const rightColRef  = React.useRef<HTMLElement | null>(null);
+  // router
+  const location = useLocation();
+
+  // refs/altura da sidebar
+  const rightColRef = React.useRef<HTMLElement | null>(null);
   const [fixedHeight, setFixedHeight] = React.useState<number | undefined>(undefined);
 
   const getStickyTopPx = () => {
@@ -1141,53 +1296,45 @@ export default function App() {
     return Number.isFinite(n) ? n : 0;
   };
 
-const measureOnce = React.useCallback(() => {
-  const main = rightColRef.current;
-  if (!main) { setFixedHeight(undefined); return; }
+  // ⚠️ define measureOnce ANTES dos effects
+  const measureOnce = React.useCallback(() => {
+    const main = rightColRef.current;
+    if (!main) { setFixedHeight(undefined); return; }
 
-  const stickyTop = getStickyTopPx();
+    const stickyTop = getStickyTopPx();
+    const rectTopDoc = main.getBoundingClientRect().top + window.scrollY;
 
-  // topo do main em coordenadas do documento
-  const rectTopDoc = main.getBoundingClientRect().top + window.scrollY;
+    let extraMb = 0;
+    const last = main.lastElementChild as HTMLElement | null;
+    if (last) {
+      const cs = getComputedStyle(last);
+      extraMb = parseFloat(cs.marginBottom || "0") || 0;
+    }
 
-  // inclui a margin-bottom do último filho (scrollHeight não inclui margens)
-  let extraMb = 0;
-  const last = main.lastElementChild as HTMLElement | null;
-  if (last) {
-    const cs = getComputedStyle(last);
-    extraMb = parseFloat(cs.marginBottom || "0") || 0;
-  }
+    const bottomDoc = rectTopDoc + main.scrollHeight + extraMb;
+    const asideTopDoc = window.scrollY + stickyTop;
 
-  const bottomDoc = rectTopDoc + main.scrollHeight + extraMb;
-  const asideTopDoc = window.scrollY + stickyTop;
+    const fudge = 8;
+    const h = Math.max(0, Math.floor(bottomDoc - asideTopDoc) - fudge);
+    setFixedHeight(h);
+  }, []);
 
-  // compensação para ring/bordas e sub-píxeis
-  const fudge = 8; // se ainda sobra 1px, pode pôr 3
-  const h = Math.max(0, Math.floor(bottomDoc - asideTopDoc) - fudge);
+  // scroll to top e re-medida quando muda o path
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
-  setFixedHeight(h);
-}, []);
-
-
-// re-medir ao trocar de rota (duplo RAF para esperar o layout final)
-useEffect(() => {
-  // evita flash enquanto a coluna direita monta
-  setFixedHeight(undefined);
-
-  const raf1 = requestAnimationFrame(() => {
-    const raf2 = requestAnimationFrame(() => {
-      measureOnce();        // mede quando o DOM já está estável
+    setFixedHeight(undefined);
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(() => measureOnce());
+      (window as any).__raf2 = raf2;
     });
-    (window as any).__raf2 = raf2;
-  });
-  (window as any).__raf1 = raf1;
+    (window as any).__raf1 = raf1;
 
-  return () => {
-    cancelAnimationFrame((window as any).__raf1 || 0);
-    cancelAnimationFrame((window as any).__raf2 || 0);
-  };
-}, [route, measureOnce]);
-
+    return () => {
+      cancelAnimationFrame((window as any).__raf1 || 0);
+      cancelAnimationFrame((window as any).__raf2 || 0);
+    };
+  }, [location.pathname, measureOnce]);
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
@@ -1198,49 +1345,31 @@ useEffect(() => {
         <div className="flex-1">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-start">
             <Sidebar
-  onOpenStream={() => setShowOverlay(true)}
-  onOpenBetify={() => setRoute("betify")}
-  onOpenWazbee={() => setRoute("wazbee")}
-  onGoHome={() => setRoute("home")}
-  onOpenCommunity={() => setShowCommunity(true)}
-  fixedHeight={fixedHeight}
-/>
+              onOpenStream={() => setShowOverlay(true)}
+              onOpenCommunity={() => setShowCommunity(true)}
+              fixedHeight={fixedHeight}
+            />
 
-
-<main className="space-y-10" ref={rightColRef}>
-  {route === "home" ? (
-    <>
-      <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
-        {brands.map((b, i) => (
-          <React.Fragment key={b.name + i}>
-            <div id={`brand-${slug(b.name)}`}>
-              <BrandCard b={b} />
-            </div>
-          </React.Fragment>
-        ))}
-      </div>
-
-      <div className="grid gap-6 sm:grid-cols-2">
-        <TwitchEmbedMini channel={TWITCH_CHANNEL} />
-        <YouTubeLastMini channelId={YT_CHANNEL_ID} />
-      </div>
-    </>
-  ) : route === "betify" ? (
-    <BetifyLanding />
-  ) : (
-    <WazbeeLanding />
-  )}
-</main>
-
+            <main className="space-y-10" ref={rightColRef}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/betify" element={<BetifyLanding />} />
+                <Route path="/wazbee" element={<WazbeeLanding />} />
+              </Routes>
+            </main>
           </div>
         </div>
 
         <Footer />
 
-        {/* Overlays */}
-        {showOverlay && (<StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />)}
-        {showCommunity && (<CommunityModal onClose={() => setShowCommunity(false)} />)}
+        {showOverlay && (
+          <StreamOverlay channel={TWITCH_CHANNEL} onClose={() => setShowOverlay(false)} />
+        )}
+        {showCommunity && (
+          <CommunityModal onClose={() => setShowCommunity(false)} />
+        )}
       </div>
     </LangCtx.Provider>
   );
 }
+
