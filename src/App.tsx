@@ -13,6 +13,7 @@ const TWITCH_CHANNEL = "k0mpa";
 /* YouTube (UC…) — @k0mpa */
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 
+const SHOW_IGNIBET_CODE = false;
 /* URLs Betify — troca para os teus links reais */
 const BETIFY_SIGNUP_URL = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/";      // <- altera
 const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
@@ -726,23 +727,33 @@ function IgnibetLanding() {
         <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
           {/* Passos + CTAs */}
           <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
-            <div className="text-lg font-extrabold mb-3">
-              {t.wazbee.steps.two_prefix}{" "}
-              <span className="text-indigo-300">{t.wazbee.steps.two_code}</span>
-            </div>
-            <ol className="space-y-3 text-sm text-white/90">
-              <li>
-                <span className="font-bold">1.</span> {t.wazbee.steps.one}
-              </li>
-              <li>
-                <span className="font-bold">2.</span> {t.wazbee.steps.two_prefix}{" "}
-                <span className="font-bold">{t.wazbee.steps.two_code}</span>{" "}
-                {t.wazbee.steps.two_suffix}
-              </li>
-              <li>
-                <span className="font-bold">3.</span> {t.wazbee.steps.three}
-              </li>
-            </ol>
+{/* título com o código (mostrar só se permitido) */}
+{SHOW_IGNIBET_CODE && (
+  <div className="text-lg font-extrabold mb-3">
+    {t.wazbee.steps.two_prefix}{" "}
+    <span className="text-indigo-300">{t.wazbee.steps.two_code}</span>
+  </div>
+)}
+
+<ol className="space-y-3 text-sm text-white/90">
+  <li>
+    <span className="font-bold">1.</span> {t.wazbee.steps.one}
+  </li>
+
+  {SHOW_IGNIBET_CODE && (
+    <li>
+      <span className="font-bold">2.</span> {t.wazbee.steps.two_prefix}{" "}
+      <span className="font-bold">{t.wazbee.steps.two_code}</span>{" "}
+      {t.wazbee.steps.two_suffix}
+    </li>
+  )}
+
+  <li>
+    <span className="font-bold">{SHOW_IGNIBET_CODE ? "3." : "2."}</span>{" "}
+    {t.wazbee.steps.three}
+  </li>
+</ol>
+
 
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <a
@@ -1138,13 +1149,13 @@ const displayCode = isIgnibet ? t.wazbee.steps.two_code : b.code;
               <TagBadge tag={b.tag} inline accent={acc} />
             </div>
 
-            <div className="space-y-3 text-white/90">
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <StatTile icon={Coins}      label={t.card.min}      value={b.minDep}    accent={acc} />
-                <StatTile icon={Percent}    label={t.card.bonus}    value={b.bonus}     accent={acc} />
-                <StatTile icon={TrendingUp} label={cashbackLabel} value={cap(b.cashback, lang)} accent={acc} />
-                <StatTile icon={Sparkles}   label={t.card.spins}    value={cap(b.freeSpins, lang)} accent={acc} />
-              </div>
+           <div className="space-y-3 text-white/90">
+  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+    <StatTile icon={Coins}      label={t.card.min}   value={b.minDep}            accent={acc} />
+    <StatTile icon={Percent}    label={t.card.bonus} value={b.bonus}             accent={acc} />
+    <StatTile icon={TrendingUp} label={cashbackLabel} value={cap(b.cashback,lang)} accent={acc} />
+    <StatTile icon={Sparkles}   label={t.card.spins} value={cap(b.freeSpins,lang)} accent={acc} />
+  </div>
 
               <div className="grid grid-cols-[1fr,auto] items-center gap-3">
                 <div className="h-11 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 flex items-center text-sm text-white/90">
