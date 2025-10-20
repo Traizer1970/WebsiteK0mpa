@@ -1068,8 +1068,9 @@ function BrandCard({ b }: { b: Brand }) {
   const shadow = b.theme?.shadow ?? rgba(acc, 0.35);
   const methods = b.payments && b.payments.length ? b.payments : ["btc","mbw","mb","visa","mc"];
 
-  const isWazbee = /wazbee/i.test(b.name); // <- ADD
-  const cashbackLabel = isWazbee ? (lang === "PT" ? "Wager" : "Wager") : t.card.cashback;
+const isIgnibet = /ignibet/i.test(b.name);
+const cashbackLabel = isIgnibet ? (lang === "PT" ? "Wager" : "Wager") : t.card.cashback;
+
 
 
 
@@ -1091,16 +1092,12 @@ function BrandCard({ b }: { b: Brand }) {
   {/* Overlay suave para leitura */}
   <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/55" />
 
-  {/* Wazbee: logo centrado no topo */}
-  {isWazbee && (
-    <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 z-10">
-      <img
-        src={b.logo}
-        alt="Wazbee"
-        className="h-10 sm:h-12 object-contain"
-      />
-    </div>
-  )}
+{isIgnibet && (
+  <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 z-20">
+    <img src={b.logo} alt={b.name} className="h-10 sm:h-12 object-contain" />
+  </div>
+)}
+
 
   {/* Botão "Mais" acima do logo */}
   <div className="absolute right-4 top-4 z-20">
