@@ -17,8 +17,8 @@ const SHOW_IGNIBET_CODE = false;
 /* URLs Betify — troca para os teus links reais */
 const BETIFY_SIGNUP_URL = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/";      // <- altera
 const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
-const IGNIBET_SIGNUP_URL = "https://ignibet.com/...?ref=K0MPA"; // TODO: coloca o teu link real
-const IGNIBET_PROMO_URL  = "https://ignibet.com/...?ref=K0MPA"; // TODO: coloca o teu link real
+const IGNIBET_SIGNUP_URL = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZcQGNd7ZgqdRLk/1/"; // TODO: coloca o teu link real
+const IGNIBET_PROMO_URL  = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZcQGNd7ZgqdRLk/1/"; // TODO: coloca o teu link real
 
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
@@ -1080,7 +1080,7 @@ function BrandCard({ b }: { b: Brand }) {
   const methods = b.payments && b.payments.length ? b.payments : ["btc","mbw","mb","visa","mc"];
 
 const isIgnibet = /ignibet/i.test(b.name);
-const cashbackLabel = isIgnibet ? (lang === "PT" ? "Wager" : "Wager") : t.card.cashback;
+const cashbackLabel = isIgnibet ? (lang === "PT" ? "Cashback" : "Cashback") : t.card.cashback;
 // garante que o código da Ignibet é o do i18n (igual ao da página Ignibet)
 const displayCode = isIgnibet ? t.wazbee.steps.two_code : b.code;
 
