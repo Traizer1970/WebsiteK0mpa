@@ -772,7 +772,7 @@ function IgnibetLanding() {
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
               <img
-                src="https://ignibet.io/assets/images/logo-EfuPTlMq.webp"
+                src="https://thumbs.dreamstime.com/b/red-dice-poker-chips-smartphone-blurry-casino-background-ai-generated-image-381975267.jpg"
                 alt="Ignibet preview"
                 className="absolute inset-0 h-full w-full object-cover"
               />
