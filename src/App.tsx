@@ -1077,7 +1077,7 @@ function BrandCard({ b }: { b: Brand }) {
   const base = tagVisual(b.tag);
   const acc  = b.theme?.accent ?? base.accent;
   const shadow = b.theme?.shadow ?? rgba(acc, 0.35);
-  const methods = b.payments && b.payments.length ? b.payments : ["btc","mbw","mb","visa","mc"];
+  const methods = b.payments && b.payments.length ? b.payments : ["mbw","mb","visa",",mc","btc"];
 
 const isIgnibet = /ignibet/i.test(b.name);
 const cashbackLabel = isIgnibet ? (lang === "PT" ? "Cashback" : "Cashback") : t.card.cashback;
