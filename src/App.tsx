@@ -1149,25 +1149,33 @@ const displayCode = isIgnibet ? t.wazbee.steps.two_code : b.code;
               <TagBadge tag={b.tag} inline accent={acc} />
             </div>
 
-           <div className="space-y-3 text-white/90">
+       // ...
+<div className="space-y-3 text-white/90">
   <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-    <StatTile icon={Coins}      label={t.card.min}   value={b.minDep}            accent={acc} />
-    <StatTile icon={Percent}    label={t.card.bonus} value={b.bonus}             accent={acc} />
+    <StatTile icon={Coins}      label={t.card.min}   value={b.minDep}              accent={acc} />
+    <StatTile icon={Percent}    label={t.card.bonus} value={b.bonus}               accent={acc} />
     <StatTile icon={TrendingUp} label={cashbackLabel} value={cap(b.cashback,lang)} accent={acc} />
     <StatTile icon={Sparkles}   label={t.card.spins} value={cap(b.freeSpins,lang)} accent={acc} />
   </div>
 
-              <div className="grid grid-cols-[1fr,auto] items-center gap-3">
-                <div className="h-11 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 flex items-center text-sm text-white/90">
-                  <span className="text-white/60">{t.card.code}</span>
-                  <span className="ml-2 font-semibold tracking-wide">{displayCode}</span>
-                </div>
-                <button onClick={async()=>{ try{ await navigator.clipboard.writeText(displayCode);}catch{} }} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60">
-                  <Copy className="h-4 w-4" />
-                  {t.card.copy}
-                </button>
-              </div>
-            </div>
+  {/* ⬇️ esconder código na Ignibet quando SHOW_IGNIBET_CODE=false */}
+  {(!isIgnibet || SHOW_IGNIBET_CODE) && (
+    <div className="grid grid-cols-[1fr,auto] items-center gap-3">
+      <div className="h-11 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 flex items-center text-sm text-white/90">
+        <span className="text-white/60">{t.card.code}</span>
+        <span className="ml-2 font-semibold tracking-wide">{b.code}</span>
+      </div>
+      <button
+        onClick={async () => { try { await navigator.clipboard.writeText(b.code); } catch {} }}
+        className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
+      >
+        <Copy className="h-4 w-4" />
+        {t.card.copy}
+      </button>
+    </div>
+  )}
+</div>
+
 
             <div className="mt-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
