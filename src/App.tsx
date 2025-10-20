@@ -1149,7 +1149,6 @@ const displayCode = isIgnibet ? t.wazbee.steps.two_code : b.code;
               <TagBadge tag={b.tag} inline accent={acc} />
             </div>
 
-       // ...
 <div className="space-y-3 text-white/90">
   <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
     <StatTile icon={Coins}      label={t.card.min}   value={b.minDep}              accent={acc} />
