@@ -294,7 +294,7 @@ const brands: Brand[] = [
 {
   name: "Ignibet",
   tag: "NEW",
-  logo: "https://your.cdn/ignibet-logo.svg",            // TODO: atualiza
+  logo: "https://ignibet.io/assets/images/logo-EfuPTlMq.webp",            // TODO: atualiza
   image: "https://your.cdn/ignibet-hero.png",           // TODO: atualiza
   imagePos: "center",
   minDep: "20€",
