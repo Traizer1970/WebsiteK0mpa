@@ -294,8 +294,8 @@ const brands: Brand[] = [
 {
   name: "Ignibet",
   tag: "NEW",
-  logo: "https://your.cdn/ignibet-logo.svg",            // TODO: atualiza
-  image: "https://ignibet.io/assets/images/logo-EfuPTlMq.webp",           // TODO: atualiza
+  logo: "https://ignibet.io/assets/images/logo-EfuPTlMq.webp",            // TODO: atualiza
+  image: "https://thumbs.dreamstime.com/b/red-dice-poker-chips-smartphone-blurry-casino-background-ai-generated-image-381975267.jpg",           // TODO: atualiza
   imagePos: "center",
   minDep: "20€",
   bonus: "125%",
