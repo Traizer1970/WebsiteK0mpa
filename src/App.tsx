@@ -724,44 +724,49 @@ function IgnibetLanding() {
         </div>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
-{/* Passos + CTAs */}
-<div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
-  {/* (REMOVIDO) cabeçalho com o código */}
+          {/* Passos + CTAs */}
+          <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
+            <div className="text-lg font-extrabold mb-3">
+              {t.wazbee.steps.two_prefix}{" "}
+              <span className="text-indigo-300">{t.wazbee.steps.two_code}</span>
+            </div>
+            <ol className="space-y-3 text-sm text-white/90">
+              <li>
+                <span className="font-bold">1.</span> {t.wazbee.steps.one}
+              </li>
+              <li>
+                <span className="font-bold">2.</span> {t.wazbee.steps.two_prefix}{" "}
+                <span className="font-bold">{t.wazbee.steps.two_code}</span>{" "}
+                {t.wazbee.steps.two_suffix}
+              </li>
+              <li>
+                <span className="font-bold">3.</span> {t.wazbee.steps.three}
+              </li>
+            </ol>
 
-  <ol className="space-y-3 text-sm text-white/90">
-    <li>
-      <span className="font-bold">1.</span> {t.wazbee.steps.one}
-    </li>
-    {/* (REMOVIDO) passo do código */}
-    <li>
-      <span className="font-bold">2.</span> {t.wazbee.steps.three}
-    </li>
-  </ol>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <a
+                href={IGNIBET_SIGNUP_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 transition hover:brightness-110"
+                style={{
+                  background: `linear-gradient(180deg, ${indigo}, #4f46e5)`,
+                  boxShadow: "0 10px 26px rgba(99,102,241,.28)",
+                }}
+              >
+                {t.wazbee.cta_signup} <ExternalLink className="h-4 w-4" />
+              </a>
 
-  <div className="mt-5 flex flex-wrap items-center gap-3">
-    <a
-      href={IGNIBET_SIGNUP_URL}
-      target="_blank"
-      rel="noreferrer"
-      className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 transition hover:brightness-110"
-      style={{
-        background: `linear-gradient(180deg, ${indigo}, #4f46e5)`,
-        boxShadow: "0 10px 26px rgba(99,102,241,.28)",
-      }}
-    >
-      {t.wazbee.cta_signup} <ExternalLink className="h-4 w-4" />
-    </a>
-
-    <button
-      type="button"
-      onClick={scrollToPromos}
-      className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/8 hover:bg-white/12 ring-1 ring-white/15"
-    >
-      {t.wazbee.cta_promos}
-    </button>
-  </div>
-</div>
-
+              <button
+                type="button"
+                onClick={scrollToPromos}
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/8 hover:bg-white/12 ring-1 ring-white/15"
+              >
+                {t.wazbee.cta_promos}
+              </button>
+            </div>
+          </div>
 
           {/* Imagem/Hero */}
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
@@ -1139,21 +1144,17 @@ const cashbackLabel = isIgnibet ? (lang === "PT" ? "Wager" : "Wager") : t.card.c
                 <StatTile icon={Sparkles}   label={t.card.spins}    value={cap(b.freeSpins, lang)} accent={acc} />
               </div>
 
-{!isIgnibet && (
-  <div className="grid grid-cols-[1fr,auto] items-center gap-3">
-    <div className="h-11 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 flex items-center text-sm text-white/90">
-      <span className="text-white/60">{t.card.code}</span>
-      <span className="ml-2 font-semibold tracking-wide">{b.code}</span>
-    </div>
-    <button
-      onClick={async () => { try { await navigator.clipboard.writeText(b.code); } catch {} }}
-      className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
-    >
-      <Copy className="h-4 w-4" />
-      {t.card.copy}
-    </button>
-  </div>
-)}
+              <div className="grid grid-cols-[1fr,auto] items-center gap-3">
+                <div className="h-11 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 flex items-center text-sm text-white/90">
+                  <span className="text-white/60">{t.card.code}</span>
+                  <span className="ml-2 font-semibold tracking-wide">{b.code}</span>
+                </div>
+                <button onClick={async()=>{ try{ await navigator.clipboard.writeText(b.code);}catch{} }} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60">
+                  <Copy className="h-4 w-4" />
+                  {t.card.copy}
+                </button>
+              </div>
+            </div>
 
             <div className="mt-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
