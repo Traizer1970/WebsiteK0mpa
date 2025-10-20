@@ -772,7 +772,7 @@ function IgnibetLanding() {
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
               <img
-                src="https://casinolt.com/wp-content/uploads/2025/01/Wazbee-Casino-hero-image.png"
+                src="https://ignibet.io/assets/images/logo-EfuPTlMq.webp"
                 alt="Ignibet preview"
                 className="absolute inset-0 h-full w-full object-cover"
               />
