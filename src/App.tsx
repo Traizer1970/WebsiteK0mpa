@@ -782,7 +782,10 @@ function IgnibetLanding() {
             </div>
           </div>
         </div>
-        
+
+<div id="betify-start" />
+
+ <div id="ignibet-start" />
 
         {/* Promos */}
         <div id="ignibet-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -1357,17 +1360,22 @@ export default function App() {
   // refs/altura da sidebar
   const rightColRef = React.useRef<HTMLElement | null>(null);
 
-  const updateSidebarMetrics = React.useCallback(() => {
+const updateSidebarMetrics = React.useCallback(() => {
   const main = rightColRef.current;
   if (!main) return;
 
-  // 1) quanto espaço há desde o topo do <main> até ao início dos embeds
-  const anchor = main.querySelector<HTMLElement>("#embeds-start");
+  // escolhe o marcador de acordo com a rota
+  const anchorSelector =
+    location.pathname.startsWith("/betify")  ? "#betify-start"  :
+    location.pathname.startsWith("/ignibet") ? "#ignibet-start" :
+                                               "#embeds-start"; // Home (default)
+
+  const anchor = main.querySelector<HTMLElement>(anchorSelector);
   const extraTop = anchor ? anchor.offsetTop : 0;
 
-  // 3) guardar em CSS vars
   document.documentElement.style.setProperty("--sidebar-extra-top", `${extraTop}px`);
-}, []);
+}, [location.pathname]);
+
 
 // re-medir quando mudas de página
 useEffect(() => {
