@@ -1294,7 +1294,7 @@ function Footer() {
   const { t } = useLang();
   const year = new Date().getFullYear();
   return (
-    <footer className="mx-auto w-full max-w-7xl px-6 sm:px-8 pb-8">
+    <footer className="mx-auto w-full max-w-7xl px-6 sm:px-8 pb-8 mt-8">
       <div className="rounded-2xl bg-black/35 backdrop-blur-md ring-1 ring-white/10 text-white/80 px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,.28)]">
         <div className="flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap max-w-full">
           <div className="shrink-0 whitespace-nowrap flex items-center gap-2">
@@ -1409,7 +1409,11 @@ useEffect(() => {
         <HeaderBar isLive={isLive} />
 
         <div className="flex-1">
-          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-start">
+          <div
+  className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8
+             px-6 pt-8 pb-0 sm:px-8
+             md:grid-cols-[240px,1fr] items-stretch"
+>
             <Sidebar
               onOpenStream={() => setShowOverlay(true)}
               onOpenCommunity={() => setShowCommunity(true)}
