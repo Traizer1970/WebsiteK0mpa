@@ -1292,11 +1292,13 @@ const updateSidebarMetrics = React.useCallback(() => {
   const main = rightColRef.current;
   if (!main) return;
 
-  // escolhe o anchor por rota
+  // âncora por rota
+  const isBetify  = location.pathname.startsWith("/betify");
+  const isIgnibet = location.pathname.startsWith("/ignibet");
   const selector =
-    location.pathname.startsWith("/betify")  ? "#betify-start"  :
-    location.pathname.startsWith("/ignibet") ? "#ignibet-start" :
-                                               "#embeds-start";
+    isBetify  ? "#betify-start"  :
+    isIgnibet ? "#ignibet-start" :
+                "#embeds-start";
 
   const anchor = main.querySelector<HTMLElement>(selector);
 
@@ -1308,32 +1310,30 @@ const updateSidebarMetrics = React.useCallback(() => {
   }
   document.documentElement.style.setProperty("--sidebar-extra-top", `${extraTop}px`);
 
-  // ⚠️ Limita a altura da sidebar à altura da secção nas páginas Betify/Ignibet
-  const isLanding = location.pathname.startsWith("/betify") || location.pathname.startsWith("/ignibet");
-  if (isLanding) {
-    // primeira section da página (é a tua hero+conteúdo)
-    const section = main.querySelector<HTMLElement>("section");
+  // Só limitamos pela SECTION nas landings
+  if (isBetify || isIgnibet) {
+    // pega a <section> que contém o #...-start
+    const section = anchor?.closest("section") as HTMLElement | null;
     if (section) {
-      const secRect = section.getBoundingClientRect();
-      const mainRect = main.getBoundingClientRect();
+      const m = main.getBoundingClientRect();
+      const s = section.getBoundingClientRect();
 
-      // altura da secção a partir do anchor (desconta o que está acima do anchor)
-      const sectionHeight = Math.max(0, Math.round(secRect.bottom - mainRect.top - extraTop));
+      // altura útil da section a partir do anchor
+      const sectionHeight = Math.max(0, Math.round(s.bottom - m.top - extraTop));
 
-      // limite por viewport (vh - header - extraTop)
-      const hdr = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hdr-offset")) || 68;
-      const byViewport = Math.max(0, Math.round(window.innerHeight - hdr - extraTop));
+      // 👉 NÃO faças min() com o viewport aqui!
+      const usable = Math.max(240, sectionHeight);
 
-      const usable = Math.max(240, Math.min(sectionHeight, byViewport)); // clamp mínimo simpático
       document.documentElement.style.setProperty("--sidebar-maxpx", `${usable}px`);
     } else {
       document.documentElement.style.removeProperty("--sidebar-maxpx");
     }
   } else {
-    // Home (ou outras): comportamento antigo por viewport
+    // Home (outras): comportamento por viewport
     document.documentElement.style.removeProperty("--sidebar-maxpx");
   }
 }, [location.pathname]);
+
 
 
 
@@ -1362,6 +1362,36 @@ useEffect(() => {
   window.addEventListener("resize", onResize);
   return () => window.removeEventListener("resize", onResize);
 }, [updateSidebarMetrics]);
+
+// re-medir quando o conteúdo da section muda (imagens/iframes carregam)
+useEffect(() => {
+  const main = rightColRef.current;
+  if (!main) return;
+
+  const ro = new ResizeObserver(() => updateSidebarMetrics());
+  ro.observe(main);
+
+  // observa também a section que contém o anchor da página atual
+  const anchorSel = location.pathname.startsWith("/betify")
+    ? "#betify-start"
+    : location.pathname.startsWith("/ignibet")
+    ? "#ignibet-start"
+    : null;
+
+  const anchor = anchorSel ? main.querySelector<HTMLElement>(anchorSel) : null;
+  const section = anchor?.closest("section") as HTMLElement | null;
+  if (section) ro.observe(section);
+
+  // opcional: re-medir quando todas as imagens dessa section terminarem de carregar
+  const imgs = section ? Array.from(section.querySelectorAll("img")) : [];
+  const onLoad = () => updateSidebarMetrics();
+  imgs.forEach((img) => img.addEventListener("load", onLoad, { once: true }));
+
+  return () => {
+    ro.disconnect();
+    imgs.forEach((img) => img.removeEventListener("load", onLoad));
+  };
+}, [location.pathname, updateSidebarMetrics]);
 
 
   return (
