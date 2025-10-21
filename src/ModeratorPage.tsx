@@ -6,6 +6,7 @@ import { Plus, Save, Trash2, MoveUp, MoveDown, LogIn } from 'lucide-react';
 // no topo do ModeratorPage.tsx
 const BRANDS_GET_URL = '/api/brands.json'; // ficheiro que já existe
 const BRANDS_MUTATE_URL = '/api/brands';   // endpoint que só funciona quando tiveres API
+const FIXED_PASS = '1234';
 
 export type Brand = {
   name: string; tag: 'HOT'|'NEW'|'TOP'; logo: string; image: string;
@@ -49,21 +50,18 @@ const load = React.useCallback(async () => {
 }, []);
 
 
-  // login “stateless”: só mantém em memória
+// login só no cliente
 const doLogin = async (e: React.FormEvent) => {
   e.preventDefault();
   setError(undefined);
   try {
-    // validação simples (troca por validação real se precisares)
-    if (!pass) throw new Error('Introduce a senha.');
-    // garante que consegues ler as marcas
-    await load();
+    if (pass !== FIXED_PASS) throw new Error('Senha inválida');
+    await load();         // garante que consegues ler o JSON
     setAuthed(true);
   } catch (e:any) {
     setError(e.message || 'Falhou autenticação');
   }
 };
-
 
   React.useEffect(() => { load(); }, [load]);
 
@@ -77,22 +75,34 @@ const doLogin = async (e: React.FormEvent) => {
   const update = <K extends keyof Brand>(i:number, key:K, val:Brand[K]) =>
     setBrands(b => b.map((it,idx) => idx===i ? {...it, [key]: val} : it));
 
+// save com fallback para download se não houver API
 const save = async () => {
   setSaving(true); setError(undefined);
   try {
     const r = await fetch(BRANDS_MUTATE_URL, {
       method:'PUT',
       headers:{ 'Content-Type':'application/json', 'x-admin-key': pass },
-      body: JSON.stringify(brands),
+      body: JSON.stringify(brands, null, 2),
     });
+
     if (r.status === 401) throw new Error('Senha inválida');
     if (!r.ok) throw new Error(`Falha ao gravar (${r.status})`);
-    // opcional: feedback
+    // sucesso → opcional: toast
   } catch (e:any) {
-    setError(e.message);
+    // fallback: descarrega brands.json para atualizar manualmente no repo
+    try {
+      const blob = new Blob([JSON.stringify(brands, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'brands.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      setError('Falha ao gravar (sem API). Fiz download do brands.json—sobe esse ficheiro para /public/api/brands.json');
+    } catch {
+      setError(e.message || 'Falha ao gravar');
+    }
   } finally { setSaving(false); }
 };
-
 
   if (!authed) {
     return (
