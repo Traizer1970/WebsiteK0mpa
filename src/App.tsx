@@ -276,12 +276,23 @@ function useLang(){ return useContext(LangCtx); }
 
 /* ---------- Data ---------- */
 export type Brand = {
-  name: string; tag: "HOT" | "NEW" | "TOP"; logo: string; image: string;
- imagePos?: string; // ex.: 'center', 'left', '20% 50%'
-  minDep: string; bonus: string; cashback: string; freeSpins: string; code: string; link: string;
-  theme?: { accent: string; shadow: string; ring?: string; };
-  payments?: Array<"btc"|"mb"|"mbb"|"visa"|"mc">;
+  name: string;
+  tag: 'HOT' | 'NEW' | 'TOP';
+  logo: string;
+  image: string;
+  imagePos?: string; // ou React.CSSProperties['objectPosition'] no Moderator
+  minDep: string;
+  bonus: string;
+  cashback: string;
+  freeSpins: string;
+  code: string;
+  link: string;
+  theme?: { accent: string; shadow: string; ring?: string };
+  payments?: Array<'btc' | 'mb' | 'mbb' | 'visa' | 'mc'>;
+  /** ⬇️ novo */
+  showLogo?: boolean;
 };
+
 type ApiBrands = Brand[];
 function useBrands() {
   const [brands, setBrands] = React.useState<ApiBrands | null>(null);
@@ -1029,11 +1040,6 @@ const methods = b.payments && b.payments.length ? b.payments : ["mbw","mb","visa
 
 const isIgnibet = /ignibet/i.test(b.name);
 const cashbackLabel = isIgnibet ? (lang === "PT" ? "Cashback" : "Cashback") : t.card.cashback;
-// garante que o código da Ignibet é o do i18n (igual ao da página Ignibet)
-const displayCode = isIgnibet ? t.wazbee.steps.two_code : b.code;
-
-
-
 
   return (
     <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height:CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
@@ -1053,9 +1059,9 @@ const displayCode = isIgnibet ? t.wazbee.steps.two_code : b.code;
   {/* Overlay suave para leitura */}
   <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/55" />
 
-{isIgnibet && (
+{b.showLogo && b.logo && (
   <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 z-20">
-    <img src={b.logo} alt={b.name} className="h-10 sm:h-12 object-contain" />
+    <img src={b.logo} alt={`${b.name} logo`} className="h-10 sm:h-12 object-contain" />
   </div>
 )}
 
