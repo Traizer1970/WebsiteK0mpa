@@ -392,14 +392,13 @@ function Sidebar({
     ].join(" ");
 
   return (
-    <aside
-      className="hidden md:block w-full md:sticky"
-      style={{
-        // header + distância até ao embed
-        top: "calc(var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))",
-        maxHeight: "calc(100dvh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)) - 8px)",
-      }}
-    >
+<aside
+  className="hidden md:block w-full md:sticky"
+  style={{
+    top: "calc(var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))",
+    maxHeight: "calc(var(--sidebar-maxh, 0px) - 8px)",
+  }}
+>
       <div className="h-full min-h-0 overflow-auto rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col">
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
@@ -961,14 +960,14 @@ function Home() {
           </div>
         ))}
       </div>
+{/* ⬇️ ANCORAGEM PARA ALINHAR A SIDEBAR */}
+<div id="embeds-start" />
 
-      {/* ⬇️ ANCORAGEM PARA ALINHAR A SIDEBAR */}
-      <div id="embeds-start" />
-
-      <div className="grid gap-6 sm:grid-cols-2">
-        <TwitchEmbedMini channel={TWITCH_CHANNEL} />
-        <YouTubeLastMini channelId={YT_CHANNEL_ID} />
-      </div>
+{/* ⬇️ BLOCO DOS EMBEDS (ADICIONA ESTE id) */}
+<div id="embeds-block" className="grid gap-6 sm:grid-cols-2">
+  <TwitchEmbedMini channel={TWITCH_CHANNEL} />
+  <YouTubeLastMini channelId={YT_CHANNEL_ID} />
+</div>
     </>
   );
 }
@@ -1354,63 +1353,49 @@ export default function App() {
 
   // refs/altura da sidebar
   const rightColRef = React.useRef<HTMLElement | null>(null);
-  const [fixedHeight, setFixedHeight] = React.useState<number | undefined>(undefined);
 
-  const getStickyTopPx = () => {
-    const v = getComputedStyle(document.documentElement).getPropertyValue("--sticky-top") || "0";
-    const n = parseFloat(v);
-    return Number.isFinite(n) ? n : 0;
-  };
-
-  // ⚠️ define measureOnce ANTES dos effects
-  const measureOnce = React.useCallback(() => {
-    const main = rightColRef.current;
-    if (!main) { setFixedHeight(undefined); return; }
-
-    const stickyTop = getStickyTopPx();
-    const rectTopDoc = main.getBoundingClientRect().top + window.scrollY;
-
-    let extraMb = 0;
-    const last = main.lastElementChild as HTMLElement | null;
-    if (last) {
-      const cs = getComputedStyle(last);
-      extraMb = parseFloat(cs.marginBottom || "0") || 0;
-    }
-
-    const bottomDoc = rectTopDoc + main.scrollHeight + extraMb;
-    const asideTopDoc = window.scrollY + stickyTop;
-
-    const fudge = 8;
-    const h = Math.max(0, Math.floor(bottomDoc - asideTopDoc) - fudge);
-    setFixedHeight(h);
-  }, []);
-
-  // scroll to top e re-medida quando muda o path
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    setFixedHeight(undefined);
-    const raf1 = requestAnimationFrame(() => {
-      const raf2 = requestAnimationFrame(() => measureOnce());
-      // depois de measureOnce(), acrescenta esta medição
-useEffect(() => {
+  const updateSidebarMetrics = React.useCallback(() => {
   const main = rightColRef.current;
   if (!main) return;
 
+  // 1) quanto espaço há desde o topo do <main> até ao início dos embeds
   const anchor = main.querySelector<HTMLElement>("#embeds-start");
-  const extra = anchor ? anchor.offsetTop : 0; // px desde o topo do <main>
-  document.documentElement.style.setProperty("--sidebar-extra-top", `${extra}px`);
-}, [location.pathname]);
+  const extraTop = anchor ? anchor.offsetTop : 0;
 
-      (window as any).__raf2 = raf2;
-    });
-    (window as any).__raf1 = raf1;
+  // 2) altura “real” do bloco dos embeds
+  const embeds = main.querySelector<HTMLElement>("#embeds-block");
+  const embedsH = embeds ? embeds.getBoundingClientRect().height : 0;
 
-    return () => {
-      cancelAnimationFrame((window as any).__raf1 || 0);
-      cancelAnimationFrame((window as any).__raf2 || 0);
-    };
-  }, [location.pathname, measureOnce]);
+  // 3) guardar em CSS vars
+  document.documentElement.style.setProperty("--sidebar-extra-top", `${extraTop}px`);
+  document.documentElement.style.setProperty("--sidebar-maxh", `${embedsH}px`);
+}, []);
+
+// re-medir quando mudas de página
+useEffect(() => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  updateSidebarMetrics();
+
+  // mede outra vez após o reflow
+  const r1 = requestAnimationFrame(() => {
+    const r2 = requestAnimationFrame(updateSidebarMetrics);
+    (window as any).__r2 = r2;
+  });
+  (window as any).__r1 = r1;
+
+  return () => {
+    cancelAnimationFrame((window as any).__r1 || 0);
+    cancelAnimationFrame((window as any).__r2 || 0);
+  };
+}, [location.pathname, updateSidebarMetrics]);
+
+// re-medir em resize (se o iframe ajustar altura)
+useEffect(() => {
+  const onResize = () => updateSidebarMetrics();
+  window.addEventListener("resize", onResize);
+  return () => window.removeEventListener("resize", onResize);
+}, [updateSidebarMetrics]);
+
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
