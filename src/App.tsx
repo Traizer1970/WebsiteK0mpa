@@ -286,54 +286,27 @@ type ApiBrands = Brand[];
 
 function useBrands() {
   const [brands, setBrands] = React.useState<ApiBrands | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
-
-  const REST = (import.meta.env.VITE_SUPABASE_REST_URL || "").replace(/\/+$/, "");
-  const ANON = (import.meta.env.VITE_SUPABASE_ANON || "").trim();
+  const [error, setError] = React.useState<null | string>(null);
 
   React.useEffect(() => {
     let alive = true;
-
     (async () => {
       try {
-        if (!REST || !ANON) {
-          throw new Error("Falta configurar VITE_SUPABASE_REST_URL / VITE_SUPABASE_ANON");
-        }
-
-        // Busca a linha mais recente: id | data(jsonb) | updated_at
-        const url = `${REST}/brands?select=data&order=updated_at.desc&limit=1`;
-
-        const res = await fetch(url, {
-          headers: {
-            apikey: ANON,
-            Authorization: `Bearer ${ANON}`,
-            // Segurança extra p/ CORS:
-            "Content-Type": "application/json",
-          },
-          cache: "no-store",
-        });
-
-        if (!res.ok) {
-          const txt = await res.text().catch(() => "");
-          throw new Error(`Supabase GET falhou (${res.status}) ${txt}`);
-        }
-
-        const rows: Array<{ data: ApiBrands }> = await res.json();
-
-        // A tua coluna "data" tem o ARRAY de brands
-        const list = (rows?.[0]?.data ?? []) as ApiBrands;
-
-        if (alive) setBrands(list);
-      } catch (e: any) {
+        const res = await fetch("/api/brands.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(await res.text().catch(()=>"Failed"));
+        const data: ApiBrands = await res.json();
+        if (alive) setBrands(data);
+      } catch (e:any) {
         if (alive) setError(e?.message || "Erro a carregar brands");
       }
     })();
-
     return () => { alive = false; };
   }, []);
 
   return { brands, error };
 }
+
+
 /* Ícones inline (TikTok + X) */
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
   return (<svg viewBox="0 0 24 24" aria-hidden="true" {...props}><path d="M16 3v4.2c1.9 1.3 3.2 1.9 5 2v3c-2.2-.1-3.8-.8-5-1.7v4.8c0 3.2-2.6 5.9-6.2 5.9S3.9 18.5 3.9 15.1c0-3.1 2.3-5.6 5.3-6v3c-1.3.3-2.3 1.5-2.3 3 0 1.7 1.3 3 3 3s3-1.4 3-3.1V3H16z" fill="currentColor"/></svg>);
