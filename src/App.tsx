@@ -395,8 +395,8 @@ function Sidebar({
 <aside
   className="hidden md:block w-full md:sticky"
   style={{
-    top: "calc(var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))",
-    maxHeight: "calc(var(--sidebar-maxh, 0px) - 8px)",
+    top: "var(--hdr-offset,68px)",
+    height: "calc(100vh - var(--hdr-offset,68px))",
   }}
 >
       <div className="h-full min-h-0 overflow-auto rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col">
@@ -1362,13 +1362,8 @@ export default function App() {
   const anchor = main.querySelector<HTMLElement>("#embeds-start");
   const extraTop = anchor ? anchor.offsetTop : 0;
 
-  // 2) altura “real” do bloco dos embeds
-  const embeds = main.querySelector<HTMLElement>("#embeds-block");
-  const embedsH = embeds ? embeds.getBoundingClientRect().height : 0;
-
   // 3) guardar em CSS vars
   document.documentElement.style.setProperty("--sidebar-extra-top", `${extraTop}px`);
-  document.documentElement.style.setProperty("--sidebar-maxh", `${embedsH}px`);
 }, []);
 
 // re-medir quando mudas de página
