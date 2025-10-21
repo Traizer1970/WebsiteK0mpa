@@ -290,7 +290,7 @@ const brands: Brand[] = [
     imagePos:"left",
     minDep:"20€", bonus:"100%", cashback:"20%", freeSpins:"100FS", code:"K0MPA", link: BETIFY_PROMO_URL,
     theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
-    payments:["btc","mb","mbb","visa","mc"]
+    payments:["mb", "mbb", "visa", "mc", "btc"]
   },
 {
   name: "Ignibet",
