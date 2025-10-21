@@ -394,16 +394,14 @@ function Sidebar({
   return (
 <aside className="hidden md:block w-full self-stretch">
    {/* wrapper que estica até ao footer */}
-   <div
-    className="rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
-    style={{ minHeight: "calc(100vh - var(--hdr-offset,68px))" }}
-  >
+ <div
+   className="h-full rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
+ >
    {/* conteúdo sticky com scroll interno */}
  <div
    className="p-4 text-white/90 flex flex-col md:sticky"
    style={{
      top: "var(--hdr-offset,68px)",
-     minHeight: "calc(100vh - var(--hdr-offset,68px))",
      maxHeight: "calc(100vh - var(--hdr-offset,68px))",
      overflow: "auto"
    }}
