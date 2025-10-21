@@ -3,11 +3,8 @@
 import React from 'react';
 import { Plus, Save, Trash2, MoveUp, MoveDown, LogIn } from 'lucide-react';
 
-// URLs do Supabase Edge Function
+// URL da função Edge no Supabase
 const BRANDS_URL = 'https://fovgbsynuxfgypzctvxg.supabase.co/functions/v1/hyper-function';
-
-// senha fixa temporária
-const FIXED_PASS = '1234';
 
 export type Brand = {
   name: string;
@@ -54,7 +51,12 @@ export default function ModeratorPage() {
     setLoading(true);
     setError(undefined);
     try {
-      const r = await fetch(BRANDS_URL, { method: 'GET', cache: 'no-store' });
+      const r = await fetch(BRANDS_URL, {
+        method: 'GET',
+        headers: { 'x-admin-key': pass },
+        cache: 'no-store',
+      });
+      if (r.status === 401) throw new Error('Senha inválida');
       if (!r.ok) throw new Error(`Erro ao carregar (${r.status})`);
       const data = await r.json();
       setBrands(data?.data || []);
@@ -63,15 +65,21 @@ export default function ModeratorPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [pass]);
 
-  // -------- login simples --------
+  // -------- login --------
   const doLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(undefined);
     try {
-      if (pass !== FIXED_PASS) throw new Error('Senha inválida');
-      await load();
+      const r = await fetch(BRANDS_URL, {
+        method: 'GET',
+        headers: { 'x-admin-key': pass },
+      });
+      if (r.status === 401) throw new Error('Senha inválida');
+      if (!r.ok) throw new Error(`Erro (${r.status})`);
+      const data = await r.json();
+      setBrands(data?.data || []);
       setAuthed(true);
     } catch (e: any) {
       setError(e.message || 'Falhou autenticação');
@@ -111,7 +119,6 @@ export default function ModeratorPage() {
         },
         body: JSON.stringify(brands, null, 2),
       });
-
       if (r.status === 401) throw new Error('Senha inválida');
       if (!r.ok) throw new Error(`Falha ao gravar (${r.status})`);
     } catch (e: any) {
@@ -206,7 +213,6 @@ export default function ModeratorPage() {
                 val={b.imagePos || ''}
                 onChange={(v) => update(i, 'imagePos', v as any)}
               />
-
               <Input label="Min. Dep." val={b.minDep} onChange={(v) => update(i, 'minDep', v)} />
               <Input label="Bónus" val={b.bonus} onChange={(v) => update(i, 'bonus', v)} />
               <Input
@@ -220,19 +226,26 @@ export default function ModeratorPage() {
                 onChange={(v) => update(i, 'freeSpins', v)}
               />
               <Input label="Código" val={b.code} onChange={(v) => update(i, 'code', v)} />
-
               <Input
                 label="Theme.accent"
                 val={b.theme?.accent || ''}
                 onChange={(v) =>
-                  update(i, 'theme', { ...(b.theme || {}), accent: v, shadow: b.theme?.shadow || 'rgba(0,0,0,.3)' })
+                  update(i, 'theme', {
+                    ...(b.theme || {}),
+                    accent: v,
+                    shadow: b.theme?.shadow || 'rgba(0,0,0,.3)',
+                  })
                 }
               />
               <Input
                 label="Theme.shadow"
                 val={b.theme?.shadow || ''}
                 onChange={(v) =>
-                  update(i, 'theme', { ...(b.theme || {}), shadow: v, accent: b.theme?.accent || '#22c55e' })
+                  update(i, 'theme', {
+                    ...(b.theme || {}),
+                    shadow: v,
+                    accent: b.theme?.accent || '#22c55e',
+                  })
                 }
               />
               <Input
