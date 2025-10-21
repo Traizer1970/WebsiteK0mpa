@@ -23,6 +23,9 @@ const IGNIBET_PROMO_URL  = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZ
 
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
+const FUNC = (import.meta.env.VITE_SUPABASE_FUNC_URL || "").trim();
+const ANON = (import.meta.env.VITE_SUPABASE_ANON || "").trim();
+
 
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
@@ -283,13 +286,9 @@ export type Brand = {
   payments?: Array<"btc"|"mb"|"mbb"|"visa"|"mc">;
 };
 type ApiBrands = Brand[];
-// substitui a implementação atual de useBrands()
 function useBrands() {
   const [brands, setBrands] = React.useState<ApiBrands | null>(null);
   const [error, setError] = React.useState<string | null>(null);
-
-  const FUNC = (import.meta.env.VITE_SUPABASE_FUNC_URL || "").trim();
-  const ANON = (import.meta.env.VITE_SUPABASE_ANON || "").trim();
 
   React.useEffect(() => {
     let alive = true;
@@ -305,17 +304,18 @@ function useBrands() {
           headers: { Authorization: `Bearer ${ANON}` },
           cache: "no-store",
         });
-
         if (!res.ok) throw new Error(`Falha GET (${res.status})`);
-        const json = await res.json(); // { data: [...] }
+
+        // a função deve devolver { data: Brand[] }
+        const json = await res.json();
         const data: ApiBrands = json?.data || [];
         if (alive) setBrands(data);
       } catch (e: any) {
-        // opcional: fallback para o ficheiro estático, se quiseres
+        // opcional: fallback local
         try {
-          const fallback = await fetch("/api/brands.json", { cache: "no-store" });
-          if (!fallback.ok) throw new Error(await fallback.text().catch(() => "Falhou"));
-          const data: ApiBrands = await fallback.json();
+          const r = await fetch("/api/brands.json", { cache: "no-store" });
+          if (!r.ok) throw new Error(await r.text().catch(() => "Falhou"));
+          const data: ApiBrands = await r.json();
           if (alive) setBrands(data);
         } catch {
           if (alive) setError(e?.message || "Erro a carregar brands");
