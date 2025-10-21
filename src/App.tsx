@@ -1413,18 +1413,22 @@ export default function App() {
         <div className="flex-1">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-start">
             <Sidebar
-  onOpenStream={() => setShowOverlay(true)}
-  onOpenCommunity={() => setShowCommunity(true)}
-/>
+              onOpenStream={() => setShowOverlay(true)}
+              onOpenCommunity={() => setShowCommunity(true)}
+              fixedHeight={fixedHeight}
+            />
 
-<main className="space-y-10">
-  <Routes>
-    <Route path="/" element={<Home />} />
-    <Route path="/betify" element={<BetifyLanding />} />
-    <Route path="/ignibet" element={<IgnibetLanding />} />
-    <Route path="/moderator" element={<ModeratorPage />} />
-  </Routes>
-</main>
+            <main className="space-y-10" ref={rightColRef}>
+              <Routes>
+  <Route path="/" element={<Home />} />
+  <Route path="/betify" element={<BetifyLanding />} />
+  <Route path="/ignibet" element={<IgnibetLanding />} />
+
+  {/* novo: painel do moderador */}
+  <Route path="/moderator" element={<ModeratorPage />} />
+</Routes>
+
+            </main>
           </div>
         </div>
 
