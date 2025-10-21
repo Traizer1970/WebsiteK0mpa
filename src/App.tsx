@@ -277,10 +277,10 @@ function useLang(){ return useContext(LangCtx); }
 /* ---------- Data ---------- */
 export type Brand = {
   name: string;
-  tag: 'HOT' | 'NEW' | 'TOP';
+  tag: "HOT" | "NEW" | "TOP";
   logo: string;
   image: string;
-  imagePos?: string; // ou React.CSSProperties['objectPosition'] no Moderator
+  imagePos?: string;
   minDep: string;
   bonus: string;
   cashback: string;
@@ -288,10 +288,12 @@ export type Brand = {
   code: string;
   link: string;
   theme?: { accent: string; shadow: string; ring?: string };
-  payments?: Array<'btc' | 'mb' | 'mbb' | 'visa' | 'mc'>;
-  /** ⬇️ novo */
+  payments?: Array<"btc" | "mb" | "mbb" | "visa" | "mc">;
   showLogo?: boolean;
+  /** NOVO: controla se aparece no site público */
+  enabled?: boolean;   // default: true
 };
+
 
 type ApiBrands = Brand[];
 function useBrands() {
@@ -320,12 +322,11 @@ function useBrands() {
         });
         if (!res.ok) throw new Error(`Supabase GET falhou (${res.status})`);
 
-        // cada linha pode ter data = Brand OU data = Brand[]
-        const rows: Array<{ data: ApiBrands | Brand }> = await res.json();
+const rows: Array<{ data: ApiBrands | Brand }> = await res.json();
+const list: Brand[] = rows.flatMap(r => Array.isArray(r.data) ? r.data : [r.data]);
+const visibleOnly = list.filter(b => b.enabled !== false);
 
-        // normaliza: transforma tudo num único array de Brand
-        const list: Brand[] = rows.flatMap(r => Array.isArray(r.data) ? r.data : [r.data]);
-
+if (alive) setBrands(visibleOnly);
         if (alive) setBrands(list);
       } catch (e: any) {
         if (alive) setError(e?.message || "Erro a carregar brands");

@@ -3,7 +3,7 @@
 import React from 'react';
 import {
   Plus, Save, Trash2, MoveUp, MoveDown, LogIn,
-  Eye, EyeOff, ChevronDown, ChevronRight
+  Eye, EyeOff, ChevronDown, ChevronRight, Power
 } from 'lucide-react';
 
 /**
@@ -29,6 +29,8 @@ export type Brand = {
   theme?: { accent: string; shadow: string; ring?: string };
   payments?: Array<'btc' | 'mb' | 'mbw' | 'visa' | 'mc'>;
   showLogo?: boolean;
+  /** NOVO: controla se aparece no site público */
+  enabled?: boolean;
 };
 
 const emptyBrand = (): Brand => ({
@@ -46,6 +48,7 @@ const emptyBrand = (): Brand => ({
   theme: { accent: '#22c55e', shadow: 'rgba(34,197,94,.45)' },
   payments: ['mbw', 'mb', 'visa', 'mc', 'btc'],
   showLogo: true,
+  enabled: true, // NOVO
 });
 
 /** Helper para chamar a Edge Function já com Authorization Bearer <ANON> */
@@ -69,7 +72,7 @@ export default function ModeratorPage() {
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState<string | undefined>();
   const [brands, setBrands] = React.useState<Brand[]>([]);
-  const [collapsed, setCollapsed] = React.useState<Set<number>>(new Set()); // <- NOVO
+  const [collapsed, setCollapsed] = React.useState<Set<number>>(new Set());
 
   const toggleOpen = (i: number) =>
     setCollapsed(prev => {
@@ -91,6 +94,7 @@ export default function ModeratorPage() {
         payments: b.payments && b.payments.length ? b.payments : ['mbw', 'mb', 'visa', 'mc', 'btc'],
         imagePos: b.imagePos ?? 'center',
         showLogo: typeof b.showLogo === 'boolean' ? b.showLogo : true,
+        enabled:  typeof b.enabled  === 'boolean' ? b.enabled  : true, // default
       }));
       setBrands(list);
     } catch (e: any) {
@@ -144,7 +148,7 @@ export default function ModeratorPage() {
       const arr = b.slice();
       const [x] = arr.splice(i, 1);
       arr.splice(j, 0, x);
-      // acompanhar estado colapsado
+      // acompanha estado colapsado
       setCollapsed(prev => {
         const next = new Set(prev);
         const wasI = next.has(i);
@@ -172,6 +176,7 @@ export default function ModeratorPage() {
         imagePos: b.imagePos || 'center',
         payments: (b.payments && b.payments.length ? b.payments : ['mbw','mb','visa','mc','btc']),
         showLogo: typeof b.showLogo === 'boolean' ? b.showLogo : true,
+        enabled:  typeof b.enabled  === 'boolean' ? b.enabled  : true,
       }));
       const r = await api('', {
         method: 'PUT',
@@ -275,6 +280,21 @@ export default function ModeratorPage() {
                   {b.showLogo ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                   <span className="text-xs font-semibold">
                     {b.showLogo ? 'Logo: ON' : 'Logo: OFF'}
+                  </span>
+                </button>
+
+                {/* NOVO: Toggle visibilidade pública */}
+                <button
+                  type="button"
+                  onClick={() => update(i, 'enabled', !(b.enabled !== false))}
+                  className={`ml-2 inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg ring-1 ring-white/15 ${
+                    b.enabled !== false ? 'bg-emerald-700/90' : 'bg-white/10'
+                  }`}
+                  title={b.enabled !== false ? 'Tornar invisível no site' : 'Mostrar no site'}
+                >
+                  <Power className="h-4 w-4" />
+                  <span className="text-xs font-semibold">
+                    {b.enabled !== false ? 'Visível: ON' : 'Visível: OFF'}
                   </span>
                 </button>
 
@@ -411,7 +431,7 @@ function Accordion({ open, children }: { open: boolean; children: React.ReactNod
       const id = window.setTimeout(() => setHeight('auto'), 200);
       return () => window.clearTimeout(id);
     } else {
-      setHeight(el.scrollHeight); // set actual height first to start transition
+      setHeight(el.scrollHeight);
       requestAnimationFrame(() => setHeight(0));
     }
   }, [open]);
