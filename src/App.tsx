@@ -296,7 +296,8 @@ function useBrands() {
       try {
         if (!REST || !ANON) throw new Error("Falta configurar VITE_SUPABASE_REST_URL / VITE_SUPABASE_ANON");
 
-        const url = `${REST}/brands?select=data&order=updated_at.desc&limit=1`;
+        // buscar TODAS as linhas (ordena como quiseres)
+        const url = `${REST}/brands?select=data&order=id.asc`;
 
         const res = await fetch(url, {
           headers: {
@@ -306,14 +307,14 @@ function useBrands() {
           },
           cache: "no-store",
         });
+        if (!res.ok) throw new Error(`Supabase GET falhou (${res.status})`);
 
-        if (!res.ok) {
-          const txt = await res.text().catch(() => "");
-          throw new Error(`Supabase GET falhou (${res.status}) ${txt}`);
-        }
+        // cada linha pode ter data = Brand OU data = Brand[]
+        const rows: Array<{ data: ApiBrands | Brand }> = await res.json();
 
-        const rows: Array<{ data: ApiBrands }> = await res.json();
-        const list = (rows?.[0]?.data ?? []) as ApiBrands;
+        // normaliza: transforma tudo num único array de Brand
+        const list: Brand[] = rows.flatMap(r => Array.isArray(r.data) ? r.data : [r.data]);
+
         if (alive) setBrands(list);
       } catch (e: any) {
         if (alive) setError(e?.message || "Erro a carregar brands");
@@ -324,6 +325,7 @@ function useBrands() {
 
   return { brands, error };
 }
+
 /* Ícones inline (TikTok + X) */
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
   return (<svg viewBox="0 0 24 24" aria-hidden="true" {...props}><path d="M16 3v4.2c1.9 1.3 3.2 1.9 5 2v3c-2.2-.1-3.8-.8-5-1.7v4.8c0 3.2-2.6 5.9-6.2 5.9S3.9 18.5 3.9 15.1c0-3.1 2.3-5.6 5.3-6v3c-1.3.3-2.3 1.5-2.3 3 0 1.7 1.3 3 3 3s3-1.4 3-3.1V3H16z" fill="currentColor"/></svg>);
