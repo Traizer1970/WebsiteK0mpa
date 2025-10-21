@@ -373,6 +373,7 @@ function DiscordIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 /* ---------- Sidebar ---------- */
+/* ---------- Sidebar ---------- */
 function Sidebar({
   onOpenStream,
   onOpenCommunity,
@@ -382,245 +383,170 @@ function Sidebar({
 }) {
   const { t } = useLang();
 
+  // 1) refs e estado primeiro
+  const stickyRef = React.useRef<HTMLDivElement>(null);
+  const [density, setDensity] = React.useState<"normal" | "compact" | "ultra">("normal");
+
+  // 2) medir e ajustar densidade conforme a altura disponível
+  React.useLayoutEffect(() => {
+    const el = stickyRef.current;
+    if (!el) return;
+
+    const check = () => {
+      const mhStr = getComputedStyle(el).maxHeight || "0"; // ex.: "calc(...)" resolve para px
+      const mh = parseFloat(mhStr);
+      const need = el.scrollHeight > mh - 1;
+      setDensity(!need ? "normal" : el.scrollHeight > mh * 1.2 ? "ultra" : "compact");
+    };
+
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    window.addEventListener("resize", check);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", check);
+    };
+  }, []);
+
+  // 3) tamanhos dependem da densidade (useMemo)
+  const sizes = React.useMemo(() => ({
+    item:
+      density === "ultra"   ? "px-2 py-1.5 text-[13px]" :
+      density === "compact" ? "px-2.5 py-2 text-[14px]" :
+                              "px-3 py-2 text-sm",
+    icon:
+      density === "ultra"   ? "h-4 w-4" :
+      density === "compact" ? "h-[18px] w-[18px]" : "h-5 w-5",
+    hRow:       density === "ultra" ? "mb-1"   : density === "compact" ? "mb-1.5" : "mb-2",
+    gapY:       density === "ultra" ? "space-y-1.5" : density === "compact" ? "space-y-2" : "space-y-2.5",
+    sectionGap: density === "ultra" ? "my-2"  : density === "compact" ? "my-2.5" : "my-3",
+    socialsGrid:
+      density === "ultra"
+        ? "grid grid-cols-2 gap-x-4 gap-y-2 text-[14px]"
+        : density === "compact"
+        ? "grid grid-cols-2 gap-x-5 gap-y-2.5 text-sm"
+        : "grid grid-cols-2 gap-x-5 gap-y-3 text-sm",
+    footPadTop: density === "ultra" ? "pt-3" : density === "compact" ? "pt-3.5" : "pt-4",
+    copyTxt:    density === "ultra" ? "text-[11px]" : "text-[12px]",
+  }), [density]);
+
+  // 4) classes base (uma única versão!)
   const baseItem =
-    "w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rose-400/60";
+    `w-full flex items-center justify-between rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400/60 ${sizes.item}`;
   const linkClasses = ({ isActive }: { isActive: boolean }) =>
-    [
-      baseItem,
-      "hover:bg-white/10",
-      isActive ? "ring-1 ring-white/25 bg-white/5" : "",
-    ].join(" ");
+    [baseItem, "hover:bg-white/10", isActive ? "ring-1 ring-white/25 bg-white/5" : ""].join(" ");
 
   return (
-<aside className="hidden md:block w-full self-stretch">
-   {/* wrapper que estica até ao footer */}
- <div
-   className="h-full rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
- >
-   {/* conteúdo sticky com scroll interno */}
- <div
-   className="p-4 text-white/90 flex flex-col md:sticky"
-   style={{
-     top: "var(--hdr-offset,68px)",
-     maxHeight: "calc(100vh - var(--hdr-offset,68px))",
-     overflow: "auto"
-   }}
->
-        <div>
-          <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
-            <span className="text-sm font-semibold text-white">
-              {t.nav?.menu ?? "Menu"}
-            </span>
-            <ChevronRight className="h-4 w-4 text-white/70" />
+    <aside className="hidden md:block w-full self-stretch">
+      <div className="h-full rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]">
+        <div
+          ref={stickyRef}
+          data-density={density}
+          className="p-4 text-white/90 flex flex-col md:sticky"
+          style={{
+            top: "var(--hdr-offset,68px)",
+            maxHeight: "calc(100vh - var(--hdr-offset,68px))",
+            overflow: "auto",
+          }}
+        >
+          <div>
+            <div className={`${sizes.hRow} flex items-center justify-between rounded-xl px-2 py-1`}>
+              <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
+              <ChevronRight className={`${sizes.icon} text-white/70`} />
+            </div>
+
+            <nav className={sizes.gapY}>
+              <NavLink to="/" end className={linkClasses}>
+                <span className="flex items-center gap-2">
+                  <Gift className={sizes.icon} />
+                  {t.nav.offers}
+                </span>
+                <Badge className="text-white" style={{ background: "#9146FF" }}>
+                  {t.nav.new}
+                </Badge>
+              </NavLink>
+
+              <NavLink to="/betify" className={linkClasses}>
+                <span className="flex items-center gap-2">
+                  <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
+                  <span className="font-extrabold text-white">{t.nav.betify}</span>
+                </span>
+                <Badge className="text-white" style={{ background: "#16a34a" }}>
+                  <Flame className="h-3.5 w-3.5" />
+                  HOT
+                </Badge>
+              </NavLink>
+
+              <NavLink to="/ignibet" className={linkClasses}>
+                <span className="flex items-center gap-2">
+                  <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
+                  <span className="font-extrabold text-white">Ignibet</span>
+                </span>
+                <Badge className="text-white flex items-center gap-1.5" style={{ background: "#6062df" }}>
+                  <Sparkles className="h-3.5 w-3.5" />
+                  {t.nav.new}
+                </Badge>
+              </NavLink>
+
+              <div className={`${sizes.sectionGap} h-px bg-white/10`} />
+
+              <a href={SHOP_URL} target="_blank" rel="noreferrer" className={baseItem} title={t.nav.shop}>
+                <span className="flex items-center gap-2">
+                  <Store className={sizes.icon} />
+                  {t.nav.shop}
+                </span>
+                <ExternalLink className={sizes.icon} />
+              </a>
+
+              <button type="button" onClick={onOpenCommunity} className={baseItem + " text-left"}>
+                <span className="flex items-center gap-2">
+                  <Users className={sizes.icon} />
+                  {t.nav.community}
+                </span>
+              </button>
+
+              <button type="button" onClick={onOpenStream} className={baseItem + " text-left"}>
+                <span className="flex items-center gap-2">
+                  <Tv className={sizes.icon} />
+                  {t.nav.stream}
+                </span>
+              </button>
+
+              <a href={SOCIAL_LINKS.instantGaming} target="_blank" rel="noreferrer" className={baseItem}>
+                <span className="flex items-center gap-2">
+                  <Sparkles className={sizes.icon} />
+                  Instant Gaming
+                </span>
+              </a>
+            </nav>
           </div>
 
-          <nav className="space-y-2">
-            {/* Home (/ ) */}
-            <NavLink to="/" end className={linkClasses}>
-              <span className="flex items-center gap-2">
-                <Gift className="h-4 w-4" />
-                {t.nav.offers}
-              </span>
-              <Badge className="text-white" style={{ background: "#9146FF" }}>
-                {t.nav.new}
-              </Badge>
-            </NavLink>
+          <div className="flex-1" />
 
-            {/* Betify (/betify) */}
-            <NavLink to="/betify" className={linkClasses}>
-              <span className="flex items-center gap-2">
-                <span
-                  className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15"
-                  aria-hidden
-                />
-                <span className="font-extrabold text-white">{t.nav.betify}</span>
-              </span>
-              <Badge className="text-white" style={{ background: "#16a34a" }}>
-                <Flame className="h-3.5 w-3.5" />
-                HOT
-              </Badge>
-            </NavLink>
+          <footer className={`${sizes.footPadTop} border-t border-white/10`}>
+            <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">Socials</div>
+            <ul className={sizes.socialsGrid}>
+              <li><a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><TwitchIcon className={sizes.icon} />Twitch</a></li>
+              <li><a href={SOCIAL_LINKS.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Instagram className={sizes.icon} />Instagram</a></li>
+              <li><a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><TikTokIcon className={sizes.icon} />TikTok</a></li>
+              <li><a href={SOCIAL_LINKS.tiktokValorant} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><TikTokIcon className={sizes.icon} />TikTok2</a></li>
+              <li><a href={SOCIAL_LINKS.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Send className={sizes.icon} />Telegram</a></li>
+              <li><a href={SOCIAL_LINKS.discord} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><DiscordIcon className={sizes.icon} />Discord</a></li>
+              <li><a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><Youtube className={sizes.icon} />Youtube</a></li>
+              <li><a href={SOCIAL_LINKS.x} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><XIcon className={sizes.icon} />Twitter</a></li>
+            </ul>
 
-            {/* Ignibet (/ignibet) */}
-            <NavLink to="/ignibet" className={linkClasses}>
-              <span className="flex items-center gap-2">
-                <span
-                  className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15"
-                  aria-hidden
-                />
-                <span className="font-extrabold text-white">Ignibet</span>
-              </span>
-              <Badge
-                className="text-white flex items-center gap-1.5"
-                style={{ background: "#6062df" }}
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-                {t.nav.new}
-              </Badge>
-            </NavLink>
-
-            <div className="my-3 h-px bg-white/10" />
-
-            {/* Loja (externo) */}
-            <a
-              href={SHOP_URL}
-              target="_blank"
-              rel="noreferrer"
-              className={baseItem}
-              title={t.nav.shop}
-            >
-              <span className="flex items-center gap-2">
-                <Store className="h-4 w-4" />
-                {t.nav.shop}
-              </span>
-              <ExternalLink className="h-4 w-4 ml-auto opacity-70" />
-            </a>
-
-            {/* Modais */}
-            <button
-              type="button"
-              onClick={onOpenCommunity}
-              className={baseItem + " text-left"}
-            >
-              <span className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                {t.nav.community}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onOpenStream}
-              className={baseItem + " text-left"}
-            >
-              <span className="flex items-center gap-2">
-                <Tv className="h-4 w-4" />
-                {t.nav.stream}
-              </span>
-            </button>
-
-            <a
-              href={SOCIAL_LINKS.instantGaming}
-              target="_blank"
-              rel="noreferrer"
-              className={baseItem}
-            >
-              <span className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4" />
-                Instant Gaming
-              </span>
-            </a>
-          </nav>
+            <div className={`mt-3 text-center ${sizes.copyTxt} text-white/55`}>
+              Copyright © {new Date().getFullYear()} <span className="brand-font">K0MPA</span>
+            </div>
+          </footer>
         </div>
-
-        <div className="flex-1" />
-
-        {/* Redes */}
-        <footer className="pt-4 border-t border-white/10">
-          <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">
-            Socials
-          </div>
-          <ul className="grid grid-cols-2 md:grid-cols-2 gap-x-5 gap-y-3 text-sm">
-            <li>
-              <a
-                href={SOCIAL_LINKS.twitch}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 hover:underline"
-              >
-                <TwitchIcon className="h-5 w-5" />
-                Twitch
-              </a>
-            </li>
-            <li>
-              <a
-                href={SOCIAL_LINKS.instagram}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 hover:underline"
-              >
-                <Instagram className="h-5 w-5" />
-                Instagram
-              </a>
-            </li>
-            <li>
-              <a
-                href={SOCIAL_LINKS.tiktok}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 hover:underline"
-              >
-                <TikTokIcon className="h-5 w-5" />
-                TikTok
-              </a>
-            </li>
-            <li>
-              <a
-                href={SOCIAL_LINKS.tiktokValorant}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 hover:underline"
-              >
-                <TikTokIcon className="h-5 w-5" />
-                TikTok2
-              </a>
-            </li>
-            <li>
-              <a
-                href={SOCIAL_LINKS.telegram}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 hover:underline"
-              >
-                <Send className="h-5 w-5" />
-                Telegram
-              </a>
-            </li>
-            <li>
-              <a
-                href={SOCIAL_LINKS.discord}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 hover:underline"
-              >
-                <DiscordIcon className="h-5 w-5" />
-                Discord
-              </a>
-            </li>
-            <li>
-              <a
-                href={SOCIAL_LINKS.youtube}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 hover:underline"
-              >
-                <Youtube className="h-5 w-5" />
-                Youtube
-              </a>
-            </li>
-            <li>
-              <a
-                href={SOCIAL_LINKS.x}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 hover:underline"
-              >
-                <XIcon className="h-5 w-5" />
-                Twitter
-              </a>
-            </li>
-          </ul>
-
-          <div className="mt-3 text-center text-[12px] text-white/55">
-            Copyright © {new Date().getFullYear()}{" "}
-            <span className="brand-font">K0MPA</span>
-          </div>
-        </footer>
-      </div>
       </div>
     </aside>
   );
 }
+
 /* ---------- helpers ---------- */
 type LangType = Lang;
 function cap(value: string, lang: LangType) {
