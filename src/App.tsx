@@ -323,11 +323,16 @@ function useBrands() {
         if (!res.ok) throw new Error(`Supabase GET falhou (${res.status})`);
 
 const rows: Array<{ data: ApiBrands | Brand }> = await res.json();
-const list: Brand[] = rows.flatMap(r => Array.isArray(r.data) ? r.data : [r.data]);
-const visibleOnly = list.filter(b => b.enabled !== false);
 
+// Achata o array e NORMALIZA (se faltar "enabled", assume true)
+const list: Brand[] = rows.flatMap(r =>
+  Array.isArray(r.data) ? r.data : [r.data]
+).map(b => ({ ...b, enabled: b.enabled !== false }));
+
+// 👇 Mantém APENAS os visíveis no site público
+const visibleOnly = list.filter(b => b.enabled !== false);
 if (alive) setBrands(visibleOnly);
-        if (alive) setBrands(list);
+
       } catch (e: any) {
         if (alive) setError(e?.message || "Erro a carregar brands");
       }
