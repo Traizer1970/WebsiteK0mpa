@@ -1046,21 +1046,33 @@ const displayCode = isIgnibet ? t.wazbee.steps.two_code : b.code;
           <TagBadge tag={b.tag} accent={acc} />
 <div className="absolute inset-0 overflow-hidden rounded-3xl">
   {/* Fundo (volta a usar a imagem do brand) */}
-  <img
-    src={b.image}
-    alt=""
-    className="absolute inset-0 h-full w-full object-cover"
-    style={{ objectPosition: b.imagePos || "center" }}
-  />
+<img
+  src={b.image}
+  alt={b.name}
+  className="absolute inset-0 h-full w-full object-cover"
+  style={{ objectPosition: b.imagePos || "center" }}
+  referrerPolicy="no-referrer"
+  onError={(e) => { e.currentTarget.src = "/fallback.jpg"; }}   // opcional
+  loading="lazy"
+  decoding="async"
+/>
+
 
   {/* Overlay suave para leitura */}
   <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/55" />
 
 {isIgnibet && (
   <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 z-20">
-    <img src={b.logo} alt={b.name} className="h-10 sm:h-12 object-contain" />
+    <img
+      src={b.logo}
+      alt={b.name}
+      className="h-10 sm:h-12 object-contain"
+      referrerPolicy="no-referrer"
+      onError={(e) => { e.currentTarget.style.display = "none"; }}
+    />
   </div>
 )}
+
 
 
   {/* Botão "Mais" acima do logo */}
