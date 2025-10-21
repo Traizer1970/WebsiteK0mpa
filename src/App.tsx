@@ -392,12 +392,14 @@ function Sidebar({
     ].join(" ");
 
   return (
-<aside className="hidden md:block w-full self-start">
-
-      <div
-   className="min-h-0 overflow-auto rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col md:sticky"
-   style={{ top: "var(--hdr-offset,68px)", maxHeight: "calc(100vh - var(--hdr-offset,68px))" }}
- >
+<aside className="hidden md:block w-full self-stretch">
+   {/* wrapper que estica até ao footer */}
+   <div className="h-full rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]">
+   {/* conteúdo sticky com scroll interno */}
+     <div
+       className="min-h-0 overflow-auto p-4 text-white/90 flex flex-col md:sticky"
+       style={{ top: "var(--hdr-offset,68px)", maxHeight: "calc(100vh - var(--hdr-offset,68px))" }}
+     >
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
             <span className="text-sm font-semibold text-white">
@@ -608,6 +610,7 @@ function Sidebar({
             <span className="brand-font">K0MPA</span>
           </div>
         </footer>
+      </div>
       </div>
     </aside>
   );
