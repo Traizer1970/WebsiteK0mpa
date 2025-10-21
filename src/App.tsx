@@ -292,7 +292,7 @@ function useBrands() {
     let alive = true;
     (async () => {
       try {
-        const res = await fetch("/api/brands", { cache: "no-store" });
+        const res = await fetch("/api/brands.json", { cache: "no-store" });
         if (!res.ok) throw new Error(await res.text().catch(()=>"Failed"));
         const data: ApiBrands = await res.json();
         if (alive) setBrands(data);
