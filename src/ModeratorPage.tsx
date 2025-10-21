@@ -3,6 +3,10 @@
 import React from 'react';
 import { Plus, Save, Trash2, MoveUp, MoveDown, LogIn } from 'lucide-react';
 
+// no topo do ModeratorPage.tsx
+const BRANDS_GET_URL = '/api/brands.json'; // ficheiro que já existe
+const BRANDS_MUTATE_URL = '/api/brands';   // endpoint que só funciona quando tiveres API
+
 export type Brand = {
   name: string; tag: 'HOT'|'NEW'|'TOP'; logo: string; image: string;
   imagePos?: React.CSSProperties['objectPosition'];
@@ -26,38 +30,40 @@ export default function ModeratorPage() {
   const [brands, setBrands] = React.useState<Brand[]>([]);
   const [selected, setSelected] = React.useState<number|null>(null);
 
-  const load = React.useCallback(async () => {
-    setLoading(true); setError(undefined);
-    try {
-      const r = await fetch('/api/brands', { cache:'no-store' });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j?.error || 'Erro ao carregar');
-      setBrands(j.data || []);
-    } catch (e:any) {
-      setError(e.message);
-    } finally { setLoading(false); }
-  }, []);
+const load = React.useCallback(async () => {
+  setLoading(true); setError(undefined);
+  try {
+    const r = await fetch(BRANDS_GET_URL, { cache:'no-store' });
+    const ct = r.headers.get('content-type') || '';
+    if (!r.ok) throw new Error(`Erro ao carregar (${r.status})`);
+    if (!ct.includes('application/json')) {
+      // devolveu HTML (ex. 404 com index.html)
+      const txt = await r.text();
+      throw new Error('A resposta não é JSON (veio HTML). Verifica o caminho /api/brands.json');
+    }
+    const data = await r.json();
+    setBrands(data || []);
+  } catch (e:any) {
+    setError(e.message);
+  } finally { setLoading(false); }
+}, []);
+
 
   // login “stateless”: só mantém em memória
-  const doLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // testa a senha com um PUT vazio em dry-run
-    try {
-      const r = await fetch('/api/brands', {
-        method:'PUT',
-        headers:{ 'Content-Type':'application/json', 'x-admin-key': pass },
-        body: JSON.stringify(brands), // envia o que estiver (ou vazio)
-      });
-      if (r.status === 401) throw new Error('Senha inválida');
-      if (!r.ok) {
-        // não queremos gravar já; portanto voltamos a carregar e só validar
-        await load();
-      }
-      setAuthed(true);
-    } catch (e:any) {
-      setError(e.message || 'Falhou autenticação');
-    }
-  };
+const doLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError(undefined);
+  try {
+    // validação simples (troca por validação real se precisares)
+    if (!pass) throw new Error('Introduce a senha.');
+    // garante que consegues ler as marcas
+    await load();
+    setAuthed(true);
+  } catch (e:any) {
+    setError(e.message || 'Falhou autenticação');
+  }
+};
+
 
   React.useEffect(() => { load(); }, [load]);
 
@@ -71,20 +77,22 @@ export default function ModeratorPage() {
   const update = <K extends keyof Brand>(i:number, key:K, val:Brand[K]) =>
     setBrands(b => b.map((it,idx) => idx===i ? {...it, [key]: val} : it));
 
-  const save = async () => {
-    setSaving(true); setError(undefined);
-    try {
-      const r = await fetch('/api/brands', {
-        method:'PUT',
-        headers:{ 'Content-Type':'application/json', 'x-admin-key': pass },
-        body: JSON.stringify(brands),
-      });
-      const j = await r.json().catch(()=> ({}));
-      if (!r.ok) throw new Error(j?.error || 'Falha ao gravar');
-    } catch (e:any) {
-      setError(e.message);
-    } finally { setSaving(false); }
-  };
+const save = async () => {
+  setSaving(true); setError(undefined);
+  try {
+    const r = await fetch(BRANDS_MUTATE_URL, {
+      method:'PUT',
+      headers:{ 'Content-Type':'application/json', 'x-admin-key': pass },
+      body: JSON.stringify(brands),
+    });
+    if (r.status === 401) throw new Error('Senha inválida');
+    if (!r.ok) throw new Error(`Falha ao gravar (${r.status})`);
+    // opcional: feedback
+  } catch (e:any) {
+    setError(e.message);
+  } finally { setSaving(false); }
+};
+
 
   if (!authed) {
     return (
