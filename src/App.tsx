@@ -300,7 +300,7 @@ const brands: Brand[] = [
   imagePos: "center",
   minDep: "20€",
   bonus: "665%",
-  cashback: "x30",
+  cashback: "30%",
   freeSpins: "750FS",
   code: "KMPA",
   link: IGNIBET_PROMO_URL,
