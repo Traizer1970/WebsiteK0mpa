@@ -376,11 +376,9 @@ function DiscordIcon(props: React.SVGProps<SVGSVGElement>) {
 function Sidebar({
   onOpenStream,
   onOpenCommunity,
-  fixedHeight,
 }: {
   onOpenStream: () => void;
   onOpenCommunity: () => void;
-  fixedHeight?: number;
 }) {
   const { t } = useLang();
 
@@ -395,17 +393,13 @@ function Sidebar({
 
   return (
     <aside
-      className="hidden md:block w-[240px] mx-auto"
-      style={{ position: "sticky", top: "var(--sticky-top,112px)" }}
+      className="hidden md:block w-[240px] mx-auto sticky overflow-auto"
+      style={{
+        top: "var(--sticky-top,112px)",
+        maxHeight: "calc(100dvh - var(--sticky-top,112px) - 8px)",
+      }}
     >
-      <div
-        className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
-        style={{
-          height: fixedHeight ? `${fixedHeight}px` : undefined,
-          overflow: "auto",
-          willChange: "height",
-        }}
-      >
+      <div className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col">
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
             <span className="text-sm font-semibold text-white">
@@ -441,7 +435,7 @@ function Sidebar({
               </Badge>
             </NavLink>
 
-            {/* Wazbee (/wazbee) */}
+            {/* Ignibet (/ignibet) */}
             <NavLink to="/ignibet" className={linkClasses}>
               <span className="flex items-center gap-2">
                 <span
@@ -476,7 +470,7 @@ function Sidebar({
               <ExternalLink className="h-4 w-4 ml-auto opacity-70" />
             </a>
 
-            {/* Modais (mantêm botão) */}
+            {/* Modais */}
             <button
               type="button"
               onClick={onOpenCommunity}
@@ -620,7 +614,6 @@ function Sidebar({
     </aside>
   );
 }
-
 /* ---------- helpers ---------- */
 type LangType = Lang;
 function cap(value: string, lang: LangType) {
@@ -1420,22 +1413,18 @@ export default function App() {
         <div className="flex-1">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-start">
             <Sidebar
-              onOpenStream={() => setShowOverlay(true)}
-              onOpenCommunity={() => setShowCommunity(true)}
-              fixedHeight={fixedHeight}
-            />
+  onOpenStream={() => setShowOverlay(true)}
+  onOpenCommunity={() => setShowCommunity(true)}
+/>
 
-            <main className="space-y-10" ref={rightColRef}>
-              <Routes>
-  <Route path="/" element={<Home />} />
-  <Route path="/betify" element={<BetifyLanding />} />
-  <Route path="/ignibet" element={<IgnibetLanding />} />
-
-  {/* novo: painel do moderador */}
-  <Route path="/moderator" element={<ModeratorPage />} />
-</Routes>
-
-            </main>
+<main className="space-y-10">
+  <Routes>
+    <Route path="/" element={<Home />} />
+    <Route path="/betify" element={<BetifyLanding />} />
+    <Route path="/ignibet" element={<IgnibetLanding />} />
+    <Route path="/moderator" element={<ModeratorPage />} />
+  </Routes>
+</main>
           </div>
         </div>
 
