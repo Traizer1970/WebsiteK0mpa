@@ -442,16 +442,16 @@ function Sidebar({
   ref={stickyRef}
   data-density={density}
   className="px-4 pt-4 pb-0 text-white/90 flex flex-col md:sticky"
-style={{
-  top: "calc(var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))",
-  maxHeight: "var(--sidebar-maxpx, calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))))",
-  minHeight: "var(--sidebar-maxpx, calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))))",
-  overflow: "auto",
-}}
-
+  style={{
+    top: "calc(var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))",
+    maxHeight:
+      "calc(var(--sidebar-maxpx, calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)))) + var(--sidebar-nudge, 0px))",
+    minHeight:
+      "calc(var(--sidebar-maxpx, calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)))) + var(--sidebar-nudge, 0px))",
+    overflow: "auto",
+  }}
 >
-
-          <div>
+       <div>
             <div className={`${sizes.hRow} flex items-center justify-between rounded-xl px-2 py-1`}>
               <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
               <ChevronRight className={`${sizes.icon} text-white/70`} />
@@ -1311,27 +1311,30 @@ const updateSidebarMetrics = React.useCallback(() => {
   document.documentElement.style.setProperty("--sidebar-extra-top", `${extraTop}px`);
 
   // Só limitamos pela SECTION nas landings
-  if (isBetify || isIgnibet) {
-    // pega a <section> que contém o #...-start
-    const section = anchor?.closest("section") as HTMLElement | null;
-    if (section) {
-      const m = main.getBoundingClientRect();
-      const s = section.getBoundingClientRect();
+if (isBetify || isIgnibet) {
+  // pega a <section> que contém o #...-start
+  const section = anchor?.closest("section") as HTMLElement | null;
+  if (section) {
+    const m = main.getBoundingClientRect();
+    const s = section.getBoundingClientRect();
 
-      // altura útil da section a partir do anchor
-      const sectionHeight = Math.max(0, Math.round(s.bottom - m.top - extraTop));
+    // altura útil da section a partir do anchor
+    const sectionHeight = Math.max(0, Math.round(s.bottom - m.top - extraTop));
 
-      // 👉 NÃO faças min() com o viewport aqui!
-      const usable = Math.max(240, sectionHeight);
-
-      document.documentElement.style.setProperty("--sidebar-maxpx", `${usable}px`);
-    } else {
-      document.documentElement.style.removeProperty("--sidebar-maxpx");
-    }
+    // altura “alvo” da sidebar + pequeno empurrão
+    const usable = Math.max(240, sectionHeight);
+    document.documentElement.style.setProperty("--sidebar-maxpx", `${usable}px`);
+    document.documentElement.style.setProperty("--sidebar-nudge", "16px"); // ajusta aqui p.ex. 20px/24px
   } else {
-    // Home (outras): comportamento por viewport
     document.documentElement.style.removeProperty("--sidebar-maxpx");
+    document.documentElement.style.removeProperty("--sidebar-nudge");
   }
+} else {
+  // Home (outras): comportamento por viewport
+  document.documentElement.style.removeProperty("--sidebar-maxpx");
+  document.documentElement.style.removeProperty("--sidebar-nudge");
+}
+
 }, [location.pathname]);
 
 
