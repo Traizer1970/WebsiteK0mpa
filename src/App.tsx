@@ -395,7 +395,7 @@ function Sidebar({
 <aside
   className="hidden md:block w-full md:sticky"
   style={{
-   top: "calc(var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))",
+   top: "var(--hdr-offset,68px)",
    height: "calc(100vh - var(--hdr-offset,68px))",
   }}
 >
