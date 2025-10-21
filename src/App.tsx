@@ -7,6 +7,7 @@ import {
   TrendingUp, Youtube, Instagram, Twitch as TwitchIcon, Send, Coins, Percent, Copy,
   Sparkles, Flame, Crown, ExternalLink
 } from "lucide-react";
+import ModeratorPage from "./ModeratorPage";
 
 /* ---------- CONFIG ---------- */
 const TWITCH_CHANNEL = "k0mpa";
@@ -276,39 +277,35 @@ function useLang(){ return useContext(LangCtx); }
 /* ---------- Data ---------- */
 export type Brand = {
   name: string; tag: "HOT" | "NEW" | "TOP"; logo: string; image: string;
-  imagePos?: React.CSSProperties["objectPosition"];
+ imagePos?: string; // ex.: 'center', 'left', '20% 50%'
   minDep: string; bonus: string; cashback: string; freeSpins: string; code: string; link: string;
   theme?: { accent: string; shadow: string; ring?: string; };
   payments?: Array<"btc"|"mb"|"mbb"|"visa"|"mc">;
 };
-const brands: Brand[] = [
-  {
-    name:"Betify",
-    tag:"HOT",
-    logo:"https://www.ce-at.fr/img/logo.webp",
-    image:"https://betify.org/wp-content/uploads/2025/02/betify-app-login.webp",
-    imagePos:"left",
-    minDep:"20€", bonus:"100%", cashback:"20%", freeSpins:"100FS", code:"K0MPA", link: BETIFY_PROMO_URL,
-    theme: { accent:"#22c55e", shadow:"rgba(34,197,94,0.45)", ring:"rgba(34,197,94,.45)" },
-    payments:["mb", "mbb", "visa", "mc", "btc"]
-  },
-{
-  name: "Ignibet",
-  tag: "NEW",
-  logo: "https://ignibet.io/assets/images/logo-EfuPTlMq.webp",            // TODO: atualiza
-  image: "https://thumbs.dreamstime.com/b/red-dice-poker-chips-smartphone-blurry-casino-background-ai-generated-image-381975267.jpg",           // TODO: atualiza
-  imagePos: "center",
-  minDep: "20€",
-  bonus: "665%",
-  cashback: "30%",
-  freeSpins: "750FS",
-  code: "KMPA",
-  link: IGNIBET_PROMO_URL,
-  theme: { accent: "#0ea5e9", shadow: "rgba(14,165,233,.45)", ring: "rgba(14,165,233,.45)" },
-  payments: ["mb", "mbb", "visa", "mc", "btc"],
-},
+type ApiBrands = Brand[];
 
-];
+function useBrands() {
+  const [brands, setBrands] = React.useState<ApiBrands | null>(null);
+  const [error, setError] = React.useState<null | string>(null);
+
+  React.useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fetch("/api/brands", { cache: "no-store" });
+        if (!res.ok) throw new Error(await res.text().catch(()=>"Failed"));
+        const data: ApiBrands = await res.json();
+        if (alive) setBrands(data);
+      } catch (e:any) {
+        if (alive) setError(e?.message || "Erro a carregar brands");
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
+
+  return { brands, error };
+}
+
 
 /* Ícones inline (TikTok + X) */
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -957,6 +954,15 @@ function StreamHero({ channel }: { channel: string }) {
 }
 
 function Home() {
+  const { brands, error } = useBrands();
+
+  if (error) {
+    return <div className="text-white/80">Falhou a carregar marcas: {error}</div>;
+  }
+  if (!brands) {
+    return <div className="text-white/60">A carregar…</div>;
+  }
+
   return (
     <>
       <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
@@ -976,8 +982,6 @@ function Home() {
     </>
   );
 }
-
-
 /* ---------- Embeds pequenos ---------- */
 const TwitchEmbedMini = React.forwardRef<HTMLDivElement, { channel: string }>(
   ({ channel }, ref) => {
@@ -1077,7 +1081,9 @@ function BrandCard({ b }: { b: Brand }) {
   const base = tagVisual(b.tag);
   const acc  = b.theme?.accent ?? base.accent;
   const shadow = b.theme?.shadow ?? rgba(acc, 0.35);
-  const methods = b.payments && b.payments.length ? b.payments : ["mbw","mb","visa",",mc","btc"];
+const methods = b.payments && b.payments.length ? b.payments : ["mbw","mb","visa","mc","btc"];
+
+
 
 const isIgnibet = /ignibet/i.test(b.name);
 const cashbackLabel = isIgnibet ? (lang === "PT" ? "Cashback" : "Cashback") : t.card.cashback;
@@ -1421,10 +1427,14 @@ export default function App() {
 
             <main className="space-y-10" ref={rightColRef}>
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/betify" element={<BetifyLanding />} />
-                <Route path="/ignibet" element={<IgnibetLanding />} />
-              </Routes>
+  <Route path="/" element={<Home />} />
+  <Route path="/betify" element={<BetifyLanding />} />
+  <Route path="/ignibet" element={<IgnibetLanding />} />
+
+  {/* novo: painel do moderador */}
+  <Route path="/moderator" element={<ModeratorPage />} />
+</Routes>
+
             </main>
           </div>
         </div>
