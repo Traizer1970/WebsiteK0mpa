@@ -394,19 +394,20 @@ function Sidebar({
   return (
 <aside className="hidden md:block w-full self-stretch">
    {/* wrapper que estica até ao footer */}
-   <div className="h-full rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]">
+   <div
+    className="rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]"
+    style={{ minHeight: "calc(100vh - var(--hdr-offset,68px))" }}
+  >
    {/* conteúdo sticky com scroll interno */}
-<div
-      className="p-4 text-white/90 flex flex-col md:sticky"
-      style={{
-        top: "var(--hdr-offset,68px)",
-        /* enche o viewport útil para o footer não “flutuar” */
-        minHeight: "calc(100vh - var(--hdr-offset,68px))",
-        /* mantém scroll quando passar do viewport */
-        maxHeight: "calc(100vh - var(--hdr-offset,68px))",
-        overflow: "auto"
-      }}
-    >
+ <div
+   className="p-4 text-white/90 flex flex-col md:sticky"
+   style={{
+     top: "var(--hdr-offset,68px)",
+     minHeight: "calc(100vh - var(--hdr-offset,68px))",
+     maxHeight: "calc(100vh - var(--hdr-offset,68px))",
+     overflow: "auto"
+   }}
+>
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
             <span className="text-sm font-semibold text-white">
