@@ -334,8 +334,9 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   React.useEffect(() => {
     const update = () => {
       const headerH = hdrRef.current?.offsetHeight ?? 56;
-      const globalTopPad = headerH + 12;
-      document.documentElement.style.setProperty("--sticky-top", `${globalTopPad + 24}px`);
+      // sem espaço extra – encostar tudo ao topo
+      const globalTopPad = headerH;
+      document.documentElement.style.setProperty("--sticky-top", `${globalTopPad}px`);
       document.documentElement.style.setProperty("--hdr-offset", `${globalTopPad}px`);
     };
     update();
@@ -344,7 +345,7 @@ function HeaderBar({ isLive }: { isLive: boolean }) {
   }, []);
 
   return (
-    <header ref={hdrRef} className="fixed top-3 left-0 right-0 z-50">
+    <header ref={hdrRef} className="fixed top-0 left-0 right-0 z-50">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         <div className="flex h-12 items-center gap-3 rounded-xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 px-4 sm:px-5 text-white/90 shadow-[0_8px_30px_rgba(0,0,0,.25)]">
           <div className="mr-1.5 flex items-center gap-2.5">
@@ -399,7 +400,6 @@ function Sidebar({
    height: "calc(100vh - var(--hdr-offset,68px))",
   }}
 >
-
       <div className="h-full min-h-0 overflow-auto rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col">
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
@@ -1359,57 +1359,46 @@ export default function App() {
   // refs/altura da sidebar
   const rightColRef = React.useRef<HTMLElement | null>(null);
 
-const updateSidebarMetrics = React.useCallback(() => {
-  const main = rightColRef.current;
-  if (!main) return;
+  // ➜ simplificado: sem "extra top" – sidebar começa logo abaixo do header
+  const updateSidebarMetrics = React.useCallback(() => {
+    document.documentElement.style.setProperty("--sidebar-extra-top", `0px`);
+  }, []);
 
-  // escolhe o marcador de acordo com a rota
-  const anchorSelector =
-    location.pathname.startsWith("/betify")  ? "#betify-start"  :
-    location.pathname.startsWith("/ignibet") ? "#ignibet-start" :
-                                               "#embeds-start"; // Home (default)
+  // re-medir quando mudas de página
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    updateSidebarMetrics();
 
-  const anchor = main.querySelector<HTMLElement>(anchorSelector);
-  const extraTop = anchor ? anchor.offsetTop : 0;
+    // mede outra vez após o reflow
+    const r1 = requestAnimationFrame(() => {
+      const r2 = requestAnimationFrame(updateSidebarMetrics);
+      (window as any).__r2 = r2;
+    });
+    (window as any).__r1 = r1;
 
-  document.documentElement.style.setProperty("--sidebar-extra-top", `${extraTop}px`);
-}, [location.pathname]);
+    return () => {
+      cancelAnimationFrame((window as any).__r1 || 0);
+      cancelAnimationFrame((window as any).__r2 || 0);
+    };
+  }, [location.pathname, updateSidebarMetrics]);
 
-
-// re-medir quando mudas de página
-useEffect(() => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  updateSidebarMetrics();
-
-  // mede outra vez após o reflow
-  const r1 = requestAnimationFrame(() => {
-    const r2 = requestAnimationFrame(updateSidebarMetrics);
-    (window as any).__r2 = r2;
-  });
-  (window as any).__r1 = r1;
-
-  return () => {
-    cancelAnimationFrame((window as any).__r1 || 0);
-    cancelAnimationFrame((window as any).__r2 || 0);
-  };
-}, [location.pathname, updateSidebarMetrics]);
-
-// re-medir em resize (se o iframe ajustar altura)
-useEffect(() => {
-  const onResize = () => updateSidebarMetrics();
-  window.addEventListener("resize", onResize);
-  return () => window.removeEventListener("resize", onResize);
-}, [updateSidebarMetrics]);
+  // re-medir em resize (se o iframe ajustar altura)
+  useEffect(() => {
+    const onResize = () => updateSidebarMetrics();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [updateSidebarMetrics]);
 
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
       <div className="relative min-h-screen isolation-isolate text-slate-900 flex flex-col overflow-x-hidden">
+        {/* empurra o conteúdo para baixo do header fixo */}
         <div style={{ height: "var(--hdr-offset, 68px)" }} aria-hidden />
         <HeaderBar isLive={isLive} />
 
         <div className="flex-1">
-          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-start">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 sm:px-8 md:grid-cols-[240px,1fr] items-stretch">
             <Sidebar
               onOpenStream={() => setShowOverlay(true)}
               onOpenCommunity={() => setShowCommunity(true)}
@@ -1417,14 +1406,12 @@ useEffect(() => {
 
             <main className="space-y-10" ref={rightColRef}>
               <Routes>
-  <Route path="/" element={<Home />} />
-  <Route path="/betify" element={<BetifyLanding />} />
-  <Route path="/ignibet" element={<IgnibetLanding />} />
-
-  {/* novo: painel do moderador */}
-  <Route path="/moderator" element={<ModeratorPage />} />
-</Routes>
-
+                <Route path="/" element={<Home />} />
+                <Route path="/betify" element={<BetifyLanding />} />
+                <Route path="/ignibet" element={<IgnibetLanding />} />
+                {/* novo: painel do moderador */}
+                <Route path="/moderator" element={<ModeratorPage />} />
+              </Routes>
             </main>
           </div>
         </div>
@@ -1441,4 +1428,3 @@ useEffect(() => {
     </LangCtx.Provider>
   );
 }
-
