@@ -395,10 +395,12 @@ function Sidebar({
 <aside
   className="hidden md:block w-full md:sticky"
   style={{
-    top: "var(--hdr-offset,68px)",
-    height: "calc(100vh - var(--hdr-offset,68px))",
+    top: "calc(var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))",
+    height:
+      "calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)))",
   }}
 >
+
       <div className="h-full min-h-0 overflow-auto rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col">
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
@@ -780,6 +782,7 @@ function IgnibetLanding() {
             </div>
           </div>
         </div>
+        
 
         {/* Promos */}
         <div id="ignibet-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
