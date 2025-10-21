@@ -371,8 +371,6 @@ function DiscordIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
-/* ---------- Sidebar ---------- */
 /* ---------- Sidebar ---------- */
 function Sidebar({
   onOpenStream,
@@ -441,15 +439,16 @@ function Sidebar({
     <aside className="hidden md:block w-full self-stretch">
       <div className="h-full rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]">
         <div
-          ref={stickyRef}
-          data-density={density}
-          className="p-4 text-white/90 flex flex-col md:sticky"
-          style={{
-            top: "var(--hdr-offset,68px)",
-            maxHeight: "calc(100vh - var(--hdr-offset,68px))",
-            overflow: "auto",
-          }}
-        >
+  ref={stickyRef}
+  data-density={density}
+  className="px-4 pt-4 pb-0 text-white/90 flex flex-col md:sticky min-h-[calc(100vh-var(--hdr-offset,68px))]"
+  style={{
+    top: "var(--hdr-offset,68px)",
+    maxHeight: "calc(100vh - var(--hdr-offset,68px))",
+    overflow: "auto",
+  }}
+>
+
           <div>
             <div className={`${sizes.hRow} flex items-center justify-between rounded-xl px-2 py-1`}>
               <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
@@ -522,9 +521,7 @@ function Sidebar({
             </nav>
           </div>
 
-          <div className="flex-1" />
-
-          <footer className={`${sizes.footPadTop} border-t border-white/10`}>
+          <footer className={`${sizes.footPadTop} mt-auto border-t border-white/10 pb-4`}>
             <div className="mb-2 text-xs font-semibold text-white/80 tracking-wide">Socials</div>
             <ul className={sizes.socialsGrid}>
               <li><a href={SOCIAL_LINKS.twitch} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline"><TwitchIcon className={sizes.icon} />Twitch</a></li>
