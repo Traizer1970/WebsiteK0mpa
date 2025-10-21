@@ -3,13 +3,10 @@
 import React from 'react';
 import { Plus, Save, Trash2, MoveUp, MoveDown, LogIn } from 'lucide-react';
 
-// Endpoint da tua Edge Function
-const BRANDS_URL =
-  'https://fovgbsynuxfgypzctvxg.supabase.co/functions/v1/hyper-function';
+// ---- CONFIG ----
+const BRANDS_URL = 'https://fovgbsynuxfgypzctvxg.supabase.co/functions/v1/hyper-function';
+const ANON = (import.meta.env.VITE_SUPABASE_ANON || '').trim();
 
-// ⚠️ ANON KEY do teu projeto (pode ficar público no frontend)
-const SUPABASE_ANON =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvdmdic3ludXhmZ3lwemN0dnhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwNjAxNTgsImV4cCI6MjA3NjYzNjE1OH0.Z69Zz_syvs3gFec3tbvLVPxRWUJt-uh_XIi4B2722tM';
 
 export type Brand = {
   name: string;
@@ -51,16 +48,22 @@ export default function ModeratorPage() {
   const [error, setError] = React.useState<string | undefined>();
   const [brands, setBrands] = React.useState<Brand[]>([]);
 
+  const requiredHeaders = React.useMemo(
+    () => ({
+      Authorization: ANON ? `Bearer ${ANON}` : '',
+    }),
+    []
+  );
+
   // -------- carregar dados --------
   const load = React.useCallback(async () => {
-    setLoading(true);
-    setError(undefined);
+    setLoading(true); setError(undefined);
     try {
       const r = await fetch(BRANDS_URL, {
         method: 'GET',
         cache: 'no-store',
         headers: {
-          Authorization: `Bearer ${SUPABASE_ANON}`,
+          ...requiredHeaders,
         },
       });
       if (!r.ok) throw new Error(`Erro ao carregar (${r.status})`);
@@ -71,14 +74,30 @@ export default function ModeratorPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [requiredHeaders]);
 
-  // -------- login (não grava nada; apenas carrega e entra) --------
+  // -------- login: valida a senha no servidor (dry-run) --------
   const doLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(undefined);
     try {
-      // Se a função estiver acessível, entra no painel.
+      if (!ANON) throw new Error('Falta configurar NEXT_PUBLIC_SUPABASE_ANON');
+      if (!pass) throw new Error('Introduz a senha.');
+
+      // dry-run: só valida a password
+      const r = await fetch(`${BRANDS_URL}?dry=1`, {
+        method: 'PUT',
+        headers: {
+          ...requiredHeaders,
+          'Content-Type': 'application/json',
+          'x-admin-key': pass,
+        },
+        body: '[]',
+      });
+
+      if (r.status === 401) throw new Error('Senha inválida');
+      if (!r.ok) throw new Error(`Falha na validação (${r.status})`);
+
       await load();
       setAuthed(true);
     } catch (e: any) {
@@ -86,14 +105,9 @@ export default function ModeratorPage() {
     }
   };
 
-  React.useEffect(() => {
-    if (authed) load();
-  }, [authed, load]);
-
   // -------- CRUD --------
-  const addBrand = () => setBrands((b) => [...b, emptyBrand()]);
-  const removeBrand = (i: number) =>
-    setBrands((b) => b.filter((_, idx) => idx !== i));
+  const addBrand   = () => setBrands((b) => [...b, emptyBrand()]);
+  const removeBrand = (i: number) => setBrands((b) => b.filter((_, idx) => idx !== i));
   const move = (i: number, dir: -1 | 1) =>
     setBrands((b) => {
       const j = i + dir;
@@ -103,21 +117,19 @@ export default function ModeratorPage() {
       arr.splice(j, 0, x);
       return arr;
     });
-
   const update = <K extends keyof Brand>(i: number, key: K, val: Brand[K]) =>
     setBrands((b) => b.map((it, idx) => (idx === i ? { ...it, [key]: val } : it)));
 
   // -------- gravar alterações --------
   const save = async () => {
-    setSaving(true);
-    setError(undefined);
+    setSaving(true); setError(undefined);
     try {
       const r = await fetch(BRANDS_URL, {
         method: 'PUT',
         headers: {
+          ...requiredHeaders,
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${SUPABASE_ANON}`,
-          'x-admin-key': pass, // <- tem de bater com ADMIN_PASSWORD no Supabase
+          'x-admin-key': pass, // usa a mesma senha do login
         },
         body: JSON.stringify(brands, null, 2),
       });
@@ -131,7 +143,7 @@ export default function ModeratorPage() {
     }
   };
 
-  // -------- UI --------
+  // -------- interface --------
   if (!authed) {
     return (
       <div className="mx-auto max-w-md mt-16 p-6 rounded-2xl bg-white/10 text-white ring-1 ring-white/15">
@@ -149,9 +161,7 @@ export default function ModeratorPage() {
           </button>
         </form>
         {error && <p className="mt-2 text-sm text-red-300">{error}</p>}
-        <p className="mt-3 text-xs text-white/60">
-          A senha não é guardada no navegador.
-        </p>
+        <p className="mt-3 text-xs text-white/60">A senha não é guardada no navegador.</p>
       </div>
     );
   }
@@ -159,19 +169,11 @@ export default function ModeratorPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <button
-          onClick={addBrand}
-          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white"
-        >
+        <button onClick={addBrand} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white">
           <Plus className="h-4 w-4" /> Adicionar casino
         </button>
-        <button
-          onClick={save}
-          disabled={saving}
-          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white disabled:opacity-60"
-        >
-          <Save className="h-4 w-4" />
-          {saving ? 'A gravar…' : 'Gravar alterações'}
+        <button onClick={save} disabled={saving} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white disabled:opacity-60">
+          <Save className="h-4 w-4" />{saving ? 'A gravar…' : 'Gravar alterações'}
         </button>
         {loading && <span className="text-white/70 text-sm">a carregar…</span>}
         {error && <span className="text-red-300 text-sm">{error}</span>}
@@ -179,10 +181,7 @@ export default function ModeratorPage() {
 
       <div className="grid gap-4">
         {brands.map((b, i) => (
-          <div
-            key={i}
-            className="rounded-2xl p-4 bg-white/10 ring-1 ring-white/15 text-white"
-          >
+          <div key={i} className="rounded-2xl p-4 bg-white/10 ring-1 ring-white/15 text-white">
             <div className="flex items-center gap-2 mb-3">
               <input
                 value={b.name}
@@ -200,15 +199,9 @@ export default function ModeratorPage() {
                 <option value="TOP">TOP</option>
               </select>
               <div className="ml-auto flex gap-1">
-                <button onClick={() => move(i, -1)} className="p-2 rounded-lg bg-white/10">
-                  <MoveUp className="h-4 w-4" />
-                </button>
-                <button onClick={() => move(i, 1)} className="p-2 rounded-lg bg-white/10">
-                  <MoveDown className="h-4 w-4" />
-                </button>
-                <button onClick={() => removeBrand(i)} className="p-2 rounded-lg bg-red-600/80">
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                <button onClick={() => move(i, -1)} className="p-2 rounded-lg bg-white/10"><MoveUp className="h-4 w-4" /></button>
+                <button onClick={() => move(i, 1)} className="p-2 rounded-lg bg-white/10"><MoveDown className="h-4 w-4" /></button>
+                <button onClick={() => removeBrand(i)} className="p-2 rounded-lg bg-red-600/80"><Trash2 className="h-4 w-4" /></button>
               </div>
             </div>
 
@@ -216,11 +209,7 @@ export default function ModeratorPage() {
               <Input label="Logo URL" val={b.logo} onChange={(v) => update(i, 'logo', v)} />
               <Input label="Imagem URL" val={b.image} onChange={(v) => update(i, 'image', v)} />
               <Input label="Link" val={b.link} onChange={(v) => update(i, 'link', v)} />
-              <Input
-                label="Posição imagem (ex: center, left, 20% 50%)"
-                val={b.imagePos || ''}
-                onChange={(v) => update(i, 'imagePos', v as any)}
-              />
+              <Input label="Posição imagem (ex: center, left, 20% 50%)" val={b.imagePos || ''} onChange={(v) => update(i, 'imagePos', v as any)} />
 
               <Input label="Min. Dep." val={b.minDep} onChange={(v) => update(i, 'minDep', v)} />
               <Input label="Bónus" val={b.bonus} onChange={(v) => update(i, 'bonus', v)} />
@@ -228,39 +217,9 @@ export default function ModeratorPage() {
               <Input label="Free Spins" val={b.freeSpins} onChange={(v) => update(i, 'freeSpins', v)} />
               <Input label="Código" val={b.code} onChange={(v) => update(i, 'code', v)} />
 
-              <Input
-                label="Theme.accent"
-                val={b.theme?.accent || ''}
-                onChange={(v) =>
-                  update(i, 'theme', {
-                    ...(b.theme || {}),
-                    accent: v,
-                    shadow: b.theme?.shadow || 'rgba(0,0,0,.3)',
-                  })
-                }
-              />
-              <Input
-                label="Theme.shadow"
-                val={b.theme?.shadow || ''}
-                onChange={(v) =>
-                  update(i, 'theme', {
-                    ...(b.theme || {}),
-                    shadow: v,
-                    accent: b.theme?.accent || '#22c55e',
-                  })
-                }
-              />
-              <Input
-                label="Payments (csv: mbw,mb,visa,mc,btc)"
-                val={(b.payments || []).join(',')}
-                onChange={(v) =>
-                  update(
-                    i,
-                    'payments',
-                    v.split(',').map((s) => s.trim()).filter(Boolean) as any
-                  )
-                }
-              />
+              <Input label="Theme.accent" val={b.theme?.accent || ''} onChange={(v) => update(i, 'theme', { ...(b.theme || {}), accent: v, shadow: b.theme?.shadow || 'rgba(0,0,0,.3)' })}/>
+              <Input label="Theme.shadow" val={b.theme?.shadow || ''} onChange={(v) => update(i, 'theme', { ...(b.theme || {}), shadow: v, accent: b.theme?.accent || '#22c55e' })}/>
+              <Input label="Payments (csv: mbw,mb,visa,mc,btc)" val={(b.payments || []).join(',')} onChange={(v) => update(i, 'payments', v.split(',').map((s) => s.trim()).filter(Boolean) as any)} />
             </div>
           </div>
         ))}
@@ -270,14 +229,8 @@ export default function ModeratorPage() {
 }
 
 function Input({
-  label,
-  val,
-  onChange,
-}: {
-  label: string;
-  val: string | number | undefined;
-  onChange: (v: string) => void;
-}) {
+  label, val, onChange,
+}: { label: string; val: string | number | undefined; onChange: (v: string) => void }) {
   return (
     <label className="flex flex-col gap-1">
       <span className="text-xs text-white/70">{label}</span>
