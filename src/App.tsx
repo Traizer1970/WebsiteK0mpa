@@ -391,17 +391,16 @@ function Sidebar({
       isActive ? "ring-1 ring-white/25 bg-white/5" : "",
     ].join(" ");
 
-return (
-  <aside
-    className="hidden md:block w-full md:sticky"
-    style={{
-      top: "var(--hdr-offset,68px)",
-      maxHeight: "calc(100dvh - var(--hdr-offset,68px) - 8px)",
-    }}
-  >
-    <div
-      className="h-full min-h-0 overflow-auto rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col"
+  return (
+    <aside
+      className="hidden md:block w-full md:sticky"
+      style={{
+        // header + distância até ao embed
+        top: "calc(var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))",
+        maxHeight: "calc(100dvh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)) - 8px)",
+      }}
     >
+      <div className="h-full min-h-0 overflow-auto rounded-2xl bg-white/10 backdrop-blur-md p-4 text-white/90 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)] flex flex-col">
         <div>
           <div className="mb-2 flex items-center justify-between rounded-xl px-2 py-1">
             <span className="text-sm font-semibold text-white">
@@ -950,25 +949,21 @@ function StreamHero({ channel }: { channel: string }) {
 
 function Home() {
   const { brands, error } = useBrands();
-
-  if (error) {
-    return <div className="text-white/80">Falhou a carregar marcas: {error}</div>;
-  }
-  if (!brands) {
-    return <div className="text-white/60">A carregar…</div>;
-  }
+  if (error) return <div className="text-white/80">Falhou a carregar marcas: {error}</div>;
+  if (!brands) return <div className="text-white/60">A carregar…</div>;
 
   return (
     <>
       <div className="grid gap-8 lg:gap-10 md:grid-cols-2">
         {brands.map((b, i) => (
-          <React.Fragment key={b.name + i}>
-            <div id={`brand-${slug(b.name)}`}>
-              <BrandCard b={b} />
-            </div>
-          </React.Fragment>
+          <div key={b.name + i} id={`brand-${slug(b.name)}`}>
+            <BrandCard b={b} />
+          </div>
         ))}
       </div>
+
+      {/* ⬇️ ANCORAGEM PARA ALINHAR A SIDEBAR */}
+      <div id="embeds-start" />
 
       <div className="grid gap-6 sm:grid-cols-2">
         <TwitchEmbedMini channel={TWITCH_CHANNEL} />
@@ -977,6 +972,7 @@ function Home() {
     </>
   );
 }
+
 /* ---------- Embeds pequenos ---------- */
 const TwitchEmbedMini = React.forwardRef<HTMLDivElement, { channel: string }>(
   ({ channel }, ref) => {
@@ -1396,6 +1392,16 @@ export default function App() {
     setFixedHeight(undefined);
     const raf1 = requestAnimationFrame(() => {
       const raf2 = requestAnimationFrame(() => measureOnce());
+      // depois de measureOnce(), acrescenta esta medição
+useEffect(() => {
+  const main = rightColRef.current;
+  if (!main) return;
+
+  const anchor = main.querySelector<HTMLElement>("#embeds-start");
+  const extra = anchor ? anchor.offsetTop : 0; // px desde o topo do <main>
+  document.documentElement.style.setProperty("--sidebar-extra-top", `${extra}px`);
+}, [location.pathname]);
+
       (window as any).__raf2 = raf2;
     });
     (window as any).__raf1 = raf1;
