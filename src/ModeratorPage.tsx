@@ -3,10 +3,12 @@
 import React from 'react';
 import { Plus, Save, Trash2, MoveUp, MoveDown, LogIn } from 'lucide-react';
 
-// ---- CONFIG ----
-const BRANDS_URL = 'https://fovgbsynuxfgypzctvxg.supabase.co/functions/v1/hyper-function';
-const ANON = (import.meta.env.VITE_SUPABASE_ANON || '').trim();
+// URL do Edge Function Supabase
+const BRANDS_URL =
+  'https://fovgbsynuxfgypzctvxg.supabase.co/functions/v1/hyper-function';
 
+// ANON KEY lida do Vite (.env -> VITE_SUPABASE_ANON)
+const ANON = (import.meta.env.VITE_SUPABASE_ANON || '').trim();
 
 export type Brand = {
   name: string;
@@ -48,23 +50,24 @@ export default function ModeratorPage() {
   const [error, setError] = React.useState<string | undefined>();
   const [brands, setBrands] = React.useState<Brand[]>([]);
 
-  const requiredHeaders = React.useMemo(
+  const needAnon = !ANON;
+  const authHeaders = React.useMemo(
     () => ({
-      Authorization: ANON ? `Bearer ${ANON}` : '',
+      Authorization: `Bearer ${ANON}`,
     }),
     []
   );
 
-  // -------- carregar dados --------
+  // ------- LOAD -------
   const load = React.useCallback(async () => {
-    setLoading(true); setError(undefined);
+    setLoading(true);
+    setError(undefined);
     try {
+      if (needAnon) throw new Error('Falta configurar VITE_SUPABASE_ANON');
       const r = await fetch(BRANDS_URL, {
         method: 'GET',
         cache: 'no-store',
-        headers: {
-          ...requiredHeaders,
-        },
+        headers: authHeaders,
       });
       if (!r.ok) throw new Error(`Erro ao carregar (${r.status})`);
       const data = await r.json();
@@ -74,30 +77,15 @@ export default function ModeratorPage() {
     } finally {
       setLoading(false);
     }
-  }, [requiredHeaders]);
+  }, [authHeaders, needAnon]);
 
-  // -------- login: valida a senha no servidor (dry-run) --------
+  // ------- LOGIN -------
   const doLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(undefined);
     try {
-      if (!ANON) throw new Error('Falta configurar NEXT_PUBLIC_SUPABASE_ANON');
-      if (!pass) throw new Error('Introduz a senha.');
-
-      // dry-run: só valida a password
-      const r = await fetch(`${BRANDS_URL}?dry=1`, {
-        method: 'PUT',
-        headers: {
-          ...requiredHeaders,
-          'Content-Type': 'application/json',
-          'x-admin-key': pass,
-        },
-        body: '[]',
-      });
-
-      if (r.status === 401) throw new Error('Senha inválida');
-      if (!r.ok) throw new Error(`Falha na validação (${r.status})`);
-
+      if (needAnon) throw new Error('Falta configurar VITE_SUPABASE_ANON');
+      // só valida se a função está acessível (GET)
       await load();
       setAuthed(true);
     } catch (e: any) {
@@ -105,8 +93,12 @@ export default function ModeratorPage() {
     }
   };
 
-  // -------- CRUD --------
-  const addBrand   = () => setBrands((b) => [...b, emptyBrand()]);
+  React.useEffect(() => {
+    if (authed) load();
+  }, [authed, load]);
+
+  // ------- CRUD -------
+  const addBrand = () => setBrands((b) => [...b, emptyBrand()]);
   const removeBrand = (i: number) => setBrands((b) => b.filter((_, idx) => idx !== i));
   const move = (i: number, dir: -1 | 1) =>
     setBrands((b) => {
@@ -117,23 +109,25 @@ export default function ModeratorPage() {
       arr.splice(j, 0, x);
       return arr;
     });
+
   const update = <K extends keyof Brand>(i: number, key: K, val: Brand[K]) =>
     setBrands((b) => b.map((it, idx) => (idx === i ? { ...it, [key]: val } : it)));
 
-  // -------- gravar alterações --------
+  // ------- SAVE -------
   const save = async () => {
-    setSaving(true); setError(undefined);
+    setSaving(true);
+    setError(undefined);
     try {
+      if (!pass) throw new Error('Escreve a senha de admin');
       const r = await fetch(BRANDS_URL, {
         method: 'PUT',
         headers: {
-          ...requiredHeaders,
           'Content-Type': 'application/json',
-          'x-admin-key': pass, // usa a mesma senha do login
+          ...authHeaders,
+          'x-admin-key': pass, // validada no Edge Function com ADMIN_PASSWORD
         },
         body: JSON.stringify(brands, null, 2),
       });
-
       if (r.status === 401) throw new Error('Senha inválida');
       if (!r.ok) throw new Error(`Falha ao gravar (${r.status})`);
     } catch (e: any) {
@@ -143,7 +137,7 @@ export default function ModeratorPage() {
     }
   };
 
-  // -------- interface --------
+  // ------- UI -------
   if (!authed) {
     return (
       <div className="mx-auto max-w-md mt-16 p-6 rounded-2xl bg-white/10 text-white ring-1 ring-white/15">
@@ -169,11 +163,19 @@ export default function ModeratorPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <button onClick={addBrand} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white">
+        <button
+          onClick={addBrand}
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white"
+        >
           <Plus className="h-4 w-4" /> Adicionar casino
         </button>
-        <button onClick={save} disabled={saving} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white disabled:opacity-60">
-          <Save className="h-4 w-4" />{saving ? 'A gravar…' : 'Gravar alterações'}
+        <button
+          onClick={save}
+          disabled={saving}
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white disabled:opacity-60"
+        >
+          <Save className="h-4 w-4" />
+          {saving ? 'A gravar…' : 'Gravar alterações'}
         </button>
         {loading && <span className="text-white/70 text-sm">a carregar…</span>}
         {error && <span className="text-red-300 text-sm">{error}</span>}
@@ -199,9 +201,15 @@ export default function ModeratorPage() {
                 <option value="TOP">TOP</option>
               </select>
               <div className="ml-auto flex gap-1">
-                <button onClick={() => move(i, -1)} className="p-2 rounded-lg bg-white/10"><MoveUp className="h-4 w-4" /></button>
-                <button onClick={() => move(i, 1)} className="p-2 rounded-lg bg-white/10"><MoveDown className="h-4 w-4" /></button>
-                <button onClick={() => removeBrand(i)} className="p-2 rounded-lg bg-red-600/80"><Trash2 className="h-4 w-4" /></button>
+                <button onClick={() => move(i, -1)} className="p-2 rounded-lg bg-white/10">
+                  <MoveUp className="h-4 w-4" />
+                </button>
+                <button onClick={() => move(i, 1)} className="p-2 rounded-lg bg-white/10">
+                  <MoveDown className="h-4 w-4" />
+                </button>
+                <button onClick={() => removeBrand(i)} className="p-2 rounded-lg bg-red-600/80">
+                  <Trash2 className="h-4 w-4" />
+                </button>
               </div>
             </div>
 
@@ -209,17 +217,43 @@ export default function ModeratorPage() {
               <Input label="Logo URL" val={b.logo} onChange={(v) => update(i, 'logo', v)} />
               <Input label="Imagem URL" val={b.image} onChange={(v) => update(i, 'image', v)} />
               <Input label="Link" val={b.link} onChange={(v) => update(i, 'link', v)} />
-              <Input label="Posição imagem (ex: center, left, 20% 50%)" val={b.imagePos || ''} onChange={(v) => update(i, 'imagePos', v as any)} />
+              <Input
+                label="Posição imagem (ex: center, left, 20% 50%)"
+                val={b.imagePos || ''}
+                onChange={(v) => update(i, 'imagePos', v as any)}
+              />
 
               <Input label="Min. Dep." val={b.minDep} onChange={(v) => update(i, 'minDep', v)} />
               <Input label="Bónus" val={b.bonus} onChange={(v) => update(i, 'bonus', v)} />
-              <Input label="Cashback/Wager" val={b.cashback} onChange={(v) => update(i, 'cashback', v)} />
+              <Input
+                label="Cashback/Wager"
+                val={b.cashback}
+                onChange={(v) => update(i, 'cashback', v)}
+              />
               <Input label="Free Spins" val={b.freeSpins} onChange={(v) => update(i, 'freeSpins', v)} />
               <Input label="Código" val={b.code} onChange={(v) => update(i, 'code', v)} />
 
-              <Input label="Theme.accent" val={b.theme?.accent || ''} onChange={(v) => update(i, 'theme', { ...(b.theme || {}), accent: v, shadow: b.theme?.shadow || 'rgba(0,0,0,.3)' })}/>
-              <Input label="Theme.shadow" val={b.theme?.shadow || ''} onChange={(v) => update(i, 'theme', { ...(b.theme || {}), shadow: v, accent: b.theme?.accent || '#22c55e' })}/>
-              <Input label="Payments (csv: mbw,mb,visa,mc,btc)" val={(b.payments || []).join(',')} onChange={(v) => update(i, 'payments', v.split(',').map((s) => s.trim()).filter(Boolean) as any)} />
+              <Input
+                label="Theme.accent"
+                val={b.theme?.accent || ''}
+                onChange={(v) =>
+                  update(i, 'theme', { ...(b.theme || {}), accent: v, shadow: b.theme?.shadow || 'rgba(0,0,0,.3)' })
+                }
+              />
+              <Input
+                label="Theme.shadow"
+                val={b.theme?.shadow || ''}
+                onChange={(v) =>
+                  update(i, 'theme', { ...(b.theme || {}), shadow: v, accent: b.theme?.accent || '#22c55e' })
+                }
+              />
+              <Input
+                label="Payments (csv: mbw,mb,visa,mc,btc)"
+                val={(b.payments || []).join(',')}
+                onChange={(v) =>
+                  update(i, 'payments', v.split(',').map((s) => s.trim()).filter(Boolean) as any)
+                }
+              />
             </div>
           </div>
         ))}
@@ -229,8 +263,14 @@ export default function ModeratorPage() {
 }
 
 function Input({
-  label, val, onChange,
-}: { label: string; val: string | number | undefined; onChange: (v: string) => void }) {
+  label,
+  val,
+  onChange,
+}: {
+  label: string;
+  val: string | number | undefined;
+  onChange: (v: string) => void;
+}) {
   return (
     <label className="flex flex-col gap-1">
       <span className="text-xs text-white/70">{label}</span>
