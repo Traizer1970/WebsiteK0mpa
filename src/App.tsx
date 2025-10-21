@@ -442,16 +442,13 @@ function Sidebar({
   ref={stickyRef}
   data-density={density}
   className="px-4 pt-4 pb-0 text-white/90 flex flex-col md:sticky"
-  style={{
-    // distância ao topo = header + offset extra (que medes por página)
-    top: "calc(var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))",
-    // altura útil idem, para o footer poder ir ao fundo
-    maxHeight:
-      "calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)))",
-    minHeight:
-      "calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)))",
-    overflow: "auto",
-  }}
+style={{
+  top: "calc(var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))",
+  maxHeight: "var(--sidebar-maxpx, calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))))",
+  minHeight: "var(--sidebar-maxpx, calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))))",
+  overflow: "auto",
+}}
+
 >
 
           <div>
@@ -1295,6 +1292,7 @@ const updateSidebarMetrics = React.useCallback(() => {
   const main = rightColRef.current;
   if (!main) return;
 
+  // escolhe o anchor por rota
   const selector =
     location.pathname.startsWith("/betify")  ? "#betify-start"  :
     location.pathname.startsWith("/ignibet") ? "#ignibet-start" :
@@ -1306,12 +1304,37 @@ const updateSidebarMetrics = React.useCallback(() => {
   if (anchor) {
     const a = anchor.getBoundingClientRect();
     const m = main.getBoundingClientRect();
-    // distância do topo do <main> ao anchor (clamp >= 0)
     extraTop = Math.max(0, Math.round(a.top - m.top));
   }
-
   document.documentElement.style.setProperty("--sidebar-extra-top", `${extraTop}px`);
+
+  // ⚠️ Limita a altura da sidebar à altura da secção nas páginas Betify/Ignibet
+  const isLanding = location.pathname.startsWith("/betify") || location.pathname.startsWith("/ignibet");
+  if (isLanding) {
+    // primeira section da página (é a tua hero+conteúdo)
+    const section = main.querySelector<HTMLElement>("section");
+    if (section) {
+      const secRect = section.getBoundingClientRect();
+      const mainRect = main.getBoundingClientRect();
+
+      // altura da secção a partir do anchor (desconta o que está acima do anchor)
+      const sectionHeight = Math.max(0, Math.round(secRect.bottom - mainRect.top - extraTop));
+
+      // limite por viewport (vh - header - extraTop)
+      const hdr = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hdr-offset")) || 68;
+      const byViewport = Math.max(0, Math.round(window.innerHeight - hdr - extraTop));
+
+      const usable = Math.max(240, Math.min(sectionHeight, byViewport)); // clamp mínimo simpático
+      document.documentElement.style.setProperty("--sidebar-maxpx", `${usable}px`);
+    } else {
+      document.documentElement.style.removeProperty("--sidebar-maxpx");
+    }
+  } else {
+    // Home (ou outras): comportamento antigo por viewport
+    document.documentElement.style.removeProperty("--sidebar-maxpx");
+  }
 }, [location.pathname]);
+
 
 
 
