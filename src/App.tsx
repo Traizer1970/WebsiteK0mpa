@@ -283,29 +283,51 @@ export type Brand = {
   payments?: Array<"btc"|"mb"|"mbb"|"visa"|"mc">;
 };
 type ApiBrands = Brand[];
-
+// substitui a implementação atual de useBrands()
 function useBrands() {
   const [brands, setBrands] = React.useState<ApiBrands | null>(null);
-  const [error, setError] = React.useState<null | string>(null);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const FUNC = (import.meta.env.VITE_SUPABASE_FUNC_URL || "").trim();
+  const ANON = (import.meta.env.VITE_SUPABASE_ANON || "").trim();
 
   React.useEffect(() => {
     let alive = true;
+
     (async () => {
       try {
-        const res = await fetch("/api/brands.json", { cache: "no-store" });
-        if (!res.ok) throw new Error(await res.text().catch(()=>"Failed"));
-        const data: ApiBrands = await res.json();
+        if (!FUNC || !ANON) {
+          throw new Error("Falta configurar VITE_SUPABASE_FUNC_URL / VITE_SUPABASE_ANON");
+        }
+
+        const res = await fetch(FUNC, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${ANON}` },
+          cache: "no-store",
+        });
+
+        if (!res.ok) throw new Error(`Falha GET (${res.status})`);
+        const json = await res.json(); // { data: [...] }
+        const data: ApiBrands = json?.data || [];
         if (alive) setBrands(data);
-      } catch (e:any) {
-        if (alive) setError(e?.message || "Erro a carregar brands");
+      } catch (e: any) {
+        // opcional: fallback para o ficheiro estático, se quiseres
+        try {
+          const fallback = await fetch("/api/brands.json", { cache: "no-store" });
+          if (!fallback.ok) throw new Error(await fallback.text().catch(() => "Falhou"));
+          const data: ApiBrands = await fallback.json();
+          if (alive) setBrands(data);
+        } catch {
+          if (alive) setError(e?.message || "Erro a carregar brands");
+        }
       }
     })();
+
     return () => { alive = false; };
   }, []);
 
   return { brands, error };
 }
-
 
 /* Ícones inline (TikTok + X) */
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
