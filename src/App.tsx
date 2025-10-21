@@ -438,13 +438,18 @@ function Sidebar({
   return (
     <aside className="hidden md:block w-full self-stretch">
       <div className="h-full rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]">
-        <div
+<div
   ref={stickyRef}
   data-density={density}
-  className="px-4 pt-4 pb-0 text-white/90 flex flex-col md:sticky min-h-[calc(100vh-var(--hdr-offset,68px))]"
+  className="px-4 pt-4 pb-0 text-white/90 flex flex-col md:sticky"
   style={{
-    top: "var(--hdr-offset,68px)",
-    maxHeight: "calc(100vh - var(--hdr-offset,68px))",
+    // distância ao topo = header + offset extra (que medes por página)
+    top: "calc(var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))",
+    // altura útil idem, para o footer poder ir ao fundo
+    maxHeight:
+      "calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)))",
+    minHeight:
+      "calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)))",
     overflow: "auto",
   }}
 >
