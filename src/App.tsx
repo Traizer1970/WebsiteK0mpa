@@ -23,9 +23,6 @@ const IGNIBET_PROMO_URL  = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZ
 
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
-const FUNC = (import.meta.env.VITE_SUPABASE_FUNC_URL || "").trim();
-const ANON = (import.meta.env.VITE_SUPABASE_ANON || "").trim();
-
 
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
@@ -286,48 +283,29 @@ export type Brand = {
   payments?: Array<"btc"|"mb"|"mbb"|"visa"|"mc">;
 };
 type ApiBrands = Brand[];
+
 function useBrands() {
   const [brands, setBrands] = React.useState<ApiBrands | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<null | string>(null);
 
   React.useEffect(() => {
     let alive = true;
-
     (async () => {
       try {
-        if (!FUNC || !ANON) {
-          throw new Error("Falta configurar VITE_SUPABASE_FUNC_URL / VITE_SUPABASE_ANON");
-        }
-
-        const res = await fetch(FUNC, {
-          method: "GET",
-          headers: { Authorization: `Bearer ${ANON}` },
-          cache: "no-store",
-        });
-        if (!res.ok) throw new Error(`Falha GET (${res.status})`);
-
-        // a função deve devolver { data: Brand[] }
-        const json = await res.json();
-        const data: ApiBrands = json?.data || [];
+        const res = await fetch("/api/brands.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(await res.text().catch(()=>"Failed"));
+        const data: ApiBrands = await res.json();
         if (alive) setBrands(data);
-      } catch (e: any) {
-        // opcional: fallback local
-        try {
-          const r = await fetch("/api/brands.json", { cache: "no-store" });
-          if (!r.ok) throw new Error(await r.text().catch(() => "Falhou"));
-          const data: ApiBrands = await r.json();
-          if (alive) setBrands(data);
-        } catch {
-          if (alive) setError(e?.message || "Erro a carregar brands");
-        }
+      } catch (e:any) {
+        if (alive) setError(e?.message || "Erro a carregar brands");
       }
     })();
-
     return () => { alive = false; };
   }, []);
 
   return { brands, error };
 }
+
 
 /* Ícones inline (TikTok + X) */
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -1046,33 +1024,21 @@ const displayCode = isIgnibet ? t.wazbee.steps.two_code : b.code;
           <TagBadge tag={b.tag} accent={acc} />
 <div className="absolute inset-0 overflow-hidden rounded-3xl">
   {/* Fundo (volta a usar a imagem do brand) */}
-<img
-  src={b.image}
-  alt={b.name}
-  className="absolute inset-0 h-full w-full object-cover"
-  style={{ objectPosition: b.imagePos || "center" }}
-  referrerPolicy="no-referrer"
-  onError={(e) => { e.currentTarget.src = "/fallback.jpg"; }}   // opcional
-  loading="lazy"
-  decoding="async"
-/>
-
+  <img
+    src={b.image}
+    alt=""
+    className="absolute inset-0 h-full w-full object-cover"
+    style={{ objectPosition: b.imagePos || "center" }}
+  />
 
   {/* Overlay suave para leitura */}
   <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/55" />
 
 {isIgnibet && (
   <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 z-20">
-    <img
-      src={b.logo}
-      alt={b.name}
-      className="h-10 sm:h-12 object-contain"
-      referrerPolicy="no-referrer"
-      onError={(e) => { e.currentTarget.style.display = "none"; }}
-    />
+    <img src={b.logo} alt={b.name} className="h-10 sm:h-12 object-contain" />
   </div>
 )}
-
 
 
   {/* Botão "Mais" acima do logo */}
