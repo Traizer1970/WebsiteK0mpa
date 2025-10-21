@@ -3,8 +3,13 @@
 import React from 'react';
 import { Plus, Save, Trash2, MoveUp, MoveDown, LogIn } from 'lucide-react';
 
-// URL da função Edge no Supabase
-const BRANDS_URL = 'https://fovgbsynuxfgypzctvxg.supabase.co/functions/v1/hyper-function';
+// Endpoint da tua Edge Function
+const BRANDS_URL =
+  'https://fovgbsynuxfgypzctvxg.supabase.co/functions/v1/hyper-function';
+
+// ⚠️ ANON KEY do teu projeto (pode ficar público no frontend)
+const SUPABASE_ANON =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvdmdic3ludXhmZ3lwemN0dnhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwNjAxNTgsImV4cCI6MjA3NjYzNjE1OH0.Z69Zz_syvs3gFec3tbvLVPxRWUJt-uh_XIi4B2722tM';
 
 export type Brand = {
   name: string;
@@ -53,10 +58,11 @@ export default function ModeratorPage() {
     try {
       const r = await fetch(BRANDS_URL, {
         method: 'GET',
-        headers: { 'x-admin-key': pass },
         cache: 'no-store',
+        headers: {
+          Authorization: `Bearer ${SUPABASE_ANON}`,
+        },
       });
-      if (r.status === 401) throw new Error('Senha inválida');
       if (!r.ok) throw new Error(`Erro ao carregar (${r.status})`);
       const data = await r.json();
       setBrands(data?.data || []);
@@ -65,21 +71,15 @@ export default function ModeratorPage() {
     } finally {
       setLoading(false);
     }
-  }, [pass]);
+  }, []);
 
-  // -------- login --------
+  // -------- login (não grava nada; apenas carrega e entra) --------
   const doLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(undefined);
     try {
-      const r = await fetch(BRANDS_URL, {
-        method: 'GET',
-        headers: { 'x-admin-key': pass },
-      });
-      if (r.status === 401) throw new Error('Senha inválida');
-      if (!r.ok) throw new Error(`Erro (${r.status})`);
-      const data = await r.json();
-      setBrands(data?.data || []);
+      // Se a função estiver acessível, entra no painel.
+      await load();
       setAuthed(true);
     } catch (e: any) {
       setError(e.message || 'Falhou autenticação');
@@ -92,7 +92,8 @@ export default function ModeratorPage() {
 
   // -------- CRUD --------
   const addBrand = () => setBrands((b) => [...b, emptyBrand()]);
-  const removeBrand = (i: number) => setBrands((b) => b.filter((_, idx) => idx !== i));
+  const removeBrand = (i: number) =>
+    setBrands((b) => b.filter((_, idx) => idx !== i));
   const move = (i: number, dir: -1 | 1) =>
     setBrands((b) => {
       const j = i + dir;
@@ -115,10 +116,12 @@ export default function ModeratorPage() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-key': pass,
+          Authorization: `Bearer ${SUPABASE_ANON}`,
+          'x-admin-key': pass, // <- tem de bater com ADMIN_PASSWORD no Supabase
         },
         body: JSON.stringify(brands, null, 2),
       });
+
       if (r.status === 401) throw new Error('Senha inválida');
       if (!r.ok) throw new Error(`Falha ao gravar (${r.status})`);
     } catch (e: any) {
@@ -128,7 +131,7 @@ export default function ModeratorPage() {
     }
   };
 
-  // -------- interface --------
+  // -------- UI --------
   if (!authed) {
     return (
       <div className="mx-auto max-w-md mt-16 p-6 rounded-2xl bg-white/10 text-white ring-1 ring-white/15">
@@ -146,7 +149,9 @@ export default function ModeratorPage() {
           </button>
         </form>
         {error && <p className="mt-2 text-sm text-red-300">{error}</p>}
-        <p className="mt-3 text-xs text-white/60">A senha não é guardada no navegador.</p>
+        <p className="mt-3 text-xs text-white/60">
+          A senha não é guardada no navegador.
+        </p>
       </div>
     );
   }
@@ -174,7 +179,10 @@ export default function ModeratorPage() {
 
       <div className="grid gap-4">
         {brands.map((b, i) => (
-          <div key={i} className="rounded-2xl p-4 bg-white/10 ring-1 ring-white/15 text-white">
+          <div
+            key={i}
+            className="rounded-2xl p-4 bg-white/10 ring-1 ring-white/15 text-white"
+          >
             <div className="flex items-center gap-2 mb-3">
               <input
                 value={b.name}
@@ -213,19 +221,13 @@ export default function ModeratorPage() {
                 val={b.imagePos || ''}
                 onChange={(v) => update(i, 'imagePos', v as any)}
               />
+
               <Input label="Min. Dep." val={b.minDep} onChange={(v) => update(i, 'minDep', v)} />
               <Input label="Bónus" val={b.bonus} onChange={(v) => update(i, 'bonus', v)} />
-              <Input
-                label="Cashback/Wager"
-                val={b.cashback}
-                onChange={(v) => update(i, 'cashback', v)}
-              />
-              <Input
-                label="Free Spins"
-                val={b.freeSpins}
-                onChange={(v) => update(i, 'freeSpins', v)}
-              />
+              <Input label="Cashback/Wager" val={b.cashback} onChange={(v) => update(i, 'cashback', v)} />
+              <Input label="Free Spins" val={b.freeSpins} onChange={(v) => update(i, 'freeSpins', v)} />
               <Input label="Código" val={b.code} onChange={(v) => update(i, 'code', v)} />
+
               <Input
                 label="Theme.accent"
                 val={b.theme?.accent || ''}
@@ -252,7 +254,11 @@ export default function ModeratorPage() {
                 label="Payments (csv: mbw,mb,visa,mc,btc)"
                 val={(b.payments || []).join(',')}
                 onChange={(v) =>
-                  update(i, 'payments', v.split(',').map((s) => s.trim()).filter(Boolean) as any)
+                  update(
+                    i,
+                    'payments',
+                    v.split(',').map((s) => s.trim()).filter(Boolean) as any
+                  )
                 }
               />
             </div>
