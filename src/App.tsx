@@ -618,6 +618,7 @@ function IgnibetLanding() {
   return (
     <div className="space-y-8">
       <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
+        <div id="ignibet-start" />
         {/* glow */}
         <div
           aria-hidden
@@ -715,10 +716,6 @@ function IgnibetLanding() {
             </div>
           </div>
         </div>
-
-<div id="betify-start" />
-
- <div id="ignibet-start" />
 
         {/* Promos */}
         <div id="ignibet-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -1166,6 +1163,7 @@ function BetifyLanding({ endRef }: { endRef?: React.RefObject<HTMLDivElement> })
   return (
     <div className="space-y-8">
       <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
+        <div id="betify-start" /> 
         <div aria-hidden className="pointer-events-none absolute inset-0" style={{background:
           "radial-gradient(60% 80% at 10% 0%, rgba(139,92,246,.18) 0%, rgba(139,92,246,0) 55%)," +
           "radial-gradient(50% 60% at 85% 100%, rgba(34,197,94,.16) 0%, rgba(34,197,94,0) 60%)", mixBlendMode:"screen"}} />
@@ -1297,17 +1295,24 @@ const updateSidebarMetrics = React.useCallback(() => {
   const main = rightColRef.current;
   if (!main) return;
 
-  // escolhe o marcador de acordo com a rota
-  const anchorSelector =
+  const selector =
     location.pathname.startsWith("/betify")  ? "#betify-start"  :
     location.pathname.startsWith("/ignibet") ? "#ignibet-start" :
-                                               "#embeds-start"; // Home (default)
+                                               "#embeds-start";
 
-  const anchor = main.querySelector<HTMLElement>(anchorSelector);
-  const extraTop = anchor ? anchor.offsetTop : 0;
+  const anchor = main.querySelector<HTMLElement>(selector);
+
+  let extraTop = 0;
+  if (anchor) {
+    const a = anchor.getBoundingClientRect();
+    const m = main.getBoundingClientRect();
+    // distância do topo do <main> ao anchor (clamp >= 0)
+    extraTop = Math.max(0, Math.round(a.top - m.top));
+  }
 
   document.documentElement.style.setProperty("--sidebar-extra-top", `${extraTop}px`);
 }, [location.pathname]);
+
 
 
 // re-medir quando mudas de página
