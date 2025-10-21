@@ -3,12 +3,13 @@
 import React from 'react';
 import { Plus, Save, Trash2, MoveUp, MoveDown, LogIn } from 'lucide-react';
 
-// URL do Edge Function Supabase
-const BRANDS_URL =
-  'https://fovgbsynuxfgypzctvxg.supabase.co/functions/v1/hyper-function';
-
-// ANON KEY lida do Vite (.env -> VITE_SUPABASE_ANON)
-const ANON = (import.meta.env.VITE_SUPABASE_ANON || '').trim();
+/**
+ * Lê as variáveis do Vite (.env)
+ *   VITE_SUPABASE_FUNC_URL = https://...supabase.co/functions/v1/hyper-function
+ *   VITE_SUPABASE_ANON     = <token anon do Supabase>
+ */
+const FUNC_URL = (import.meta.env.VITE_SUPABASE_FUNC_URL || '').trim();
+const ANON     = (import.meta.env.VITE_SUPABASE_ANON || '').trim();
 
 export type Brand = {
   name: string;
@@ -42,6 +43,21 @@ const emptyBrand = (): Brand => ({
   payments: ['mbw', 'mb', 'visa', 'mc', 'btc'],
 });
 
+/** Helper para chamar a Edge Function já com Authorization Bearer <ANON> */
+function api(path = '', init: RequestInit = {}) {
+  if (!FUNC_URL) throw new Error('Falta configurar VITE_SUPABASE_FUNC_URL');
+  if (!ANON)     throw new Error('Falta configurar VITE_SUPABASE_ANON');
+
+  return fetch(`${FUNC_URL}${path}`, {
+    ...init,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${ANON}`,
+      ...(init.headers || {}),
+    },
+  });
+}
+
 export default function ModeratorPage() {
   const [pass, setPass] = React.useState('');
   const [authed, setAuthed] = React.useState(false);
@@ -50,25 +66,12 @@ export default function ModeratorPage() {
   const [error, setError] = React.useState<string | undefined>();
   const [brands, setBrands] = React.useState<Brand[]>([]);
 
-  const needAnon = !ANON;
-  const authHeaders = React.useMemo(
-    () => ({
-      Authorization: `Bearer ${ANON}`,
-    }),
-    []
-  );
-
   // ------- LOAD -------
   const load = React.useCallback(async () => {
     setLoading(true);
     setError(undefined);
     try {
-      if (needAnon) throw new Error('Falta configurar VITE_SUPABASE_ANON');
-      const r = await fetch(BRANDS_URL, {
-        method: 'GET',
-        cache: 'no-store',
-        headers: authHeaders,
-      });
+      const r = await api('', { method: 'GET', cache: 'no-store' });
       if (!r.ok) throw new Error(`Erro ao carregar (${r.status})`);
       const data = await r.json();
       setBrands(data?.data || []);
@@ -77,17 +80,31 @@ export default function ModeratorPage() {
     } finally {
       setLoading(false);
     }
-  }, [authHeaders, needAnon]);
+  }, []);
 
-  // ------- LOGIN -------
+  // ------- LOGIN (valida no servidor com dry-run) -------
   const doLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(undefined);
     try {
-      if (needAnon) throw new Error('Falta configurar VITE_SUPABASE_ANON');
-      // só valida se a função está acessível (GET)
-      await load();
-      setAuthed(true);
+      if (!pass) throw new Error('Escreve a senha de admin');
+
+      // PUT dry-run: o server retorna 204 se a senha (x-admin-key) estiver correta
+      const probe = await api('', {
+        method: 'PUT',
+        headers: { 'x-admin-key': pass, 'x-dry-run': '1' },
+        body: JSON.stringify([]),
+      });
+
+      if (probe.status === 204 || probe.ok) {
+        await load();
+        setAuthed(true);
+      } else if (probe.status === 401) {
+        throw new Error('Senha inválida');
+      } else {
+        const txt = await probe.text().catch(() => '');
+        throw new Error(`Falha ao validar (${probe.status}) ${txt}`);
+      }
     } catch (e: any) {
       setError(e.message || 'Falhou autenticação');
     }
@@ -113,19 +130,15 @@ export default function ModeratorPage() {
   const update = <K extends keyof Brand>(i: number, key: K, val: Brand[K]) =>
     setBrands((b) => b.map((it, idx) => (idx === i ? { ...it, [key]: val } : it)));
 
-  // ------- SAVE -------
+  // ------- SAVE (grava de verdade) -------
   const save = async () => {
     setSaving(true);
     setError(undefined);
     try {
       if (!pass) throw new Error('Escreve a senha de admin');
-      const r = await fetch(BRANDS_URL, {
+      const r = await api('', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          ...authHeaders,
-          'x-admin-key': pass, // validada no Edge Function com ADMIN_PASSWORD
-        },
+        headers: { 'x-admin-key': pass },
         body: JSON.stringify(brands, null, 2),
       });
       if (r.status === 401) throw new Error('Senha inválida');
@@ -155,7 +168,9 @@ export default function ModeratorPage() {
           </button>
         </form>
         {error && <p className="mt-2 text-sm text-red-300">{error}</p>}
-        <p className="mt-3 text-xs text-white/60">A senha não é guardada no navegador.</p>
+        <p className="mt-3 text-xs text-white/60">
+          A senha não é guardada no navegador.
+        </p>
       </div>
     );
   }
