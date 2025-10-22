@@ -411,10 +411,15 @@ function DiscordIcon(props: React.SVGProps<SVGSVGElement>) {
 function Sidebar({
   onOpenStream,
   onOpenCommunity,
+  showBetify,
+  showIgnibet,
 }: {
   onOpenStream: () => void;
   onOpenCommunity: () => void;
+  showBetify: boolean;
+  showIgnibet: boolean;
 }) {
+
   const { t } = useLang();
 
   // 1) refs e estado primeiro
@@ -504,27 +509,32 @@ function Sidebar({
                 </Badge>
               </NavLink>
 
-              <NavLink to="/betify" className={linkClasses}>
-                <span className="flex items-center gap-2">
-                  <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
-                  <span className="font-extrabold text-white">{t.nav.betify}</span>
-                </span>
-                <Badge className="text-white" style={{ background: "#16a34a" }}>
-                  <Flame className="h-3.5 w-3.5" />
-                  HOT
-                </Badge>
-              </NavLink>
+{showBetify && (
+  <NavLink to="/betify" className={linkClasses}>
+    <span className="flex items-center gap-2">
+      <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
+      <span className="font-extrabold text-white">{t.nav.betify}</span>
+    </span>
+    <Badge className="text-white" style={{ background: "#16a34a" }}>
+      <Flame className="h-3.5 w-3.5" />
+      HOT
+    </Badge>
+  </NavLink>
+)}
 
-              <NavLink to="/ignibet" className={linkClasses}>
-                <span className="flex items-center gap-2">
-                  <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
-                  <span className="font-extrabold text-white">Ignibet</span>
-                </span>
-                <Badge className="text-white flex items-center gap-1.5" style={{ background: "#6062df" }}>
-                  <Sparkles className="h-3.5 w-3.5" />
-                  {t.nav.new}
-                </Badge>
-              </NavLink>
+{showIgnibet && (
+  <NavLink to="/ignibet" className={linkClasses}>
+    <span className="flex items-center gap-2">
+      <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
+      <span className="font-extrabold text-white">Ignibet</span>
+    </span>
+    <Badge className="text-white flex items-center gap-1.5" style={{ background: "#6062df" }}>
+      <Sparkles className="h-3.5 w-3.5" />
+      {t.nav.new}
+    </Badge>
+  </NavLink>
+)}
+
 
               <div className={`${sizes.sectionGap} h-px bg-white/10`} />
 
@@ -1427,6 +1437,12 @@ useEffect(() => {
   };
 }, [location.pathname, updateSidebarMetrics]);
 
+// Lê as brands também no App
+const { brands: navBrands } = useBrands();
+
+// Flags: mostram na sidebar só se a brand estiver enabled (default: true)
+const showBetifyNav  = !!navBrands && navBrands.some(b => /betify/i.test(b.name)  && b.enabled !== false);
+const showIgnibetNav = !!navBrands && navBrands.some(b => /ignibet/i.test(b.name) && b.enabled !== false);
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
@@ -1441,9 +1457,12 @@ useEffect(() => {
              md:grid-cols-[240px,1fr] items-stretch"
 >
             <Sidebar
-              onOpenStream={() => setShowOverlay(true)}
-              onOpenCommunity={() => setShowCommunity(true)}
-            />
+  onOpenStream={() => setShowOverlay(true)}
+  onOpenCommunity={() => setShowCommunity(true)}
+  showBetify={showBetifyNav}
+  showIgnibet={showIgnibetNav}
+/>
+
 
             <main className="space-y-10" ref={rightColRef}>
               <Routes>
