@@ -23,7 +23,6 @@ const IGNIBET_PROMO_URL  = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZ
 const ZEUSBET_SIGNUP_URL = "https://2up.io/?r=K0MPA";
 const ZEUSBET_PROMO_URL  = "https://2up.io/?r=K0MPA";
 
-
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
 const SHOW_PROMO_CODE = false;
@@ -1217,6 +1216,9 @@ const methods = b.payments && b.payments.length ? b.payments : ["mbw","mb","visa
 const isIgnibet = /ignibet/i.test(b.name);
 const cashbackLabel = isIgnibet ? (lang === "PT" ? "Cashback" : "Cashback") : t.card.cashback;
 
+const is2up = /(2up|zeusbet)/i.test(b.name || "");
+const signupHref = is2up ? ZEUSBET_SIGNUP_URL : (b.link || "#");
+
   return (
     <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height:CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
       <div className="absolute inset-0 transition-transform duration-500" style={{ transformStyle:"preserve-3d", transform: flip ? "rotateY(180deg)" : "none" }}>
@@ -1264,7 +1266,7 @@ const cashbackLabel = isIgnibet ? (lang === "PT" ? "Cashback" : "Cashback") : t.
         <FancyStat icon={Sparkles} label={t.card.spins} value={cap(b.freeSpins, lang)} accent={acc} />
       </div>
       <div className="py-1.5 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
-      <div className="pt-0.5"><FancyCTA href={b.link} label={t.card.go} accent={acc} /></div>
+      <div className="pt-0.5"><FancyCTA href={signupHref} label={t.card.go} accent={acc} /></div>
     </div>
   </div>
 </div>
@@ -1311,7 +1313,7 @@ const cashbackLabel = isIgnibet ? (lang === "PT" ? "Cashback" : "Cashback") : t.
             <div className="mt-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
                 <button type="button" onClick={() => setFlip(false)} className="h-12 w-full rounded-2xl px-4 text-sm font-semibold text-white/90 bg-white/6 hover:bg-white/10 ring-1 ring-white/12 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60">Voltar</button>
-                <a href={b.link} target="_blank" rel="noreferrer" className="h-12 w-full inline-flex items-center justify-center rounded-2xl px-5 text-sm font-extrabold text-white ring-1 ring-white/10 transition hover:brightness-110 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background: `linear-gradient(135deg, ${acc}, ${rgba(acc, .88)})`, boxShadow: `inset 0 -1px 0 ${rgba('#000', .25)}` }}>Visitar marca</a>
+                <a href={signupHref} target="_blank" rel="noreferrer" className="h-12 w-full inline-flex items-center justify-center rounded-2xl px-5 text-sm font-extrabold text-white ring-1 ring-white/10 transition hover:brightness-110 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60" style={{ background: `linear-gradient(135deg, ${acc}, ${rgba(acc, .88)})`, boxShadow: `inset 0 -1px 0 ${rgba('#000', .25)}` }}>Visitar marca</a>
               </div>
             </div>
 
