@@ -559,7 +559,7 @@ function Sidebar({
 )}
 
 {showZeusbet && (
-  <NavLink to="/zeusbet" className={linkClasses}>
+  <NavLink to="/2up" className={linkClasses}>
     <span className="flex items-center gap-2">
       <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
       <span className="font-extrabold text-white">2UP</span>
@@ -1497,12 +1497,12 @@ const updateSidebarMetrics = React.useCallback(() => {
 
   const isBetify  = location.pathname.startsWith("/betify");
   const isIgnibet = location.pathname.startsWith("/ignibet");
-  const isZeusbet = location.pathname.startsWith("/zeusbet"); // <<< NOVO
+  const is2up = location.pathname.startsWith("/2up"); // <<< NOVO
 
   const selector =
     isBetify  ? "#betify-start"  :
     isIgnibet ? "#ignibet-start" :
-    isZeusbet ? "#zeusbet-start" : // <<< NOVO
+    is2up     ? "#zeusbet-start" :
                 "#embeds-start";
 
   const anchor = main.querySelector<HTMLElement>(selector);
@@ -1515,7 +1515,7 @@ const updateSidebarMetrics = React.useCallback(() => {
   }
   document.documentElement.style.setProperty("--sidebar-extra-top", `0px`);
 
-  if (isBetify || isIgnibet || isZeusbet) { // <<< NOVO
+  if (isBetify || isIgnibet || is2up) { // <<< NOVO
     const section = anchor?.closest("section") as HTMLElement | null;
     if (section) {
       const m = main.getBoundingClientRect();
@@ -1577,7 +1577,7 @@ const anchorSel = location.pathname.startsWith("/betify")
   ? "#betify-start"
   : location.pathname.startsWith("/ignibet")
   ? "#ignibet-start"
-  : location.pathname.startsWith("/zeusbet")
+  : location.pathname.startsWith("/2up")
   ? "#zeusbet-start"
   : null;
 
@@ -1631,7 +1631,7 @@ const showZeusbetNav = !!navBrands && navBrands.some(b => /zeusbet/i.test(b.name
   <Route path="/" element={<Home />} />
   <Route path="/betify" element={<BetifyLanding />} />
   <Route path="/ignibet" element={<IgnibetLanding />} />
-  <Route path="/zeusbet" element={<ZeusbetLanding />} />
+  <Route path="/2up" element={<ZeusbetLanding />} />
 
 
   {/* novo: painel do moderador */}
