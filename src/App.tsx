@@ -20,6 +20,9 @@ const BETIFY_SIGNUP_URL = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh
 const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
 const IGNIBET_SIGNUP_URL = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZcQGNd7ZgqdRLk/1/"; // TODO: coloca o teu link real
 const IGNIBET_PROMO_URL  = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZcQGNd7ZgqdRLk/1/"; // TODO: coloca o teu link real
+const ZEUSBET_SIGNUP_URL = "https://teu.link.zeusbet/signup";
+const ZEUSBET_PROMO_URL  = "https://teu.link.zeusbet/promo";
+
 
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
@@ -46,6 +49,11 @@ const betifyPromos: Promo[] = [
 const ignibetPromos: Promo[] = [
   { id: "every-dep", icon: Percent,  href: IGNIBET_PROMO_URL },
   { id: "fs-monthly", icon: Sparkles, href: IGNIBET_PROMO_URL },
+];
+
+const zeusbetPromos: Promo[] = [
+  { id: "every-dep", icon: Percent,  href: ZEUSBET_PROMO_URL },
+  { id: "fs-monthly", icon: Sparkles, href: ZEUSBET_PROMO_URL },
 ];
 
 
@@ -850,24 +858,31 @@ function IgnibetLanding() {
 }
 
 function ZeusbetLanding() {
+  const { t } = useLang();
   const scrollToPromos = () =>
-    document
-      .getElementById("zeusbet-promos")
+    document.getElementById("zeusbet-promos")
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  const accent = "#f59e0b"; // laranja Zeusbet
+  const accent = "#f59e0b"; // laranja
 
   return (
     <div className="space-y-8">
       <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
         <div id="zeusbet-start" />
 
-        <div aria-hidden className="pointer-events-none absolute inset-0"
-             style={{ background:
-               "radial-gradient(60% 80% at 10% 0%, rgba(245,158,11,.20) 0%, rgba(245,158,11,0) 55%)," +
-               "radial-gradient(50% 60% at 85% 100%, rgba(250,204,21,.16) 0%, rgba(250,204,21,0) 60%)",
-               mixBlendMode:"screen" }} />
+        {/* glow */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(60% 80% at 10% 0%, rgba(245,158,11,.20) 0%, rgba(245,158,11,0) 55%)," +
+              "radial-gradient(50% 60% at 85% 100%, rgba(250,204,21,.16) 0%, rgba(250,204,21,0) 60%)",
+            mixBlendMode: "screen",
+          }}
+        />
 
+        {/* grelha principal (passos + imagem) */}
         <div className="flex items-center justify-between gap-4 relative">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Zeusbet</h1>
@@ -879,19 +894,25 @@ function ZeusbetLanding() {
           <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
             <ol className="space-y-3 text-sm text-white/90">
               <li><span className="font-bold">1.</span> Cria conta na Zeusbet.</li>
-              <li><span className="font-bold">2.</span> Usa o código <span className="font-bold">K0MPA</span> no registo.</li>
-              <li><span className="font-bold">3.</span> Aproveita promoções, cashback e free spins.</li>
+              <li><span className="font-bold">2.</span> Aproveita promoções, cashback e free spins.</li>
             </ol>
 
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <a href="#" target="_blank" rel="noreferrer"
-                 className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 transition hover:brightness-110"
-                 style={{ background:`linear-gradient(180deg, ${accent}, #d97706)`, boxShadow:"0 10px 26px rgba(245,158,11,.28)" }}>
-                REGISTAR AGORA
+              <a
+                href={ZEUSBET_SIGNUP_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 transition hover:brightness-110"
+                style={{ background:`linear-gradient(180deg, ${accent}, #d97706)`, boxShadow:"0 10px 26px rgba(245,158,11,.28)" }}
+              >
+                REGISTAR AGORA <ExternalLink className="h-4 w-4" />
               </a>
 
-              <button type="button" onClick={scrollToPromos}
-                      className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/8 hover:bg-white/12 ring-1 ring-white/15">
+              <button
+                type="button"
+                onClick={scrollToPromos}
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/8 hover:bg-white/12 ring-1 ring-white/15"
+              >
                 VER PROMOÇÕES
               </button>
             </div>
@@ -899,14 +920,64 @@ function ZeusbetLanding() {
 
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
-              <img src="https://your-cdn/zeusbet-hero.jpg" alt="Zeusbet preview"
-                   className="absolute inset-0 h-full w-full object-cover" />
+              <img
+                src="https://thumbs.dreamstime.com/b/red-dice-poker-chips-smartphone-blurry-casino-background-ai-generated-image-381975267.jpg"
+                alt="Zeusbet preview"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
             </div>
           </div>
         </div>
 
+        {/* Promos (mesmo layout da Ignibet) */}
         <div id="zeusbet-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
-          {/* reusa os teus cards de promo aqui */}
+          {zeusbetPromos.map((p) => (
+            <div
+              key={p.id}
+              className="rounded-3xl p-5 sm:p-6 ring-1 ring-white/12 text-white/90 bg-white/[.06] backdrop-blur-md shadow-[0_14px_50px_rgba(0,0,0,.35)] relative overflow-hidden"
+            >
+              <span aria-hidden className="absolute inset-x-4 top-0 h-[3px] rounded-b-xl"
+                    style={{ background: "linear-gradient(90deg,#f59e0b,transparent)" }} />
+              <div className="flex items-start gap-3 relative">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
+                  <p.icon className="h-5 w-5 text-white" />
+                </span>
+                <div className="flex-1">
+                  <div className="text-xs font-semibold text-white/60 uppercase">Promo</div>
+                  <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">
+                    {p.id === "every-dep" ? "Bónus de Boas-Vindas" : "Bónus de Segundo Depósito"}
+                  </h3>
+                  <div className="mt-1.5 text-[13px] text-white/75">
+                    {p.id === "every-dep"
+                      ? "Zeusbet (Min. depósito €20 — detalhes do bónus)."
+                      : "Zeusbet (Min. depósito €20 — detalhes do 2º depósito)."}
+                  </div>
+
+                  <div className="mt-4">
+                    <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
+                      <Sparkles className="h-4 w-4" />
+                      <span className="text-sm font-extrabold text-white whitespace-nowrap">
+                        Até 750FS
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <a
+                      href={p.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10"
+                      style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)", boxShadow: "0 10px 26px rgba(245,158,11,.25)" }}
+                    >
+                      {t.card.go} <ExternalLink className="h-4 w-4" />
+                    </a>
+                    <span className="text-[11px] text-white/60 self-center">{t.card.terms}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </div>
