@@ -1631,7 +1631,7 @@ const showZeusbetNav = !!navBrands && navBrands.some(b => /zeusbet/i.test(b.name
   <Route path="/" element={<Home />} />
   <Route path="/betify" element={<BetifyLanding />} />
   <Route path="/ignibet" element={<IgnibetLanding />} />
-  <Route path="/2UP" element={<ZeusbetLanding />} />
+  <Route path="/zeusbet" element={<ZeusbetLanding />} />
 
 
   {/* novo: painel do moderador */}
