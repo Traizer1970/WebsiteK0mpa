@@ -559,7 +559,7 @@ function Sidebar({
 )}
 
 {showZeusbet && (
-  <NavLink to="/2up" className={linkClasses}>
+  <NavLink to="/zeusbet" className={linkClasses}>
     <span className="flex items-center gap-2">
       <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
       <span className="font-extrabold text-white">2UP</span>
@@ -1497,7 +1497,7 @@ const updateSidebarMetrics = React.useCallback(() => {
 
   const isBetify  = location.pathname.startsWith("/betify");
   const isIgnibet = location.pathname.startsWith("/ignibet");
-  const isZeusbet = location.pathname.startsWith("/2up"); // <<< NOVO
+  const isZeusbet = location.pathname.startsWith("/zeusbet"); // <<< NOVO
 
   const selector =
     isBetify  ? "#betify-start"  :
@@ -1577,7 +1577,7 @@ const anchorSel = location.pathname.startsWith("/betify")
   ? "#betify-start"
   : location.pathname.startsWith("/ignibet")
   ? "#ignibet-start"
-  : location.pathname.startsWith("/2up")
+  : location.pathname.startsWith("/zeusbet")
   ? "#zeusbet-start"
   : null;
 
@@ -1602,7 +1602,7 @@ const { brands: navBrands } = useBrands();
 // Flags: mostram na sidebar só se a brand estiver enabled (default: true)
 const showBetifyNav  = !!navBrands && navBrands.some(b => /betify/i.test(b.name)  && b.enabled !== false);
 const showIgnibetNav = !!navBrands && navBrands.some(b => /ignibet/i.test(b.name) && b.enabled !== false);
-const showZeusbetNav = !!navBrands && navBrands.some(b => /2up/i.test(b.name) && b.enabled !== false);
+const showZeusbetNav = !!navBrands && navBrands.some(b => /zeusbet/i.test(b.name) && b.enabled !== false);
 
 
   return (
@@ -1631,7 +1631,7 @@ const showZeusbetNav = !!navBrands && navBrands.some(b => /2up/i.test(b.name) &&
   <Route path="/" element={<Home />} />
   <Route path="/betify" element={<BetifyLanding />} />
   <Route path="/ignibet" element={<IgnibetLanding />} />
-  <Route path="/2up" element={<ZeusbetLanding />} />
+  <Route path="/2UP" element={<ZeusbetLanding />} />
 
 
   {/* novo: painel do moderador */}
