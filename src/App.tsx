@@ -413,11 +413,13 @@ function Sidebar({
   onOpenCommunity,
   showBetify,
   showIgnibet,
+  showZeusbet, 
 }: {
   onOpenStream: () => void;
   onOpenCommunity: () => void;
   showBetify: boolean;
   showIgnibet: boolean;
+  showZeusbet: boolean;
 }) {
 
   const { t } = useLang();
@@ -532,6 +534,16 @@ function Sidebar({
       <Sparkles className="h-3.5 w-3.5" />
       {t.nav.new}
     </Badge>
+  </NavLink>
+)}
+
+{showZeusbet && (
+  <NavLink to="/zeusbet" className={linkClasses}>
+    <span className="flex items-center gap-2">
+      <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
+      <span className="font-extrabold text-white">Zeusbet</span>
+    </span>
+    <Badge className="text-white" style={{ background: "#f59e0b" }}>NEW</Badge>
   </NavLink>
 )}
 
@@ -818,6 +830,70 @@ function IgnibetLanding() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function ZeusbetLanding() {
+  const scrollToPromos = () =>
+    document
+      .getElementById("zeusbet-promos")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  const accent = "#f59e0b"; // laranja Zeusbet
+
+  return (
+    <div className="space-y-8">
+      <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
+        <div id="zeusbet-start" />
+
+        <div aria-hidden className="pointer-events-none absolute inset-0"
+             style={{ background:
+               "radial-gradient(60% 80% at 10% 0%, rgba(245,158,11,.20) 0%, rgba(245,158,11,0) 55%)," +
+               "radial-gradient(50% 60% at 85% 100%, rgba(250,204,21,.16) 0%, rgba(250,204,21,0) 60%)",
+               mixBlendMode:"screen" }} />
+
+        <div className="flex items-center justify-between gap-4 relative">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Zeusbet</h1>
+            <p className="text-white/70 text-sm">Como jogar na Zeusbet e aproveitar o bónus.</p>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
+          <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
+            <ol className="space-y-3 text-sm text-white/90">
+              <li><span className="font-bold">1.</span> Cria conta na Zeusbet.</li>
+              <li><span className="font-bold">2.</span> Usa o código <span className="font-bold">K0MPA</span> no registo.</li>
+              <li><span className="font-bold">3.</span> Aproveita promoções, cashback e free spins.</li>
+            </ol>
+
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <a href="#" target="_blank" rel="noreferrer"
+                 className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 transition hover:brightness-110"
+                 style={{ background:`linear-gradient(180deg, ${accent}, #d97706)`, boxShadow:"0 10px 26px rgba(245,158,11,.28)" }}>
+                REGISTAR AGORA
+              </a>
+
+              <button type="button" onClick={scrollToPromos}
+                      className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/8 hover:bg-white/12 ring-1 ring-white/15">
+                VER PROMOÇÕES
+              </button>
+            </div>
+          </div>
+
+          <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
+            <div className="relative w-full" style={{ paddingTop: "100%" }}>
+              <img src="https://your-cdn/zeusbet-hero.jpg" alt="Zeusbet preview"
+                   className="absolute inset-0 h-full w-full object-cover" />
+            </div>
+          </div>
+        </div>
+
+        <div id="zeusbet-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
+          {/* reusa os teus cards de promo aqui */}
         </div>
       </section>
     </div>
@@ -1333,12 +1409,14 @@ const updateSidebarMetrics = React.useCallback(() => {
   const main = rightColRef.current;
   if (!main) return;
 
-  // âncora por rota
   const isBetify  = location.pathname.startsWith("/betify");
   const isIgnibet = location.pathname.startsWith("/ignibet");
+  const isZeusbet = location.pathname.startsWith("/zeusbet"); // <<< NOVO
+
   const selector =
     isBetify  ? "#betify-start"  :
     isIgnibet ? "#ignibet-start" :
+    isZeusbet ? "#zeusbet-start" : // <<< NOVO
                 "#embeds-start";
 
   const anchor = main.querySelector<HTMLElement>(selector);
@@ -1351,32 +1429,25 @@ const updateSidebarMetrics = React.useCallback(() => {
   }
   document.documentElement.style.setProperty("--sidebar-extra-top", `${extraTop}px`);
 
-  // Só limitamos pela SECTION nas landings
-if (isBetify || isIgnibet) {
-  // pega a <section> que contém o #...-start
-  const section = anchor?.closest("section") as HTMLElement | null;
-  if (section) {
-    const m = main.getBoundingClientRect();
-    const s = section.getBoundingClientRect();
-
-    // altura útil da section a partir do anchor
-    const sectionHeight = Math.max(0, Math.round(s.bottom - m.top - extraTop));
-
-    // altura “alvo” da sidebar + pequeno empurrão
-    const usable = Math.max(240, sectionHeight);
-    document.documentElement.style.setProperty("--sidebar-maxpx", `${usable}px`);
-    document.documentElement.style.setProperty("--sidebar-nudge", "16px"); // ajusta aqui p.ex. 20px/24px
+  if (isBetify || isIgnibet || isZeusbet) { // <<< NOVO
+    const section = anchor?.closest("section") as HTMLElement | null;
+    if (section) {
+      const m = main.getBoundingClientRect();
+      const s = section.getBoundingClientRect();
+      const sectionHeight = Math.max(0, Math.round(s.bottom - m.top - extraTop));
+      const usable = Math.max(240, sectionHeight);
+      document.documentElement.style.setProperty("--sidebar-maxpx", `${usable}px`);
+      document.documentElement.style.setProperty("--sidebar-nudge", "16px");
+    } else {
+      document.documentElement.style.removeProperty("--sidebar-maxpx");
+      document.documentElement.style.removeProperty("--sidebar-nudge");
+    }
   } else {
     document.documentElement.style.removeProperty("--sidebar-maxpx");
     document.documentElement.style.removeProperty("--sidebar-nudge");
   }
-} else {
-  // Home (outras): comportamento por viewport
-  document.documentElement.style.removeProperty("--sidebar-maxpx");
-  document.documentElement.style.removeProperty("--sidebar-nudge");
-}
-
 }, [location.pathname]);
+
 
 
 
@@ -1416,11 +1487,13 @@ useEffect(() => {
   ro.observe(main);
 
   // observa também a section que contém o anchor da página atual
-  const anchorSel = location.pathname.startsWith("/betify")
-    ? "#betify-start"
-    : location.pathname.startsWith("/ignibet")
-    ? "#ignibet-start"
-    : null;
+const anchorSel = location.pathname.startsWith("/betify")
+  ? "#betify-start"
+  : location.pathname.startsWith("/ignibet")
+  ? "#ignibet-start"
+  : location.pathname.startsWith("/zeusbet")
+  ? "#zeusbet-start"
+  : null;
 
   const anchor = anchorSel ? main.querySelector<HTMLElement>(anchorSel) : null;
   const section = anchor?.closest("section") as HTMLElement | null;
@@ -1443,6 +1516,8 @@ const { brands: navBrands } = useBrands();
 // Flags: mostram na sidebar só se a brand estiver enabled (default: true)
 const showBetifyNav  = !!navBrands && navBrands.some(b => /betify/i.test(b.name)  && b.enabled !== false);
 const showIgnibetNav = !!navBrands && navBrands.some(b => /ignibet/i.test(b.name) && b.enabled !== false);
+const showZeusbetNav = !!navBrands && navBrands.some(b => /zeusbet/i.test(b.name) && b.enabled !== false);
+
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
@@ -1461,6 +1536,7 @@ const showIgnibetNav = !!navBrands && navBrands.some(b => /ignibet/i.test(b.name
   onOpenCommunity={() => setShowCommunity(true)}
   showBetify={showBetifyNav}
   showIgnibet={showIgnibetNav}
+  showZeusbet={showZeusbetNav}
 />
 
 
@@ -1469,6 +1545,8 @@ const showIgnibetNav = !!navBrands && navBrands.some(b => /ignibet/i.test(b.name
   <Route path="/" element={<Home />} />
   <Route path="/betify" element={<BetifyLanding />} />
   <Route path="/ignibet" element={<IgnibetLanding />} />
+  <Route path="/zeusbet" element={<ZeusbetLanding />} />
+
 
   {/* novo: painel do moderador */}
   <Route path="/moderator" element={<ModeratorPage />} />
