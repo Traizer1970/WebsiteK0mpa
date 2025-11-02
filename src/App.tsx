@@ -23,6 +23,7 @@ const IGNIBET_PROMO_URL  = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZ
 
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
+const SHOW_PROMO_CODE = false;
 
 /* ---------- utils ---------- */
 function cn(...a: Array<string | false | undefined>) { return a.filter(Boolean).join(" "); }
@@ -430,25 +431,37 @@ function Sidebar({
 
   // 2) medir e ajustar densidade conforme a altura disponível
   React.useLayoutEffect(() => {
-    const el = stickyRef.current;
-    if (!el) return;
+  const el = stickyRef.current;
+  if (!el) return;
 
-    const check = () => {
-      const mhStr = getComputedStyle(el).maxHeight || "0"; // ex.: "calc(...)" resolve para px
-      const mh = parseFloat(mhStr);
-      const need = el.scrollHeight > mh - 1;
-      setDensity(!need ? "normal" : el.scrollHeight > mh * 1.2 ? "ultra" : "compact");
-    };
+  const getMaxPx = () => {
+    const s = getComputedStyle(el).maxHeight;
+    if (!s || s === "none") return Number.POSITIVE_INFINITY; // <- evita NaN
+    const n = parseFloat(s);
+    return Number.isFinite(n) ? n : Number.POSITIVE_INFINITY;
+  };
 
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    window.addEventListener("resize", check);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", check);
-    };
-  }, []);
+  const check = () => {
+    const mh = getMaxPx();
+    // se for “infinito”, nunca compacta
+    if (!Number.isFinite(mh)) { 
+      setDensity("normal");
+      return;
+    }
+    const need = el.scrollHeight > mh - 1;
+    setDensity(!need ? "normal" : el.scrollHeight > mh * 1.2 ? "ultra" : "compact");
+  };
+
+  check();
+  const ro = new ResizeObserver(check);
+  ro.observe(el);
+  window.addEventListener("resize", check);
+  return () => {
+    ro.disconnect();
+    window.removeEventListener("resize", check);
+  };
+}, []);
+
 
   // 3) tamanhos dependem da densidade (useMemo)
   const sizes = React.useMemo(() => ({
@@ -1204,21 +1217,23 @@ const cashbackLabel = isIgnibet ? (lang === "PT" ? "Cashback" : "Cashback") : t.
   </div>
 
   {/* ⬇️ esconder código na Ignibet quando SHOW_IGNIBET_CODE=false */}
-  {(!isIgnibet || SHOW_IGNIBET_CODE) && (
-    <div className="grid grid-cols-[1fr,auto] items-center gap-3">
-      <div className="h-11 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 flex items-center text-sm text-white/90">
-        <span className="text-white/60">{t.card.code}</span>
-        <span className="ml-2 font-semibold tracking-wide">{b.code}</span>
-      </div>
-      <button
-        onClick={async () => { try { await navigator.clipboard.writeText(b.code); } catch {} }}
-        className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
-      >
-        <Copy className="h-4 w-4" />
-        {t.card.copy}
-      </button>
+{/* esconder o campo do código por padrão */}
+{SHOW_PROMO_CODE && (
+  <div className="grid grid-cols-[1fr,auto] items-center gap-3">
+    <div className="h-11 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 flex items-center text-sm text-white/90">
+      <span className="text-white/60">{t.card.code}</span>
+      <span className="ml-2 font-semibold tracking-wide">{b.code}</span>
     </div>
-  )}
+    <button
+      onClick={async () => { try { await navigator.clipboard.writeText(b.code); } catch {} }}
+      className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
+    >
+      <Copy className="h-4 w-4" />
+      {t.card.copy}
+    </button>
+  </div>
+)}
+
 </div>
 
 
