@@ -486,7 +486,7 @@ function Sidebar({
   data-density={density}
   className="px-4 pt-4 pb-0 text-white/90 flex flex-col md:sticky"
   style={{
-    top: "calc(var(--hdr-offset,68px) + var(--sidebar-extra-top,0px))",
+    top: "var(--hdr-offset,68px)",
     maxHeight:
       "calc(var(--sidebar-maxpx, calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)))) + var(--sidebar-nudge, 0px))",
     minHeight:
@@ -1427,7 +1427,7 @@ const updateSidebarMetrics = React.useCallback(() => {
     const m = main.getBoundingClientRect();
     extraTop = Math.max(0, Math.round(a.top - m.top));
   }
-  document.documentElement.style.setProperty("--sidebar-extra-top", `${extraTop}px`);
+  document.documentElement.style.setProperty("--sidebar-extra-top", `0px`);
 
   if (isBetify || isIgnibet || isZeusbet) { // <<< NOVO
     const section = anchor?.closest("section") as HTMLElement | null;
