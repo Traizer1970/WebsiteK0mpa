@@ -20,8 +20,8 @@ const BETIFY_SIGNUP_URL = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh
 const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
 const IGNIBET_SIGNUP_URL = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZcQGNd7ZgqdRLk/1/"; // TODO: coloca o teu link real
 const IGNIBET_PROMO_URL  = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZcQGNd7ZgqdRLk/1/"; // TODO: coloca o teu link real
-const ZEUSBET_SIGNUP_URL = "https://teu.link.zeusbet/signup";
-const ZEUSBET_PROMO_URL  = "https://teu.link.zeusbet/promo";
+const ZEUSBET_SIGNUP_URL = "https://2up.io/?r=K0MPA";
+const ZEUSBET_PROMO_URL  = "https://2up.io/?r=K0MPA";
 
 
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
@@ -893,7 +893,7 @@ function ZeusbetLanding() {
         <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
           <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
             <ol className="space-y-3 text-sm text-white/90">
-              <li><span className="font-bold">1.</span> Cria conta na Zeusbet.</li>
+              <li><span className="font-bold">1.</span> Cria conta na 2UP.</li>
               <li><span className="font-bold">2.</span> Aproveita promoções, cashback e free spins.</li>
             </ol>
 
@@ -921,7 +921,7 @@ function ZeusbetLanding() {
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
               <img
-                src="https://thumbs.dreamstime.com/b/red-dice-poker-chips-smartphone-blurry-casino-background-ai-generated-image-381975267.jpg"
+                src="https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/coincodex_1755101337_3851/w=430,h=242,fit=cover"
                 alt="Zeusbet preview"
                 className="absolute inset-0 h-full w-full object-cover"
               />
@@ -949,15 +949,15 @@ function ZeusbetLanding() {
                   </h3>
                   <div className="mt-1.5 text-[13px] text-white/75">
                     {p.id === "every-dep"
-                      ? "Zeusbet (Min. depósito €20 — detalhes do bónus)."
-                      : "Zeusbet (Min. depósito €20 — detalhes do 2º depósito)."}
+                      ? "2UP (Min. depósito €20 — detalhes do bónus)."
+                      : "2UP (Min. depósito €20 — detalhes do 2º depósito)."}
                   </div>
 
                   <div className="mt-4">
                     <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
                       <Sparkles className="h-4 w-4" />
                       <span className="text-sm font-extrabold text-white whitespace-nowrap">
-                        Até 750FS
+                        Até 500FS
                       </span>
                     </div>
                   </div>
