@@ -23,6 +23,10 @@ const IGNIBET_PROMO_URL  = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZ
 const ZEUSBET_SIGNUP_URL = "https://2up.io/?r=K0MPA";
 const ZEUSBET_PROMO_URL  = "https://2up.io/?r=K0MPA";
 
+// NEW: Aerobet
+const AEROBET_SIGNUP_URL = "https://teu-link-aerobet-signup.com";  // TODO: coloca o teu link real
+const AEROBET_PROMO_URL  = "https://teu-link-aerobet-promo.com";   // TODO: coloca o teu link real
+
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
 const SHOW_PROMO_CODE = false;
@@ -44,7 +48,7 @@ const betifyPromos: Promo[] = [
   { id: "fs-monthly", icon: Sparkles, href: BETIFY_PROMO_URL },
 ];
 
-/* ---------- Wazbee: promoções ---------- */
+/* ---------- Wazbee / Ignibet: promoções ---------- */
 const ignibetPromos: Promo[] = [
   { id: "every-dep", icon: Percent,  href: IGNIBET_PROMO_URL },
   { id: "fs-monthly", icon: Sparkles, href: IGNIBET_PROMO_URL },
@@ -55,6 +59,11 @@ const zeusbetPromos: Promo[] = [
   { id: "fs-monthly", icon: Sparkles, href: ZEUSBET_PROMO_URL },
 ];
 
+// NEW: Aerobet promos
+const aerobetPromos: Promo[] = [
+  { id: "every-dep",  icon: Percent,  href: AEROBET_PROMO_URL },
+  { id: "fs-monthly", icon: Sparkles, href: AEROBET_PROMO_URL },
+];
 
 /* links das redes */
 const SOCIAL_LINKS = {
@@ -163,64 +172,89 @@ type Translations = {
       "fs-monthly": { title: string; blurb: string; highlight: string; };
     };
   };
+  aerobet: {
+    title: string; subtitle: string;
+    steps: { one: string; two_prefix: string; two_code: string; two_suffix: string; three: string; };
+    cta_signup: string; cta_promos: string; promo_label: string;
+    promos: {
+      "every-dep":  { title: string; blurb: string; highlight: string; };
+      "fs-monthly": { title: string; blurb: string; highlight: string; };
+    };
+  };
 };
 
 const messages: Record<Lang, Translations> = {
-PT: {
-  brand: "K0MPA", search: "Pesquisar…",
-  nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO", },
-  promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
-  card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
-  social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
-  footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
-           rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
-           rg_site:"BeGambleAware.org" },
-  latestVideos: "Últimos vídeos",
-  communityModal: {
-    close: "Fechar",
-    choose: "Escolhe onde queres entrar:",
-    discord_sub: "Chats, roles e anúncios",
-    telegram_sub: "Canal rápido de updates",
-  },
-  betify: {
-    title: "Betify",
-    subtitle: "Como jogar na Betify e desbloquear o melhor VIP",
-    steps: {
-      one: "Cria conta na Betify.",
-      two_prefix: "Usa o código",
-      two_code: "K0MPA",
-      two_suffix: "no registo.",
-      three: "Aproveita promoções, cashback e free spins."
+  PT: {
+    brand: "K0MPA", search: "Pesquisar…",
+    nav: { menu:"Menu", casinos:"Casinos", offers:"Ofertas", betify:"Betify", shop:"Loja", community:"Comunidade", slots:"Slots", stream:"Transmissão", minigames:"Mini Jogos", new:"NOVO", },
+    promo:{ lootbox:"Lootbox", everyDep:"Every Dep.", bonus:"5% Bonus", giveaways:"Giveaways", monthly:"Monthly", depcode:"Dep. Code", claim:"Claim Bonus" },
+    card:{ min:"Min. Dep.", bonus:"Bónus", cashback:"Cashback", spins:"Free Spins", code:"Código:", terms:"+18 | T&C aplicam-se", showMore:"Mais", back:"Voltar", moreInfo:"Mais informações", visit:"Visitar marca", go:"RESGATAR BÓNUS", copy:"Copiar" },
+    social:{ title:"Redes", youtube:"Youtube", instagram:"Instagram", twitch:"Twitch", telegram:"Telegram", tiktok:"TikTok", tiktok_val:"TikTok2", x:"X", copyright:(y)=>`Copyright © ${y} K0MPA` },
+    footer:{ terms:"Termos & Condições", privacy:"Política de Privacidade", cookies:"Política de Cookies",
+             rg_paragraph:"18+ | Joga com responsabilidade. A maioria das pessoas joga por diversão. Não encares o jogo como forma de ganhar dinheiro. Joga apenas com o que podes perder. Define limites de tempo e dinheiro com antecedência. Nunca tentes recuperar perdas. Não uses o jogo para fugir a problemas do dia a dia.",
+             rg_site:"BeGambleAware.org" },
+    latestVideos: "Últimos vídeos",
+    communityModal: {
+      close: "Fechar",
+      choose: "Escolhe onde queres entrar:",
+      discord_sub: "Chats, roles e anúncios",
+      telegram_sub: "Canal rápido de updates",
     },
-    cta_signup: "REGISTAR AGORA",
-    cta_promos: "VER PROMOÇÕES",
-    promo_label: "Promo",
-    promos: {
-      "every-dep": { title: "Campanhas e Free Spins", blurb: "Betify (Depósito Mínimo 20€ — 40FS sem wager na Shaolin Panda).", highlight: "Até 40FS" },
-      "fs-monthly": { title: "Campanhas e Free Spins", blurb: "Betify (Depósito 50€ — 100FS sem wager na Shaolin Panda).", highlight: "Até 100FS" }
-    }
+    betify: {
+      title: "Betify",
+      subtitle: "Como jogar na Betify e desbloquear o melhor VIP",
+      steps: {
+        one: "Cria conta na Betify.",
+        two_prefix: "Usa o código",
+        two_code: "K0MPA",
+        two_suffix: "no registo.",
+        three: "Aproveita promoções, cashback e free spins."
+      },
+      cta_signup: "REGISTAR AGORA",
+      cta_promos: "VER PROMOÇÕES",
+      promo_label: "Promo",
+      promos: {
+        "every-dep": { title: "Campanhas e Free Spins", blurb: "Betify (Depósito Mínimo 20€ — 40FS sem wager na Shaolin Panda).", highlight: "Até 40FS" },
+        "fs-monthly": { title: "Campanhas e Free Spins", blurb: "Betify (Depósito 50€ — 100FS sem wager na Shaolin Panda).", highlight: "Até 100FS" }
+      }
+    },
+    wazbee: {
+      title: "Ignibet",
+      subtitle: "Como jogar na Ignibet e aproveitar o bónus de boas-vindas",
+      steps: {
+        one: "Cria conta na Ignibet.",
+        two_prefix: "Usa o código",
+        two_code: "KMPA",
+        two_suffix: "no registo.",
+        three: "Aproveita as promoções, wager e free spins."
+      },
+      cta_signup: "REGISTAR AGORA",
+      cta_promos: "VER PROMOÇÕES",
+      promo_label: "Promo",
+      promos: {
+        "every-dep":  { title: "Bónus de Boas-Vindas", blurb: "Ignibet (Min. depósito €20 Até 750FS).", highlight: "Até 750FS" },
+        "fs-monthly": { title: "Bónus de Segundo Depósito", blurb: "Ignibet (Min. depósito €20 Até 750FS)", highlight: "Até 750FS" }
+      }
+    },
+    aerobet: {
+      title: "Aerobet",
+      subtitle: "Como jogar na Aerobet e aproveitar o bónus de boas-vindas",
+      steps: {
+        one: "Cria conta na Aerobet.",
+        two_prefix: "Usa o código",
+        two_code: "K0MPA",
+        two_suffix: "no registo.",
+        three: "Aproveita as promoções, cashback e free spins."
+      },
+      cta_signup: "REGISTAR AGORA",
+      cta_promos: "VER PROMOÇÕES",
+      promo_label: "Promo",
+      promos: {
+        "every-dep":  { title: "Bónus de Boas-Vindas",        blurb: "Aerobet (Min. depósito €20 — 150% até 500 euros + 50 freespins na le bandit).",          highlight: "Até 50FS" },
+        "fs-monthly": { title: "Bónus de Segundo Depósito",   blurb: "Aerobet (Min. depósito €20).",       highlight: "Até 200FS" }
+      }
+    },
   },
-// PT …
-wazbee: {
-  title: "Ignibet",
-  subtitle: "Como jogar na Ignibet e aproveitar o bónus de boas-vindas",
-  steps: {
-    one: "Cria conta na Ignibet.",
-    two_prefix: "Usa o código",
-    two_code: "KMPA",
-    two_suffix: "no registo.",
-    three: "Aproveita as promoções, wager e free spins."
-  },
-  cta_signup: "REGISTAR AGORA",
-  cta_promos: "VER PROMOÇÕES",
-  promo_label: "Promo",
-  promos: {
-    "every-dep":  { title: "Bónus de Boas-Vindas", blurb: "Ignibet (Min. depósito €20 Até 750FS).", highlight: "Até 750FS" },
-    "fs-monthly": { title: "Bónus de Segundo Depósito", blurb: "Ignibet (Min. depósito €20 Até 750FS)", highlight: "Até 750FS" }
-  }
-},
-},
-
 
   EN: {
     brand:"K0MPA", search:"Search…",
@@ -253,30 +287,48 @@ wazbee: {
       promo_label: "Promo",
       promos: {
         "every-dep": { title: "Campaigns & Free Spins", blurb: "Betify (Min. deposit €20 — 40FS no wager on Shaolin Panda).", highlight: "Up to 40FS" },
-        "fs-monthly": { title: "Campaigns & Free Spins", blurb: "Betify (Deposit €50 — 100FS no wager on Shaolin Panda).", highlight: "Up to 100FS" }
+        "fs-monthly": { title: "Campaigns & Free Spins", blurb: "Betify (Deposit €50 — 100FS no wager on Shaolin Panda).",    highlight: "Up to 100FS" }
       }
     },
-wazbee: {
-  title: "Ignibet",
-  subtitle: "How to play on Ignibet and grab the welcome bonus",
-  steps: {
-    one: "Create an account on Ignibet.",
-    two_prefix: "Use the code",
-    two_code: "KMPA",
-    two_suffix: "during signup.",
-    three: "Enjoy the promotions, wager and free spins."
-  },
-  cta_signup: "SIGN UP NOW",
-  cta_promos: "SEE PROMOTIONS",
-  promo_label: "Promo",
-  promos: {
-    "every-dep":  { title: "Welcome Bonus", blurb: "Ignibet (Min. deposit €20 — Up to 750FS).", highlight: "Up to 750FS" },
-    "fs-monthly": { title: "2nd Deposit Bonus", blurb: "Ignibet (Min. deposit €20 — Up to 750FS)", highlight: "Up to 750FS" }
-  }
-},
-
+    wazbee: {
+      title: "Ignibet",
+      subtitle: "How to play on Ignibet and grab the welcome bonus",
+      steps: {
+        one: "Create an account on Ignibet.",
+        two_prefix: "Use the code",
+        two_code: "KMPA",
+        two_suffix: "during signup.",
+        three: "Enjoy the promotions, wager and free spins."
+      },
+      cta_signup: "SIGN UP NOW",
+      cta_promos: "SEE PROMOTIONS",
+      promo_label: "Promo",
+      promos: {
+        "every-dep":  { title: "Welcome Bonus",     blurb: "Ignibet (Min. deposit €20 — Up to 750FS).", highlight: "Up to 750FS" },
+        "fs-monthly": { title: "2nd Deposit Bonus", blurb: "Ignibet (Min. deposit €20 — Up to 750FS)",  highlight: "Up to 750FS" }
+      }
+    },
+    aerobet: {
+      title: "Aerobet",
+      subtitle: "How to play on Aerobet and grab the welcome bonus",
+      steps: {
+        one: "Create an account on Aerobet.",
+        two_prefix: "Use the code",
+        two_code: "K0MPA",
+        two_suffix: "during signup.",
+        three: "Enjoy promotions, cashback and free spins."
+      },
+      cta_signup: "SIGN UP NOW",
+      cta_promos: "SEE PROMOTIONS",
+      promo_label: "Promo",
+      promos: {
+        "every-dep":  { title: "Welcome Bonus",     blurb: "Aerobet (Min. deposit €20 — bonus details).",      highlight: "Up to 500FS" },
+        "fs-monthly": { title: "2nd Deposit Bonus", blurb: "Aerobet (Min. deposit €20 — campaign details).",   highlight: "Up to 500FS" }
+      }
+    },
   }
 };
+
 const LangCtx = createContext<{lang:Lang; setLang:(l:Lang)=>void; t:Translations}>({lang:"PT", setLang:()=>{}, t:messages.PT});
 function useLang(){ return useContext(LangCtx); }
 
@@ -299,7 +351,6 @@ export type Brand = {
   /** NOVO: controla se aparece no site público */
   enabled?: boolean;   // default: true
 };
-
 
 type ApiBrands = Brand[];
 function useBrands() {
@@ -328,16 +379,16 @@ function useBrands() {
         });
         if (!res.ok) throw new Error(`Supabase GET falhou (${res.status})`);
 
-const rows: Array<{ data: ApiBrands | Brand }> = await res.json();
+        const rows: Array<{ data: ApiBrands | Brand }> = await res.json();
 
-// Achata o array e NORMALIZA (se faltar "enabled", assume true)
-const list: Brand[] = rows.flatMap(r =>
-  Array.isArray(r.data) ? r.data : [r.data]
-).map(b => ({ ...b, enabled: b.enabled !== false }));
+        // Achata o array e NORMALIZA (se faltar "enabled", assume true)
+        const list: Brand[] = rows.flatMap(r =>
+          Array.isArray(r.data) ? r.data : [r.data]
+        ).map(b => ({ ...b, enabled: b.enabled !== false }));
 
-// 👇 Mantém APENAS os visíveis no site público
-const visibleOnly = list.filter(b => b.enabled !== false);
-if (alive) setBrands(visibleOnly);
+        // 👇 Mantém APENAS os visíveis no site público
+        const visibleOnly = list.filter(b => b.enabled !== false);
+        if (alive) setBrands(visibleOnly);
 
       } catch (e: any) {
         if (alive) setError(e?.message || "Erro a carregar brands");
@@ -413,6 +464,7 @@ function DiscordIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
 /* ---------- Sidebar ---------- */
 function Sidebar({
   onOpenStream,
@@ -420,13 +472,16 @@ function Sidebar({
   showBetify,
   showIgnibet,
   showZeusbet,
+  showAerobet,          // <--- ADICIONAR
 }: {
   onOpenStream: () => void;
   onOpenCommunity: () => void;
   showBetify: boolean;
   showIgnibet: boolean;
   showZeusbet: boolean;
+  showAerobet: boolean; // <--- ADICIONAR
 }) {
+
 
   const { t } = useLang();
 
@@ -436,36 +491,36 @@ function Sidebar({
 
   // 2) medir e ajustar densidade conforme a altura disponível
   React.useLayoutEffect(() => {
-  const el = stickyRef.current;
-  if (!el) return;
+    const el = stickyRef.current;
+    if (!el) return;
 
-  const getMaxPx = () => {
-    const s = getComputedStyle(el).maxHeight;
-    if (!s || s === "none") return Number.POSITIVE_INFINITY; // <- evita NaN
-    const n = parseFloat(s);
-    return Number.isFinite(n) ? n : Number.POSITIVE_INFINITY;
-  };
+    const getMaxPx = () => {
+      const s = getComputedStyle(el).maxHeight;
+      if (!s || s === "none") return Number.POSITIVE_INFINITY; // <- evita NaN
+      const n = parseFloat(s);
+      return Number.isFinite(n) ? n : Number.POSITIVE_INFINITY;
+    };
 
-  const check = () => {
-    const mh = getMaxPx();
-    // se for “infinito”, nunca compacta
-    if (!Number.isFinite(mh)) { 
-      setDensity("normal");
-      return;
-    }
-    const need = el.scrollHeight > mh - 1;
-    setDensity(!need ? "normal" : el.scrollHeight > mh * 1.2 ? "ultra" : "compact");
-  };
+    const check = () => {
+      const mh = getMaxPx();
+      // se for “infinito”, nunca compacta
+      if (!Number.isFinite(mh)) {
+        setDensity("normal");
+        return;
+      }
+      const need = el.scrollHeight > mh - 1;
+      setDensity(!need ? "normal" : el.scrollHeight > mh * 1.2 ? "ultra" : "compact");
+    };
 
-  check();
-  const ro = new ResizeObserver(check);
-  ro.observe(el);
-  window.addEventListener("resize", check);
-  return () => {
-    ro.disconnect();
-    window.removeEventListener("resize", check);
-  };
-}, []);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    window.addEventListener("resize", check);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", check);
+    };
+  }, []);
 
 
   // 3) tamanhos dependem da densidade (useMemo)
@@ -499,20 +554,20 @@ function Sidebar({
   return (
     <aside className="hidden md:block w-full self-stretch">
       <div className="h-full rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,.25)]">
-<div
-  ref={stickyRef}
-  data-density={density}
-  className="px-4 pt-4 pb-0 text-white/90 flex flex-col md:sticky"
-  style={{
-    top: "var(--hdr-offset,68px)",
-    maxHeight:
-      "calc(var(--sidebar-maxpx, calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)))) + var(--sidebar-nudge, 0px))",
-    minHeight:
-      "calc(var(--sidebar-maxpx, calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)))) + var(--sidebar-nudge, 0px))",
-    overflow: "auto",
-  }}
->
-       <div>
+        <div
+          ref={stickyRef}
+          data-density={density}
+          className="px-4 pt-4 pb-0 text-white/90 flex flex-col md:sticky"
+          style={{
+            top: "var(--hdr-offset,68px)",
+            maxHeight:
+              "calc(var(--sidebar-maxpx, calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)))) + var(--sidebar-nudge, 0px))",
+            minHeight:
+              "calc(var(--sidebar-maxpx, calc(100vh - (var(--hdr-offset,68px) + var(--sidebar-extra-top,0px)))) + var(--sidebar-nudge, 0px))",
+            overflow: "auto",
+          }}
+        >
+          <div>
             <div className={`${sizes.hRow} flex items-center justify-between rounded-xl px-2 py-1`}>
               <span className="text-sm font-semibold text-white">{t.nav?.menu ?? "Menu"}</span>
               <ChevronRight className={`${sizes.icon} text-white/70`} />
@@ -528,39 +583,59 @@ function Sidebar({
                   {t.nav.new}
                 </Badge>
               </NavLink>
-{showBetify && (
-  <NavLink to="/betify" className={linkClasses}>
-    <span className="flex items-center gap-2">
-      <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
-      <span className="font-extrabold text-white">{t.nav.betify}</span>
-    </span>
-    <Badge className="text-white" style={{ background: "#16a34a" }}>
-      <Flame className="h-3.5 w-3.5" />
-      HOT
-    </Badge>
-  </NavLink>
-)}
 
-{showIgnibet && (
-  <NavLink to="/ignibet" className={linkClasses}>
+              {showBetify && (
+                <NavLink to="/betify" className={linkClasses}>
+                  <span className="flex items-center gap-2">
+                    <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
+                    <span className="font-extrabold text-white">{t.nav.betify}</span>
+                  </span>
+                  <Badge className="text-white" style={{ background: "#16a34a" }}>
+                    <Flame className="h-3.5 w-3.5" />
+                    HOT
+                  </Badge>
+                </NavLink>
+              )}
+
+              {showIgnibet && (
+                <NavLink to="/ignibet" className={linkClasses}>
+                  <span className="flex items-center gap-2">
+                    <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
+                    <span className="font-extrabold text-white">Ignibet</span>
+                  </span>
+                  <Badge className="text-white flex items-center gap-1.5" style={{ background: "#6062df" }}>
+                    <Sparkles className="h-3.5 w-3.5" />
+                    {t.nav.new}
+                  </Badge>
+                </NavLink>
+              )}
+
+              {showZeusbet && (
+                <NavLink to="/2up" className={linkClasses}>
+                  <span className="flex items-center gap-2">
+                    <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
+                    <span className="font-extrabold text-white">2UP</span>
+                  </span>
+                  <Badge className="text-white" style={{ background: "#f59e0b" }}>NEW</Badge>
+                </NavLink>
+              )}
+
+              {showAerobet && (
+  <NavLink to="/aerobet" className={linkClasses}>
     <span className="flex items-center gap-2">
-      <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
-      <span className="font-extrabold text-white">Ignibet</span>
+      <span
+        className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15"
+        aria-hidden
+      />
+      <span className="font-extrabold text-white">Aerobet</span>
     </span>
-    <Badge className="text-white flex items-center gap-1.5" style={{ background: "#6062df" }}>
+    <Badge
+      className="text-white flex items-center gap-1.5"
+      style={{ background: "#2563eb" }} // azul
+    >
       <Sparkles className="h-3.5 w-3.5" />
-      {t.nav.new}
+      NEW
     </Badge>
-  </NavLink>
-)}
-
-{showZeusbet && (
-  <NavLink to="/2up" className={linkClasses}>
-    <span className="flex items-center gap-2">
-      <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
-      <span className="font-extrabold text-white">2UP</span>
-    </span>
-    <Badge className="text-white" style={{ background: "#f59e0b" }}>NEW</Badge>
   </NavLink>
 )}
 
@@ -654,7 +729,6 @@ const scrollToBrand = (name: string) => {
   );
 };
 
-
 /* ---------- Payment logos ---------- */
 function PaymentIcon({ type }: { type: keyof typeof PAYMENT_ICON_URLS }) {
   const src = PAYMENT_ICON_URLS[type];
@@ -677,7 +751,7 @@ function FancyCTA({ href, label, accent }: { href: string; label: string; accent
   );
 }
 
-/* ---------- Página Wazbee ---------- */
+/* ---------- Página Ignibet ---------- */
 function IgnibetLanding() {
   const { t } = useLang();
   const scrollToPromos = () =>
@@ -725,33 +799,32 @@ function IgnibetLanding() {
         <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
           {/* Passos + CTAs */}
           <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
-{/* título com o código (mostrar só se permitido) */}
-{SHOW_IGNIBET_CODE && (
-  <div className="text-lg font-extrabold mb-3">
-    {t.wazbee.steps.two_prefix}{" "}
-    <span className="text-indigo-300">{t.wazbee.steps.two_code}</span>
-  </div>
-)}
+            {/* título com o código (mostrar só se permitido) */}
+            {SHOW_IGNIBET_CODE && (
+              <div className="text-lg font-extrabold mb-3">
+                {t.wazbee.steps.two_prefix}{" "}
+                <span className="text-indigo-300">{t.wazbee.steps.two_code}</span>
+              </div>
+            )}
 
-<ol className="space-y-3 text-sm text-white/90">
-  <li>
-    <span className="font-bold">1.</span> {t.wazbee.steps.one}
-  </li>
+            <ol className="space-y-3 text-sm text-white/90">
+              <li>
+                <span className="font-bold">1.</span> {t.wazbee.steps.one}
+              </li>
 
-  {SHOW_IGNIBET_CODE && (
-    <li>
-      <span className="font-bold">2.</span> {t.wazbee.steps.two_prefix}{" "}
-      <span className="font-bold">{t.wazbee.steps.two_code}</span>{" "}
-      {t.wazbee.steps.two_suffix}
-    </li>
-  )}
+              {SHOW_IGNIBET_CODE && (
+                <li>
+                  <span className="font-bold">2.</span> {t.wazbee.steps.two_prefix}{" "}
+                  <span className="font-bold">{t.wazbee.steps.two_code}</span>{" "}
+                  {t.wazbee.steps.two_suffix}
+                </li>
+              )}
 
-  <li>
-    <span className="font-bold">{SHOW_IGNIBET_CODE ? "3." : "2."}</span>{" "}
-    {t.wazbee.steps.three}
-  </li>
-</ol>
-
+              <li>
+                <span className="font-bold">{SHOW_IGNIBET_CODE ? "3." : "2."}</span>{" "}
+                {t.wazbee.steps.three}
+              </li>
+            </ol>
 
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <a
@@ -853,6 +926,7 @@ function IgnibetLanding() {
   );
 }
 
+/* ---------- Página 2UP / Zeusbet ---------- */
 function ZeusbetLanding() {
   const { t } = useLang();
   const scrollToPromos = () =>
@@ -980,7 +1054,168 @@ function ZeusbetLanding() {
   );
 }
 
+/* ---------- Página Aerobet ---------- */
+function AerobetLanding() {
+  const { t } = useLang();
+  const scrollToPromos = () =>
+    document.getElementById("aerobet-promos")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
 
+  const accent = "#2563eb"; // azul Aerobet
+
+
+  return (
+    <div className="space-y-8">
+      <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
+        <div id="aerobet-start" />
+
+        {/* glow */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+         style={{
+  background:
+    "radial-gradient(60% 80% at 10% 0%, rgba(37,99,235,.22) 0%, rgba(37,99,235,0) 55%)," +
+    "radial-gradient(50% 60% at 85% 100%, rgba(56,189,248,.18) 0%, rgba(56,189,248,0) 60%)",
+  mixBlendMode: "screen",
+}}
+
+        />
+
+        <div className="flex items-center justify-between gap-4 relative">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+              {t.aerobet.title}
+            </h1>
+            <p className="text-white/70 text-sm">{t.aerobet.subtitle}</p>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
+          {/* passos */}
+          <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
+            <div className="text-lg font-extrabold mb-3">
+  {t.aerobet.steps.two_prefix}{" "}
+  <span className="text-sky-300">{t.aerobet.steps.two_code}</span>
+</div>
+
+            <ol className="space-y-3 text-sm text-white/90">
+              <li>
+                <span className="font-bold">1.</span> {t.aerobet.steps.one}
+              </li>
+              <li>
+                <span className="font-bold">2.</span> {t.aerobet.steps.two_prefix}{" "}
+                <span className="font-bold">{t.aerobet.steps.two_code}</span>{" "}
+                {t.aerobet.steps.two_suffix}
+              </li>
+              <li>
+                <span className="font-bold">3.</span> {t.aerobet.steps.three}
+              </li>
+            </ol>
+
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <a
+                href={AEROBET_SIGNUP_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 transition hover:brightness-110"
+                style={{
+  background: `linear-gradient(180deg, ${accent}, #1d4ed8)`,
+  boxShadow: "0 10px 26px rgba(37,99,235,.28)",
+}}
+
+              >
+                {t.aerobet.cta_signup} <ExternalLink className="h-4 w-4" />
+              </a>
+
+              <button
+                type="button"
+                onClick={scrollToPromos}
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/8 hover:bg-white/12 ring-1 ring-white/15"
+              >
+                {t.aerobet.cta_promos}
+              </button>
+            </div>
+          </div>
+
+          {/* imagem */}
+          <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
+            <div className="relative w-full" style={{ paddingTop: "100%" }}>
+              <img
+                src="https://casinoportugal.online/image/cache/data/casino/Aerobet/Aerobet-main-0x0s.jpg"
+                alt="Aerobet preview"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* promos */}
+        <div id="aerobet-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
+          {aerobetPromos.map((p) => (
+            <div
+              key={p.id}
+              className="rounded-3xl p-5 sm:p-6 ring-1 ring-white/12 text-white/90 bg-white/[.06] backdrop-blur-md shadow-[0_14px_50px_rgba(0,0,0,.35)] relative overflow-hidden"
+            >
+              <span
+                aria-hidden
+                className="absolute inset-x-4 top-0 h-[3px] rounded-b-xl"
+                style={{ background: "linear-gradient(90deg,#2563eb,transparent)" }}
+
+              />
+              <div className="flex items-start gap-3 relative">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
+                  <p.icon className="h-5 w-5 text-white" />
+                </span>
+                <div className="flex-1">
+                  <div className="text-xs font-semibold text-white/60 uppercase">
+                    {t.aerobet.promo_label}
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">
+                    {t.aerobet.promos[p.id].title}
+                  </h3>
+                  <div className="mt-1.5 text-[13px] text-white/75">
+                    {t.aerobet.promos[p.id].blurb}
+                  </div>
+
+                  <div className="mt-4">
+                    <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
+                      <Sparkles className="h-4 w-4" />
+                      <span className="text-sm font-extrabold text-white whitespace-nowrap">
+                        {t.aerobet.promos[p.id].highlight}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <a
+                      href={p.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10"
+                      style={{
+  background: "linear-gradient(135deg,#2563eb,#1d4ed8)",
+  boxShadow: "0 10px 26px rgba(37,99,235,.25)",
+}}
+
+                    >
+                      {t.card.go} <ExternalLink className="h-4 w-4" />
+                    </a>
+                    <span className="text-[11px] text-white/60 self-center">
+                      {t.card.terms}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+/* ---------- Stream helpers ---------- */
 function buildTwitchEmbedUrl(channel: string) {
   const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
   const parents = new Set<string>([
@@ -1095,14 +1330,15 @@ function Home() {
           </div>
         ))}
       </div>
-{/* ⬇️ ANCORAGEM PARA ALINHAR A SIDEBAR */}
-<div id="embeds-start" />
 
-{/* ⬇️ BLOCO DOS EMBEDS (ADICIONA ESTE id) */}
-<div id="embeds-block" className="grid gap-6 sm:grid-cols-2">
-  <TwitchEmbedMini channel={TWITCH_CHANNEL} />
-  <YouTubeLastMini channelId={YT_CHANNEL_ID} />
-</div>
+      {/* ⬇️ ANCORAGEM PARA ALINHAR A SIDEBAR */}
+      <div id="embeds-start" />
+
+      {/* ⬇️ BLOCO DOS EMBEDS (ADICIONA ESTE id) */}
+      <div id="embeds-block" className="grid gap-6 sm:grid-cols-2">
+        <TwitchEmbedMini channel={TWITCH_CHANNEL} />
+        <YouTubeLastMini channelId={YT_CHANNEL_ID} />
+      </div>
     </>
   );
 }
@@ -1206,15 +1442,13 @@ function BrandCard({ b }: { b: Brand }) {
   const base = tagVisual(b.tag);
   const acc  = b.theme?.accent ?? base.accent;
   const shadow = b.theme?.shadow ?? rgba(acc, 0.35);
-const methods = b.payments && b.payments.length ? b.payments : ["mbw","mb","visa","mc","btc"];
+  const methods = b.payments && b.payments.length ? b.payments : ["mbw","mb","visa","mc","btc"];
 
+  const isIgnibet = /ignibet/i.test(b.name);
+  const cashbackLabel = isIgnibet ? (lang === "PT" ? "Cashback" : "Cashback") : t.card.cashback;
 
-
-const isIgnibet = /ignibet/i.test(b.name);
-const cashbackLabel = isIgnibet ? (lang === "PT" ? "Cashback" : "Cashback") : t.card.cashback;
-
-const is2up = /(2up|zeusbet)/i.test(b.name || "");
-const signupHref = is2up ? ZEUSBET_SIGNUP_URL : (b.link || "#");
+  const is2up = /(2up|zeusbet)/i.test(b.name || "");
+  const signupHref = is2up ? ZEUSBET_SIGNUP_URL : (b.link || "#");
 
   return (
     <Card className="relative rounded-3xl bg-white/70 backdrop-blur-sm ring-1 ring-white/10" style={{ height:CARD_H, perspective:"1200px", overflow:"visible", boxShadow:`0 14px 40px ${shadow}` }}>
@@ -1222,52 +1456,50 @@ const signupHref = is2up ? ZEUSBET_SIGNUP_URL : (b.link || "#");
         {/* FRONT */}
         <div className="absolute inset-0" style={{ backfaceVisibility:"hidden" }}>
           <TagBadge tag={b.tag} accent={acc} />
-<div className="absolute inset-0 overflow-hidden rounded-3xl">
-  {/* Fundo (volta a usar a imagem do brand) */}
-  <img
-    src={b.image}
-    alt=""
-    className="absolute inset-0 h-full w-full object-cover"
-    style={{ objectPosition: b.imagePos || "center" }}
-  />
+          <div className="absolute inset-0 overflow-hidden rounded-3xl">
+            {/* Fundo (volta a usar a imagem do brand) */}
+            <img
+              src={b.image}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{ objectPosition: b.imagePos || "center" }}
+            />
 
-  {/* Overlay suave para leitura */}
-  <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/55" />
+            {/* Overlay suave para leitura */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/0 to-black/55" />
 
-{b.showLogo && b.logo && (
-  <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 z-20">
-    <img src={b.logo} alt={`${b.name} logo`} className="h-10 sm:h-12 object-contain" />
-  </div>
-)}
+            {b.showLogo && b.logo && (
+              <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 z-20">
+                <img src={b.logo} alt={`${b.name} logo`} className="h-10 sm:h-12 object-contain" />
+              </div>
+            )}
 
+            {/* Botão "Mais" acima do logo */}
+            <div className="absolute right-4 top-4 z-20">
+              <button
+                onClick={() => setFlip(true)}
+                className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60"
+              >
+                {t.card.showMore}
+              </button>
+            </div>
 
-  {/* Botão "Mais" acima do logo */}
-  <div className="absolute right-4 top-4 z-20">
-    <button
-      onClick={() => setFlip(true)}
-      className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 ring-1 ring-black/10 backdrop-blur hover:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400/60"
-    >
-      {t.card.showMore}
-    </button>
-  </div>
-
-  {/* Conteúdo de stats/cta */}
-  <div className="absolute inset-x-4 bottom-4">
-    <div className="relative rounded-2xl bg-black/35 p-4 backdrop-blur-md ring-1 ring-white/10 overflow-visible">
-      <PaymentRibbon methods={methods} />
-      <div className="pointer-events-none absolute left-6 right-6 -top-2 h-2 rounded-b-xl bg-gradient-to-b from-black/40 to-transparent" />
-      <div className="grid grid-cols-4 gap-2">
-        <FancyStat icon={Coins} label={t.card.min} value={b.minDep} accent={acc} />
-        <FancyStat icon={Percent} label={t.card.bonus} value={b.bonus} accent={acc} />
-        <FancyStat icon={TrendingUp} label={cashbackLabel} value={cap(b.cashback, lang)} accent={acc} />
-        <FancyStat icon={Sparkles} label={t.card.spins} value={cap(b.freeSpins, lang)} accent={acc} />
-      </div>
-      <div className="py-1.5 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
-      <div className="pt-0.5"><FancyCTA href={signupHref} label={t.card.go} accent={acc} /></div>
-    </div>
-  </div>
-</div>
-
+            {/* Conteúdo de stats/cta */}
+            <div className="absolute inset-x-4 bottom-4">
+              <div className="relative rounded-2xl bg-black/35 p-4 backdrop-blur-md ring-1 ring-white/10 overflow-visible">
+                <PaymentRibbon methods={methods} />
+                <div className="pointer-events-none absolute left-6 right-6 -top-2 h-2 rounded-b-xl bg-gradient-to-b from-black/40 to-transparent" />
+                <div className="grid grid-cols-4 gap-2">
+                  <FancyStat icon={Coins}      label={t.card.min}     value={b.minDep}              accent={acc} />
+                  <FancyStat icon={Percent}    label={t.card.bonus}   value={b.bonus}               accent={acc} />
+                  <FancyStat icon={TrendingUp} label={cashbackLabel}  value={cap(b.cashback, lang)} accent={acc} />
+                  <FancyStat icon={Sparkles}   label={t.card.spins}   value={cap(b.freeSpins, lang)} accent={acc} />
+                </div>
+                <div className="py-1.5 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
+                <div className="pt-0.5"><FancyCTA href={signupHref} label={t.card.go} accent={acc} /></div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* BACK */}
@@ -1278,34 +1510,31 @@ const signupHref = is2up ? ZEUSBET_SIGNUP_URL : (b.link || "#");
               <TagBadge tag={b.tag} inline accent={acc} />
             </div>
 
-<div className="space-y-3 text-white/90">
-  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-    <StatTile icon={Coins}      label={t.card.min}   value={b.minDep}              accent={acc} />
-    <StatTile icon={Percent}    label={t.card.bonus} value={b.bonus}               accent={acc} />
-    <StatTile icon={TrendingUp} label={cashbackLabel} value={cap(b.cashback,lang)} accent={acc} />
-    <StatTile icon={Sparkles}   label={t.card.spins} value={cap(b.freeSpins,lang)} accent={acc} />
-  </div>
+            <div className="space-y-3 text-white/90">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <StatTile icon={Coins}      label={t.card.min}     value={b.minDep}              accent={acc} />
+                <StatTile icon={Percent}    label={t.card.bonus}   value={b.bonus}               accent={acc} />
+                <StatTile icon={TrendingUp} label={cashbackLabel}  value={cap(b.cashback,lang)}  accent={acc} />
+                <StatTile icon={Sparkles}   label={t.card.spins}   value={cap(b.freeSpins,lang)} accent={acc} />
+              </div>
 
-  {/* ⬇️ esconder código na Ignibet quando SHOW_IGNIBET_CODE=false */}
-{/* esconder o campo do código por padrão */}
-{SHOW_PROMO_CODE && (
-  <div className="grid grid-cols-[1fr,auto] items-center gap-3">
-    <div className="h-11 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 flex items-center text-sm text-white/90">
-      <span className="text-white/60">{t.card.code}</span>
-      <span className="ml-2 font-semibold tracking-wide">{b.code}</span>
-    </div>
-    <button
-      onClick={async () => { try { await navigator.clipboard.writeText(b.code); } catch {} }}
-      className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
-    >
-      <Copy className="h-4 w-4" />
-      {t.card.copy}
-    </button>
-  </div>
-)}
-
-</div>
-
+              {/* código promocional opcional */}
+              {SHOW_PROMO_CODE && (
+                <div className="grid grid-cols-[1fr,auto] items-center gap-3">
+                  <div className="h-11 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 flex items-center text-sm text-white/90">
+                    <span className="text-white/60">{t.card.code}</span>
+                    <span className="ml-2 font-semibold tracking-wide">{b.code}</span>
+                  </div>
+                  <button
+                    onClick={async () => { try { await navigator.clipboard.writeText(b.code); } catch {} }}
+                    className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/5 ring-1 ring-white/10 px-4 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-rose-400/60"
+                  >
+                    <Copy className="h-4 w-4" />
+                    {t.card.copy}
+                  </button>
+                </div>
+              )}
+            </div>
 
             <div className="mt-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
@@ -1321,6 +1550,8 @@ const signupHref = is2up ? ZEUSBET_SIGNUP_URL : (b.link || "#");
     </Card>
   );
 }
+
+/* ---------- Betify PromoCard + Landing ---------- */
 function PromoCard({ p }: { p: Promo }) {
   const { t } = useLang();
   const copy = t.betify.promos[p.id];
@@ -1489,119 +1720,118 @@ export default function App() {
   // refs/altura da sidebar
   const rightColRef = React.useRef<HTMLElement | null>(null);
 
-const updateSidebarMetrics = React.useCallback(() => {
-  const main = rightColRef.current;
-  if (!main) return;
+  const updateSidebarMetrics = React.useCallback(() => {
+    const main = rightColRef.current;
+    if (!main) return;
 
-  const isBetify  = location.pathname.startsWith("/betify");
-  const isIgnibet = location.pathname.startsWith("/ignibet");
-  const is2up = location.pathname.startsWith("/2up"); // <<< NOVO
+    const isBetify  = location.pathname.startsWith("/betify");
+    const isIgnibet = location.pathname.startsWith("/ignibet");
+    const is2up     = location.pathname.startsWith("/2up");
+    const isAerobet = location.pathname.startsWith("/aerobet");
 
-  const selector =
-    isBetify  ? "#betify-start"  :
-    isIgnibet ? "#ignibet-start" :
-    is2up     ? "#zeusbet-start" :
-                "#embeds-start";
+    const selector =
+      isBetify  ? "#betify-start"  :
+      isIgnibet ? "#ignibet-start" :
+      is2up     ? "#zeusbet-start" :
+      isAerobet ? "#aerobet-start" :
+                  "#embeds-start";
 
-  const anchor = main.querySelector<HTMLElement>(selector);
+    const anchor = main.querySelector<HTMLElement>(selector);
 
-  let extraTop = 0;
-  if (anchor) {
-    const a = anchor.getBoundingClientRect();
-    const m = main.getBoundingClientRect();
-    extraTop = Math.max(0, Math.round(a.top - m.top));
-  }
-  document.documentElement.style.setProperty("--sidebar-extra-top", `0px`);
-
-if (isBetify || isIgnibet || is2up) {
-    const section = anchor?.closest("section") as HTMLElement | null;
-    if (section) {
+    let extraTop = 0;
+    if (anchor) {
+      const a = anchor.getBoundingClientRect();
       const m = main.getBoundingClientRect();
-      const s = section.getBoundingClientRect();
-      const sectionHeight = Math.max(0, Math.round(s.bottom - m.top - extraTop));
-      const usable = Math.max(240, sectionHeight);
-      document.documentElement.style.setProperty("--sidebar-maxpx", `${usable}px`);
-      document.documentElement.style.setProperty("--sidebar-nudge", "16px");
+      extraTop = Math.max(0, Math.round(a.top - m.top));
+    }
+    document.documentElement.style.setProperty("--sidebar-extra-top", `0px`);
+
+    if (isBetify || isIgnibet || is2up || isAerobet) {
+      const section = anchor?.closest("section") as HTMLElement | null;
+      if (section) {
+        const m = main.getBoundingClientRect();
+        const s = section.getBoundingClientRect();
+        const sectionHeight = Math.max(0, Math.round(s.bottom - m.top - extraTop));
+        const usable = Math.max(240, sectionHeight);
+        document.documentElement.style.setProperty("--sidebar-maxpx", `${usable}px`);
+        document.documentElement.style.setProperty("--sidebar-nudge", "16px");
+      } else {
+        document.documentElement.style.removeProperty("--sidebar-maxpx");
+        document.documentElement.style.removeProperty("--sidebar-nudge");
+      }
     } else {
       document.documentElement.style.removeProperty("--sidebar-maxpx");
       document.documentElement.style.removeProperty("--sidebar-nudge");
     }
-  } else {
-    document.documentElement.style.removeProperty("--sidebar-maxpx");
-    document.documentElement.style.removeProperty("--sidebar-nudge");
-  }
-}, [location.pathname]);
+  }, [location.pathname]);
 
+  // re-medir quando mudas de página
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    updateSidebarMetrics();
 
+    // mede outra vez após o reflow
+    const r1 = requestAnimationFrame(() => {
+      const r2 = requestAnimationFrame(updateSidebarMetrics);
+      (window as any).__r2 = r2;
+    });
+    (window as any).__r1 = r1;
 
+    return () => {
+      cancelAnimationFrame((window as any).__r1 || 0);
+      cancelAnimationFrame((window as any).__r2 || 0);
+    };
+  }, [location.pathname, updateSidebarMetrics]);
 
+  // re-medir em resize (se o iframe ajustar altura)
+  useEffect(() => {
+    const onResize = () => updateSidebarMetrics();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [updateSidebarMetrics]);
 
+  // re-medir quando o conteúdo da section muda (imagens/iframes carregam)
+  useEffect(() => {
+    const main = rightColRef.current;
+    if (!main) return;
 
-// re-medir quando mudas de página
-useEffect(() => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  updateSidebarMetrics();
+    const ro = new ResizeObserver(() => updateSidebarMetrics());
+    ro.observe(main);
 
-  // mede outra vez após o reflow
-  const r1 = requestAnimationFrame(() => {
-    const r2 = requestAnimationFrame(updateSidebarMetrics);
-    (window as any).__r2 = r2;
-  });
-  (window as any).__r1 = r1;
+    // observa também a section que contém o anchor da página atual
+    const anchorSel = location.pathname.startsWith("/betify")
+      ? "#betify-start"
+      : location.pathname.startsWith("/ignibet")
+      ? "#ignibet-start"
+      : location.pathname.startsWith("/2up")
+      ? "#zeusbet-start"
+      : location.pathname.startsWith("/aerobet")
+      ? "#aerobet-start"
+      : null;
 
-  return () => {
-    cancelAnimationFrame((window as any).__r1 || 0);
-    cancelAnimationFrame((window as any).__r2 || 0);
-  };
-}, [location.pathname, updateSidebarMetrics]);
+    const anchor = anchorSel ? main.querySelector<HTMLElement>(anchorSel) : null;
+    const section = anchor?.closest("section") as HTMLElement | null;
+    if (section) ro.observe(section);
 
-// re-medir em resize (se o iframe ajustar altura)
-useEffect(() => {
-  const onResize = () => updateSidebarMetrics();
-  window.addEventListener("resize", onResize);
-  return () => window.removeEventListener("resize", onResize);
-}, [updateSidebarMetrics]);
+    // opcional: re-medir quando todas as imagens dessa section terminarem de carregar
+    const imgs = section ? Array.from(section.querySelectorAll("img")) : [];
+    const onLoad = () => updateSidebarMetrics();
+    imgs.forEach((img) => img.addEventListener("load", onLoad, { once: true }));
 
-// re-medir quando o conteúdo da section muda (imagens/iframes carregam)
-useEffect(() => {
-  const main = rightColRef.current;
-  if (!main) return;
+    return () => {
+      ro.disconnect();
+      imgs.forEach((img) => img.removeEventListener("load", onLoad));
+    };
+  }, [location.pathname, updateSidebarMetrics]);
 
-  const ro = new ResizeObserver(() => updateSidebarMetrics());
-  ro.observe(main);
+  // Lê as brands também no App
+  const { brands: navBrands } = useBrands();
 
-  // observa também a section que contém o anchor da página atual
-const anchorSel = location.pathname.startsWith("/betify")
-  ? "#betify-start"
-  : location.pathname.startsWith("/ignibet")
-  ? "#ignibet-start"
-  : location.pathname.startsWith("/2up")
-  ? "#zeusbet-start"
-  : null;
-
-  const anchor = anchorSel ? main.querySelector<HTMLElement>(anchorSel) : null;
-  const section = anchor?.closest("section") as HTMLElement | null;
-  if (section) ro.observe(section);
-
-  // opcional: re-medir quando todas as imagens dessa section terminarem de carregar
-  const imgs = section ? Array.from(section.querySelectorAll("img")) : [];
-  const onLoad = () => updateSidebarMetrics();
-  imgs.forEach((img) => img.addEventListener("load", onLoad, { once: true }));
-
-  return () => {
-    ro.disconnect();
-    imgs.forEach((img) => img.removeEventListener("load", onLoad));
-  };
-}, [location.pathname, updateSidebarMetrics]);
-
-// Lê as brands também no App
-const { brands: navBrands } = useBrands();
-
-// Flags: mostram na sidebar só se a brand estiver enabled (default: true)
-const showBetifyNav  = !!navBrands && navBrands.some(b => /betify/i.test(b.name)  && b.enabled !== false);
-const showIgnibetNav = !!navBrands && navBrands.some(b => /ignibet/i.test(b.name) && b.enabled !== false);
-const showZeusbetNav = !!navBrands && navBrands.some(b => /zeusbet/i.test(b.name) && b.enabled !== false);
-
+  // Flags: mostram na sidebar só se a brand estiver enabled (default: true)
+  const showBetifyNav  = !!navBrands && navBrands.some(b => /betify/i.test(b.name)  && b.enabled !== false);
+  const showIgnibetNav = !!navBrands && navBrands.some(b => /ignibet/i.test(b.name) && b.enabled !== false);
+  const showZeusbetNav = !!navBrands && navBrands.some(b => /zeusbet/i.test(b.name) && b.enabled !== false);
+  const showAerobetNav = !!navBrands && navBrands.some(b => /aerobet/i.test(b.name) && b.enabled !== false);
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
@@ -1611,31 +1841,30 @@ const showZeusbetNav = !!navBrands && navBrands.some(b => /zeusbet/i.test(b.name
 
         <div className="flex-1">
           <div
-  className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8
+            className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8
              px-6 pt-8 pb-0 sm:px-8
              md:grid-cols-[240px,1fr] items-stretch"
->
+          >
             <Sidebar
-  onOpenStream={() => setShowOverlay(true)}
-  onOpenCommunity={() => setShowCommunity(true)}
-  showBetify={showBetifyNav}
-  showIgnibet={showIgnibetNav}
-  showZeusbet={showZeusbetNav}
-/>
-
+              onOpenStream={() => setShowOverlay(true)}
+              onOpenCommunity={() => setShowCommunity(true)}
+              showBetify={showBetifyNav}
+              showIgnibet={showIgnibetNav}
+              showZeusbet={showZeusbetNav}
+              showAerobet={showAerobetNav}
+            />
 
             <main className="space-y-10" ref={rightColRef}>
               <Routes>
-  <Route path="/" element={<Home />} />
-  <Route path="/betify" element={<BetifyLanding />} />
-  <Route path="/ignibet" element={<IgnibetLanding />} />
-  <Route path="/2up" element={<ZeusbetLanding />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/betify" element={<BetifyLanding />} />
+                <Route path="/ignibet" element={<IgnibetLanding />} />
+                <Route path="/2up" element={<ZeusbetLanding />} />
+                <Route path="/aerobet" element={<AerobetLanding />} />
 
-
-  {/* novo: painel do moderador */}
-  <Route path="/moderator" element={<ModeratorPage />} />
-</Routes>
-
+                {/* novo: painel do moderador */}
+                <Route path="/moderator" element={<ModeratorPage />} />
+              </Routes>
             </main>
           </div>
         </div>
@@ -1652,4 +1881,3 @@ const showZeusbetNav = !!navBrands && navBrands.some(b => /zeusbet/i.test(b.name
     </LangCtx.Provider>
   );
 }
-
