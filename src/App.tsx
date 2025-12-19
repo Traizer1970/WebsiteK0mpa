@@ -16,16 +16,16 @@ const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 
 const SHOW_IGNIBET_CODE = false;
 /* URLs Betify — troca para os teus links reais */
-const BETIFY_SIGNUP_URL = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/";      // <- altera
+const BETIFY_SIGNUP_URL = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/";       // <- altera
 const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
 const IGNIBET_SIGNUP_URL = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZcQGNd7ZgqdRLk/1/"; // TODO: coloca o teu link real
 const IGNIBET_PROMO_URL  = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZcQGNd7ZgqdRLk/1/"; // TODO: coloca o teu link real
 const ZEUSBET_SIGNUP_URL = "https://2up.io/?r=K0MPA";
 const ZEUSBET_PROMO_URL  = "https://2up.io/?r=K0MPA";
 
-// NEW: Aerobet
-const AEROBET_SIGNUP_URL = "https://teu-link-aerobet-signup.com";  // TODO: coloca o teu link real
-const AEROBET_PROMO_URL  = "https://teu-link-aerobet-promo.com";   // TODO: coloca o teu link real
+// NEW: BetFury
+const BETFURY_SIGNUP_URL = "https://betfury.tv/4qbdlF6";
+const BETFURY_PROMO_URL  = "https://betfury.tv/4qbdlF6";
 
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
@@ -59,10 +59,10 @@ const zeusbetPromos: Promo[] = [
   { id: "fs-monthly", icon: Sparkles, href: ZEUSBET_PROMO_URL },
 ];
 
-// NEW: Aerobet promos
-const aerobetPromos: Promo[] = [
-  { id: "every-dep",  icon: Percent,  href: AEROBET_PROMO_URL },
-  { id: "fs-monthly", icon: Sparkles, href: AEROBET_PROMO_URL },
+// NEW: BetFury promos
+const betfuryPromos: Promo[] = [
+  { id: "every-dep",  icon: Percent,  href: BETFURY_PROMO_URL },
+  { id: "fs-monthly", icon: Sparkles, href: BETFURY_PROMO_URL },
 ];
 
 /* links das redes */
@@ -72,9 +72,9 @@ const SOCIAL_LINKS = {
   twitch:   "https://twitch.tv/k0mpa",
   telegram: "https://t.me/+L7INF90tYokwMDY0",
   discord:  "https://discord.gg/JMe6xxU",
-  tiktok:        "https://www.tiktok.com/@k0mpa_",
+  tiktok:         "https://www.tiktok.com/@k0mpa_",
   tiktokValorant:"https://www.tiktok.com/@k0mpavalorant",
-  x:             "https://x.com/k0mpafps",
+  x:               "https://x.com/k0mpafps",
   instantGaming: "https://www.instant-gaming.com/en/?igr=k0mpa",
 } as const;
 
@@ -172,7 +172,7 @@ type Translations = {
       "fs-monthly": { title: string; blurb: string; highlight: string; };
     };
   };
-  aerobet: {
+  betfury: {
     title: string; subtitle: string;
     steps: { one: string; two_prefix: string; two_code: string; two_suffix: string; three: string; };
     cta_signup: string; cta_promos: string; promo_label: string;
@@ -236,11 +236,11 @@ const messages: Record<Lang, Translations> = {
         "fs-monthly": { title: "Bónus de Segundo Depósito", blurb: "Ignibet (Min. depósito €20 Até 750FS)", highlight: "Até 750FS" }
       }
     },
-    aerobet: {
-      title: "Aerobet",
-      subtitle: "Como jogar na Aerobet e aproveitar o bónus de boas-vindas",
+    betfury: {
+      title: "BetFury",
+      subtitle: "Como jogar na BetFury e aproveitar o bónus de boas-vindas",
       steps: {
-        one: "Cria conta na Aerobet.",
+        one: "Cria conta na BetFury.",
         two_prefix: "Usa o código",
         two_code: "K0MPA",
         two_suffix: "no registo.",
@@ -250,8 +250,8 @@ const messages: Record<Lang, Translations> = {
       cta_promos: "VER PROMOÇÕES",
       promo_label: "Promo",
       promos: {
-        "every-dep":  { title: "Bónus de Boas-Vindas",        blurb: "Aerobet (Min. depósito €20 — 150% até 500 euros + 50 freespins na le bandit).",          highlight: "Até 50FS" },
-        "fs-monthly": { title: "Bónus de Segundo Depósito",   blurb: "Aerobet (Min. depósito €20).",       highlight: "Até 200FS" }
+        "every-dep":  { title: "Bónus de Boas-Vindas",        blurb: "BetFury (150% até 500 euros + 50 freespins, wager x40).",         highlight: "150% + 50FS" },
+        "fs-monthly": { title: "Bónus de Segundo Depósito",   blurb: "BetFury (180% + 75 Freespins, wager x40).",       highlight: "180% + 75FS" }
       }
     },
   },
@@ -308,11 +308,11 @@ const messages: Record<Lang, Translations> = {
         "fs-monthly": { title: "2nd Deposit Bonus", blurb: "Ignibet (Min. deposit €20 — Up to 750FS)",  highlight: "Up to 750FS" }
       }
     },
-    aerobet: {
-      title: "Aerobet",
-      subtitle: "How to play on Aerobet and grab the welcome bonus",
+    betfury: {
+      title: "BetFury",
+      subtitle: "How to play on BetFury and grab the welcome bonus",
       steps: {
-        one: "Create an account on Aerobet.",
+        one: "Create an account on BetFury.",
         two_prefix: "Use the code",
         two_code: "K0MPA",
         two_suffix: "during signup.",
@@ -322,8 +322,8 @@ const messages: Record<Lang, Translations> = {
       cta_promos: "SEE PROMOTIONS",
       promo_label: "Promo",
       promos: {
-        "every-dep":  { title: "Welcome Bonus",     blurb: "Aerobet (Min. deposit €20 — bonus details).",      highlight: "Up to 500FS" },
-        "fs-monthly": { title: "2nd Deposit Bonus", blurb: "Aerobet (Min. deposit €20 — campaign details).",   highlight: "Up to 500FS" }
+        "every-dep":  { title: "Welcome Bonus",     blurb: "BetFury (150% + 50 freespins, wager x40).",       highlight: "150% + 50FS" },
+        "fs-monthly": { title: "2nd Deposit Bonus", blurb: "BetFury (180% + 75 Freespins, wager x40).",   highlight: "180% + 75FS" }
       }
     },
   }
@@ -472,14 +472,14 @@ function Sidebar({
   showBetify,
   showIgnibet,
   showZeusbet,
-  showAerobet,          // <--- ADICIONAR
+  showBetfury,          // <--- MODIFICADO
 }: {
   onOpenStream: () => void;
   onOpenCommunity: () => void;
   showBetify: boolean;
   showIgnibet: boolean;
   showZeusbet: boolean;
-  showAerobet: boolean; // <--- ADICIONAR
+  showBetfury: boolean; // <--- MODIFICADO
 }) {
 
 
@@ -532,7 +532,7 @@ function Sidebar({
     icon:
       density === "ultra"   ? "h-4 w-4" :
       density === "compact" ? "h-[18px] w-[18px]" : "h-5 w-5",
-    hRow:       density === "ultra" ? "mb-1"   : density === "compact" ? "mb-1.5" : "mb-2",
+    hRow:       density === "ultra" ? "mb-1"    : density === "compact" ? "mb-1.5" : "mb-2",
     gapY:       density === "ultra" ? "space-y-1.5" : density === "compact" ? "space-y-2" : "space-y-2.5",
     sectionGap: density === "ultra" ? "my-2"  : density === "compact" ? "my-2.5" : "my-3",
     socialsGrid:
@@ -620,24 +620,24 @@ function Sidebar({
                 </NavLink>
               )}
 
-              {showAerobet && (
-  <NavLink to="/aerobet" className={linkClasses}>
-    <span className="flex items-center gap-2">
-      <span
-        className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15"
-        aria-hidden
-      />
-      <span className="font-extrabold text-white">Aerobet</span>
-    </span>
-    <Badge
-      className="text-white flex items-center gap-1.5"
-      style={{ background: "#2563eb" }} // azul
-    >
-      <Sparkles className="h-3.5 w-3.5" />
-      NEW
-    </Badge>
-  </NavLink>
-)}
+              {showBetfury && (
+                <NavLink to="/betfury" className={linkClasses}>
+                  <span className="flex items-center gap-2">
+                    <span
+                      className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15"
+                      aria-hidden
+                    />
+                    <span className="font-extrabold text-white">BetFury</span>
+                  </span>
+                  <Badge
+                    className="text-white flex items-center gap-1.5"
+                    style={{ background: "#d92626" }} // vermelho Betfury
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    NEW
+                  </Badge>
+                </NavLink>
+              )}
 
 
               <div className={`${sizes.sectionGap} h-px bg-white/10`} />
@@ -1054,20 +1054,20 @@ function ZeusbetLanding() {
   );
 }
 
-/* ---------- Página Aerobet ---------- */
-function AerobetLanding() {
+/* ---------- Página BetFury (Substitui Aerobet) ---------- */
+function BetfuryLanding() {
   const { t } = useLang();
   const scrollToPromos = () =>
-    document.getElementById("aerobet-promos")
+    document.getElementById("betfury-promos")
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  const accent = "#2563eb"; // azul Aerobet
+  const accent = "#E73F28"; // Vermelho BetFury
 
 
   return (
     <div className="space-y-8">
       <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
-        <div id="aerobet-start" />
+        <div id="betfury-start" />
 
         {/* glow */}
         <div
@@ -1075,8 +1075,8 @@ function AerobetLanding() {
           className="pointer-events-none absolute inset-0"
          style={{
   background:
-    "radial-gradient(60% 80% at 10% 0%, rgba(37,99,235,.22) 0%, rgba(37,99,235,0) 55%)," +
-    "radial-gradient(50% 60% at 85% 100%, rgba(56,189,248,.18) 0%, rgba(56,189,248,0) 60%)",
+    "radial-gradient(60% 80% at 10% 0%, rgba(231,63,40,.22) 0%, rgba(231,63,40,0) 55%)," +
+    "radial-gradient(50% 60% at 85% 100%, rgba(251,146,60,.18) 0%, rgba(251,146,60,0) 60%)",
   mixBlendMode: "screen",
 }}
 
@@ -1085,9 +1085,9 @@ function AerobetLanding() {
         <div className="flex items-center justify-between gap-4 relative">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-              {t.aerobet.title}
+              {t.betfury.title}
             </h1>
-            <p className="text-white/70 text-sm">{t.aerobet.subtitle}</p>
+            <p className="text-white/70 text-sm">{t.betfury.subtitle}</p>
           </div>
         </div>
 
@@ -1095,37 +1095,37 @@ function AerobetLanding() {
           {/* passos */}
           <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
             <div className="text-lg font-extrabold mb-3">
-  {t.aerobet.steps.two_prefix}{" "}
-  <span className="text-sky-300">{t.aerobet.steps.two_code}</span>
+  {t.betfury.steps.two_prefix}{" "}
+  <span className="text-orange-400">{t.betfury.steps.two_code}</span>
 </div>
 
             <ol className="space-y-3 text-sm text-white/90">
               <li>
-                <span className="font-bold">1.</span> {t.aerobet.steps.one}
+                <span className="font-bold">1.</span> {t.betfury.steps.one}
               </li>
               <li>
-                <span className="font-bold">2.</span> {t.aerobet.steps.two_prefix}{" "}
-                <span className="font-bold">{t.aerobet.steps.two_code}</span>{" "}
-                {t.aerobet.steps.two_suffix}
+                <span className="font-bold">2.</span> {t.betfury.steps.two_prefix}{" "}
+                <span className="font-bold">{t.betfury.steps.two_code}</span>{" "}
+                {t.betfury.steps.two_suffix}
               </li>
               <li>
-                <span className="font-bold">3.</span> {t.aerobet.steps.three}
+                <span className="font-bold">3.</span> {t.betfury.steps.three}
               </li>
             </ol>
 
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <a
-                href={AEROBET_SIGNUP_URL}
+                href={BETFURY_SIGNUP_URL}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 transition hover:brightness-110"
                 style={{
-  background: `linear-gradient(180deg, ${accent}, #1d4ed8)`,
-  boxShadow: "0 10px 26px rgba(37,99,235,.28)",
+  background: `linear-gradient(180deg, ${accent}, #b91c1c)`,
+  boxShadow: "0 10px 26px rgba(220,38,38,.28)",
 }}
 
               >
-                {t.aerobet.cta_signup} <ExternalLink className="h-4 w-4" />
+                {t.betfury.cta_signup} <ExternalLink className="h-4 w-4" />
               </a>
 
               <button
@@ -1133,7 +1133,7 @@ function AerobetLanding() {
                 onClick={scrollToPromos}
                 className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/8 hover:bg-white/12 ring-1 ring-white/15"
               >
-                {t.aerobet.cta_promos}
+                {t.betfury.cta_promos}
               </button>
             </div>
           </div>
@@ -1142,8 +1142,8 @@ function AerobetLanding() {
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
               <img
-                src="https://casinoportugal.online/image/cache/data/casino/Aerobet/Aerobet-main-0x0s.jpg"
-                alt="Aerobet preview"
+                src="https://win.gg/wp-content/uploads/2025/01/betfury-pro-contra-en.jpg.webp"
+                alt="BetFury preview"
                 className="absolute inset-0 h-full w-full object-cover"
               />
             </div>
@@ -1151,8 +1151,8 @@ function AerobetLanding() {
         </div>
 
         {/* promos */}
-        <div id="aerobet-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
-          {aerobetPromos.map((p) => (
+        <div id="betfury-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
+          {betfuryPromos.map((p) => (
             <div
               key={p.id}
               className="rounded-3xl p-5 sm:p-6 ring-1 ring-white/12 text-white/90 bg-white/[.06] backdrop-blur-md shadow-[0_14px_50px_rgba(0,0,0,.35)] relative overflow-hidden"
@@ -1160,7 +1160,7 @@ function AerobetLanding() {
               <span
                 aria-hidden
                 className="absolute inset-x-4 top-0 h-[3px] rounded-b-xl"
-                style={{ background: "linear-gradient(90deg,#2563eb,transparent)" }}
+                style={{ background: "linear-gradient(90deg,#E73F28,transparent)" }}
 
               />
               <div className="flex items-start gap-3 relative">
@@ -1169,20 +1169,20 @@ function AerobetLanding() {
                 </span>
                 <div className="flex-1">
                   <div className="text-xs font-semibold text-white/60 uppercase">
-                    {t.aerobet.promo_label}
+                    {t.betfury.promo_label}
                   </div>
                   <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">
-                    {t.aerobet.promos[p.id].title}
+                    {t.betfury.promos[p.id].title}
                   </h3>
                   <div className="mt-1.5 text-[13px] text-white/75">
-                    {t.aerobet.promos[p.id].blurb}
+                    {t.betfury.promos[p.id].blurb}
                   </div>
 
                   <div className="mt-4">
                     <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
                       <Sparkles className="h-4 w-4" />
                       <span className="text-sm font-extrabold text-white whitespace-nowrap">
-                        {t.aerobet.promos[p.id].highlight}
+                        {t.betfury.promos[p.id].highlight}
                       </span>
                     </div>
                   </div>
@@ -1194,8 +1194,8 @@ function AerobetLanding() {
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10"
                       style={{
-  background: "linear-gradient(135deg,#2563eb,#1d4ed8)",
-  boxShadow: "0 10px 26px rgba(37,99,235,.25)",
+  background: "linear-gradient(135deg,#E73F28,#b91c1c)",
+  boxShadow: "0 10px 26px rgba(220,38,38,.25)",
 }}
 
                     >
@@ -1490,10 +1490,10 @@ function BrandCard({ b }: { b: Brand }) {
                 <PaymentRibbon methods={methods} />
                 <div className="pointer-events-none absolute left-6 right-6 -top-2 h-2 rounded-b-xl bg-gradient-to-b from-black/40 to-transparent" />
                 <div className="grid grid-cols-4 gap-2">
-                  <FancyStat icon={Coins}      label={t.card.min}     value={b.minDep}              accent={acc} />
-                  <FancyStat icon={Percent}    label={t.card.bonus}   value={b.bonus}               accent={acc} />
+                  <FancyStat icon={Coins}       label={t.card.min}      value={b.minDep}              accent={acc} />
+                  <FancyStat icon={Percent}     label={t.card.bonus}    value={b.bonus}                accent={acc} />
                   <FancyStat icon={TrendingUp} label={cashbackLabel}  value={cap(b.cashback, lang)} accent={acc} />
-                  <FancyStat icon={Sparkles}   label={t.card.spins}   value={cap(b.freeSpins, lang)} accent={acc} />
+                  <FancyStat icon={Sparkles}    label={t.card.spins}    value={cap(b.freeSpins, lang)} accent={acc} />
                 </div>
                 <div className="py-1.5 text-[11px] font-semibold tracking-wide text-white/75 text-center">{t.card.terms}</div>
                 <div className="pt-0.5"><FancyCTA href={signupHref} label={t.card.go} accent={acc} /></div>
@@ -1512,10 +1512,10 @@ function BrandCard({ b }: { b: Brand }) {
 
             <div className="space-y-3 text-white/90">
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <StatTile icon={Coins}      label={t.card.min}     value={b.minDep}              accent={acc} />
-                <StatTile icon={Percent}    label={t.card.bonus}   value={b.bonus}               accent={acc} />
+                <StatTile icon={Coins}       label={t.card.min}      value={b.minDep}              accent={acc} />
+                <StatTile icon={Percent}     label={t.card.bonus}    value={b.bonus}                accent={acc} />
                 <StatTile icon={TrendingUp} label={cashbackLabel}  value={cap(b.cashback,lang)}  accent={acc} />
-                <StatTile icon={Sparkles}   label={t.card.spins}   value={cap(b.freeSpins,lang)} accent={acc} />
+                <StatTile icon={Sparkles}    label={t.card.spins}    value={cap(b.freeSpins,lang)} accent={acc} />
               </div>
 
               {/* código promocional opcional */}
@@ -1592,7 +1592,7 @@ function BetifyLanding({ endRef }: { endRef?: React.RefObject<HTMLDivElement> })
   return (
     <div className="space-y-8">
       <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
-        <div id="betify-start" /> 
+        <div id="betify-start" />
         <div aria-hidden className="pointer-events-none absolute inset-0" style={{background:
           "radial-gradient(60% 80% at 10% 0%, rgba(139,92,246,.18) 0%, rgba(139,92,246,0) 55%)," +
           "radial-gradient(50% 60% at 85% 100%, rgba(34,197,94,.16) 0%, rgba(34,197,94,0) 60%)", mixBlendMode:"screen"}} />
@@ -1726,14 +1726,14 @@ export default function App() {
 
     const isBetify  = location.pathname.startsWith("/betify");
     const isIgnibet = location.pathname.startsWith("/ignibet");
-    const is2up     = location.pathname.startsWith("/2up");
-    const isAerobet = location.pathname.startsWith("/aerobet");
+    const is2up      = location.pathname.startsWith("/2up");
+    const isBetfury = location.pathname.startsWith("/betfury"); // MODIFICADO
 
     const selector =
       isBetify  ? "#betify-start"  :
       isIgnibet ? "#ignibet-start" :
-      is2up     ? "#zeusbet-start" :
-      isAerobet ? "#aerobet-start" :
+      is2up      ? "#zeusbet-start" :
+      isBetfury ? "#betfury-start" : // MODIFICADO
                   "#embeds-start";
 
     const anchor = main.querySelector<HTMLElement>(selector);
@@ -1746,7 +1746,7 @@ export default function App() {
     }
     document.documentElement.style.setProperty("--sidebar-extra-top", `0px`);
 
-    if (isBetify || isIgnibet || is2up || isAerobet) {
+    if (isBetify || isIgnibet || is2up || isBetfury) {
       const section = anchor?.closest("section") as HTMLElement | null;
       if (section) {
         const m = main.getBoundingClientRect();
@@ -1805,8 +1805,8 @@ export default function App() {
       ? "#ignibet-start"
       : location.pathname.startsWith("/2up")
       ? "#zeusbet-start"
-      : location.pathname.startsWith("/aerobet")
-      ? "#aerobet-start"
+      : location.pathname.startsWith("/betfury") // MODIFICADO
+      ? "#betfury-start"
       : null;
 
     const anchor = anchorSel ? main.querySelector<HTMLElement>(anchorSel) : null;
@@ -1831,7 +1831,7 @@ export default function App() {
   const showBetifyNav  = !!navBrands && navBrands.some(b => /betify/i.test(b.name)  && b.enabled !== false);
   const showIgnibetNav = !!navBrands && navBrands.some(b => /ignibet/i.test(b.name) && b.enabled !== false);
   const showZeusbetNav = !!navBrands && navBrands.some(b => /zeusbet/i.test(b.name) && b.enabled !== false);
-  const showAerobetNav = !!navBrands && navBrands.some(b => /aerobet/i.test(b.name) && b.enabled !== false);
+  const showBetfuryNav = !!navBrands && navBrands.some(b => /betfury/i.test(b.name) && b.enabled !== false); // MODIFICADO
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
@@ -1842,8 +1842,8 @@ export default function App() {
         <div className="flex-1">
           <div
             className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8
-             px-6 pt-8 pb-0 sm:px-8
-             md:grid-cols-[240px,1fr] items-stretch"
+              px-6 pt-8 pb-0 sm:px-8
+              md:grid-cols-[240px,1fr] items-stretch"
           >
             <Sidebar
               onOpenStream={() => setShowOverlay(true)}
@@ -1851,7 +1851,7 @@ export default function App() {
               showBetify={showBetifyNav}
               showIgnibet={showIgnibetNav}
               showZeusbet={showZeusbetNav}
-              showAerobet={showAerobetNav}
+              showBetfury={showBetfuryNav}
             />
 
             <main className="space-y-10" ref={rightColRef}>
@@ -1860,7 +1860,7 @@ export default function App() {
                 <Route path="/betify" element={<BetifyLanding />} />
                 <Route path="/ignibet" element={<IgnibetLanding />} />
                 <Route path="/2up" element={<ZeusbetLanding />} />
-                <Route path="/aerobet" element={<AerobetLanding />} />
+                <Route path="/betfury" element={<BetfuryLanding />} /> {/* MODIFICADO */}
 
                 {/* novo: painel do moderador */}
                 <Route path="/moderator" element={<ModeratorPage />} />
