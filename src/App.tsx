@@ -15,6 +15,9 @@ const TWITCH_CHANNEL = "k0mpa";
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 
 const SHOW_IGNIBET_CODE = false;
+// NEW: Configuração para esconder o código da BetFury
+const SHOW_BETFURY_CODE = false; 
+
 /* URLs Betify — troca para os teus links reais */
 const BETIFY_SIGNUP_URL = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/";       // <- altera
 const BETIFY_PROMO_URL  = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/"; // <- altera
@@ -23,7 +26,7 @@ const IGNIBET_PROMO_URL  = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZ
 const ZEUSBET_SIGNUP_URL = "https://2up.io/?r=K0MPA";
 const ZEUSBET_PROMO_URL  = "https://2up.io/?r=K0MPA";
 
-// NEW: BetFury
+// NEW: BetFury Links
 const BETFURY_SIGNUP_URL = "https://betfury.tv/4qbdlF6";
 const BETFURY_PROMO_URL  = "https://betfury.tv/4qbdlF6";
 
@@ -710,11 +713,14 @@ function TagBadge({ tag, inline=false, className="", style, accent }: { tag: Bra
   const Icon = (tag === "HOT" ? Flame : tag === "NEW" ? Sparkles : Crown) as React.ElementType;
   const acc = accent ?? tagVisual(tag).accent;
   return (
+    <div className="relative inline-flex" style={style}>
+     {/* Correção para garantir posicionamento do badge na brand card se não for inline */}
     <div className={cn(inline ? "relative inline-flex" : "absolute left-3 top-3 z-20", className)} style={style}>
       <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ background: `linear-gradient(180deg, ${acc}, ${acc})`, boxShadow: "0 4px 14px rgba(0,0,0,.18)" }}>
         <Icon className="h-3.5 w-3.5" />
         <span className="uppercase tracking-wide">{tag}</span>
       </span>
+    </div>
     </div>
   );
 }
@@ -1094,22 +1100,29 @@ function BetfuryLanding() {
         <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
           {/* passos */}
           <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
+            {/* O código foi removido conforme solicitado */}
+            {SHOW_BETFURY_CODE && (
             <div className="text-lg font-extrabold mb-3">
-  {t.betfury.steps.two_prefix}{" "}
-  <span className="text-orange-400">{t.betfury.steps.two_code}</span>
-</div>
+              {t.betfury.steps.two_prefix}{" "}
+              <span className="text-orange-400">{t.betfury.steps.two_code}</span>
+            </div>
+            )}
 
             <ol className="space-y-3 text-sm text-white/90">
               <li>
                 <span className="font-bold">1.</span> {t.betfury.steps.one}
               </li>
+              {/* O passo 2 (código) só aparece se a flag for true */}
+              {SHOW_BETFURY_CODE && (
               <li>
                 <span className="font-bold">2.</span> {t.betfury.steps.two_prefix}{" "}
                 <span className="font-bold">{t.betfury.steps.two_code}</span>{" "}
                 {t.betfury.steps.two_suffix}
               </li>
+              )}
+              {/* Se o passo 2 estiver escondido, este passa a ser o passo 2 */}
               <li>
-                <span className="font-bold">3.</span> {t.betfury.steps.three}
+                <span className="font-bold">{SHOW_BETFURY_CODE ? "3." : "2."}</span> {t.betfury.steps.three}
               </li>
             </ol>
 
@@ -1142,7 +1155,7 @@ function BetfuryLanding() {
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
               <img
-                src="https://win.gg/wp-content/uploads/2025/01/betfury-pro-contra-en.jpg.webp"
+                src="https://images.prismic.io/betfury-blog/Znlv_a8jQADsJlZ2_bf_main_banner.jpg?auto=compress,format"
                 alt="BetFury preview"
                 className="absolute inset-0 h-full w-full object-cover"
               />
