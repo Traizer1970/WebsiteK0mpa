@@ -1155,7 +1155,7 @@ function BetfuryLanding() {
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
               <img
-                src="https://images.prismic.io/betfury-blog/Znlv_a8jQADsJlZ2_bf_main_banner.jpg?auto=compress,format"
+                src="https://win.gg/wp-content/uploads/2025/01/betfury-pro-contra-en.jpg.webp"
                 alt="BetFury preview"
                 className="absolute inset-0 h-full w-full object-cover"
               />
