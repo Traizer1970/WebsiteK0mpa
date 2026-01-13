@@ -253,8 +253,8 @@ const messages: Record<Lang, Translations> = {
       cta_promos: "VER PROMOÇÕES",
       promo_label: "Promo",
       promos: {
-        "every-dep":  { title: "Bónus de Boas-Vindas",        blurb: "Casabet (150% até 500 euros + 50 freespins, wager x40).",         highlight: "150% + 50FS" },
-        "fs-monthly": { title: "Bónus de Segundo Depósito",   blurb: "Casabet (180% + 75 Freespins, wager x40).",        highlight: "180% + 75FS" }
+        "every-dep":  { title: "Bónus de Boas-Vindas",        blurb: "Casabet (400% até 2200 euros + 350 freespins, wager x40).",         highlight: "400% + 350FS" },
+        "fs-monthly": { title: "Bónus de Segundo Depósito",   blurb: "Casabet (400% até 2200 euros + 350 Freespins, wager x40).",        highlight: "400% + 350FS" }
       }
     },
   },
