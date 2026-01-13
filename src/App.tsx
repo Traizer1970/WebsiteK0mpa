@@ -15,8 +15,8 @@ const TWITCH_CHANNEL = "k0mpa";
 const YT_CHANNEL_ID = "UCwhhk8mIE-wGg_EWX2adH5Q";
 
 const SHOW_IGNIBET_CODE = false;
-// NEW: Configuração para esconder o código da BetFury
-const SHOW_BETFURY_CODE = false; 
+// NEW: Configuração para esconder o código da Casabet
+const SHOW_CASABET_CODE = false; 
 
 /* URLs Betify — troca para os teus links reais */
 const BETIFY_SIGNUP_URL = "https://record.betify.partners/_8zlSykIFj1eu11z-n_bVh2Nd7ZgqdRLk/1/";       // <- altera
@@ -26,9 +26,9 @@ const IGNIBET_PROMO_URL  = "https://record.ignibet.partners/_ZoU5ocbGidEWqcfzuvZ
 const ZEUSBET_SIGNUP_URL = "https://2up.io/?r=K0MPA";
 const ZEUSBET_PROMO_URL  = "https://2up.io/?r=K0MPA";
 
-// NEW: BetFury Links
-const BETFURY_SIGNUP_URL = "https://betfury.tv/4qbdlF6";
-const BETFURY_PROMO_URL  = "https://betfury.tv/4qbdlF6";
+// NEW: Casabet Links (antiga BetFury)
+const CASABET_SIGNUP_URL = "https://record.joinaff.com/_vJziJ-Kei05AoZgmYAcPQmNd7ZgqdRLk/1/?pg=0"; // TODO: Coloca o teu link real da Casabet
+const CASABET_PROMO_URL  = "https://record.joinaff.com/_vJziJ-Kei05AoZgmYAcPQmNd7ZgqdRLk/1/?pg=0"; // TODO: Coloca o teu link real da Casabet
 
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
@@ -62,10 +62,10 @@ const zeusbetPromos: Promo[] = [
   { id: "fs-monthly", icon: Sparkles, href: ZEUSBET_PROMO_URL },
 ];
 
-// NEW: BetFury promos
-const betfuryPromos: Promo[] = [
-  { id: "every-dep",  icon: Percent,  href: BETFURY_PROMO_URL },
-  { id: "fs-monthly", icon: Sparkles, href: BETFURY_PROMO_URL },
+// NEW: Casabet promos
+const casabetPromos: Promo[] = [
+  { id: "every-dep",  icon: Percent,  href: CASABET_PROMO_URL },
+  { id: "fs-monthly", icon: Sparkles, href: CASABET_PROMO_URL },
 ];
 
 /* links das redes */
@@ -175,7 +175,7 @@ type Translations = {
       "fs-monthly": { title: string; blurb: string; highlight: string; };
     };
   };
-  betfury: {
+  casabet: {
     title: string; subtitle: string;
     steps: { one: string; two_prefix: string; two_code: string; two_suffix: string; three: string; };
     cta_signup: string; cta_promos: string; promo_label: string;
@@ -239,11 +239,11 @@ const messages: Record<Lang, Translations> = {
         "fs-monthly": { title: "Bónus de Segundo Depósito", blurb: "Ignibet (Min. depósito €20 Até 750FS)", highlight: "Até 750FS" }
       }
     },
-    betfury: {
-      title: "BetFury",
-      subtitle: "Como jogar na BetFury e aproveitar o bónus de boas-vindas",
+    casabet: {
+      title: "Casabet",
+      subtitle: "Como jogar na Casabet e aproveitar o bónus de boas-vindas",
       steps: {
-        one: "Cria conta na BetFury.",
+        one: "Cria conta na Casabet.",
         two_prefix: "Usa o código",
         two_code: "K0MPA",
         two_suffix: "no registo.",
@@ -253,8 +253,8 @@ const messages: Record<Lang, Translations> = {
       cta_promos: "VER PROMOÇÕES",
       promo_label: "Promo",
       promos: {
-        "every-dep":  { title: "Bónus de Boas-Vindas",        blurb: "BetFury (150% até 500 euros + 50 freespins, wager x40).",         highlight: "150% + 50FS" },
-        "fs-monthly": { title: "Bónus de Segundo Depósito",   blurb: "BetFury (180% + 75 Freespins, wager x40).",       highlight: "180% + 75FS" }
+        "every-dep":  { title: "Bónus de Boas-Vindas",        blurb: "Casabet (150% até 500 euros + 50 freespins, wager x40).",         highlight: "150% + 50FS" },
+        "fs-monthly": { title: "Bónus de Segundo Depósito",   blurb: "Casabet (180% + 75 Freespins, wager x40).",        highlight: "180% + 75FS" }
       }
     },
   },
@@ -311,11 +311,11 @@ const messages: Record<Lang, Translations> = {
         "fs-monthly": { title: "2nd Deposit Bonus", blurb: "Ignibet (Min. deposit €20 — Up to 750FS)",  highlight: "Up to 750FS" }
       }
     },
-    betfury: {
-      title: "BetFury",
-      subtitle: "How to play on BetFury and grab the welcome bonus",
+    casabet: {
+      title: "Casabet",
+      subtitle: "How to play on Casabet and grab the welcome bonus",
       steps: {
-        one: "Create an account on BetFury.",
+        one: "Create an account on Casabet.",
         two_prefix: "Use the code",
         two_code: "K0MPA",
         two_suffix: "during signup.",
@@ -325,8 +325,8 @@ const messages: Record<Lang, Translations> = {
       cta_promos: "SEE PROMOTIONS",
       promo_label: "Promo",
       promos: {
-        "every-dep":  { title: "Welcome Bonus",     blurb: "BetFury (150% + 50 freespins, wager x40).",       highlight: "150% + 50FS" },
-        "fs-monthly": { title: "2nd Deposit Bonus", blurb: "BetFury (180% + 75 Freespins, wager x40).",   highlight: "180% + 75FS" }
+        "every-dep":  { title: "Welcome Bonus",     blurb: "Casabet (150% + 50 freespins, wager x40).",        highlight: "150% + 50FS" },
+        "fs-monthly": { title: "2nd Deposit Bonus", blurb: "Casabet (180% + 75 Freespins, wager x40).",   highlight: "180% + 75FS" }
       }
     },
   }
@@ -475,14 +475,14 @@ function Sidebar({
   showBetify,
   showIgnibet,
   showZeusbet,
-  showBetfury,          // <--- MODIFICADO
+  showCasabet,          // <--- MODIFICADO
 }: {
   onOpenStream: () => void;
   onOpenCommunity: () => void;
   showBetify: boolean;
   showIgnibet: boolean;
   showZeusbet: boolean;
-  showBetfury: boolean; // <--- MODIFICADO
+  showCasabet: boolean; // <--- MODIFICADO
 }) {
 
 
@@ -623,18 +623,18 @@ function Sidebar({
                 </NavLink>
               )}
 
-              {showBetfury && (
-                <NavLink to="/betfury" className={linkClasses}>
+              {showCasabet && (
+                <NavLink to="/casabet" className={linkClasses}>
                   <span className="flex items-center gap-2">
                     <span
                       className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15"
                       aria-hidden
                     />
-                    <span className="font-extrabold text-white">BetFury</span>
+                    <span className="font-extrabold text-white">Casabet</span>
                   </span>
                   <Badge
                     className="text-white flex items-center gap-1.5"
-                    style={{ background: "#d92626" }} // vermelho Betfury
+                    style={{ background: "#EAB308" }} // Amarelo Casabet
                   >
                     <Sparkles className="h-3.5 w-3.5" />
                     NEW
@@ -1060,20 +1060,20 @@ function ZeusbetLanding() {
   );
 }
 
-/* ---------- Página BetFury (Substitui Aerobet) ---------- */
-function BetfuryLanding() {
+/* ---------- Página Casabet (Substitui BetFury) ---------- */
+function CasabetLanding() {
   const { t } = useLang();
   const scrollToPromos = () =>
-    document.getElementById("betfury-promos")
+    document.getElementById("casabet-promos")
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  const accent = "#E73F28"; // Vermelho BetFury
+  const accent = "#EAB308"; // Amarelo Casabet (Substitui Vermelho BetFury)
 
 
   return (
     <div className="space-y-8">
       <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
-        <div id="betfury-start" />
+        <div id="casabet-start" />
 
         {/* glow */}
         <div
@@ -1081,8 +1081,8 @@ function BetfuryLanding() {
           className="pointer-events-none absolute inset-0"
          style={{
   background:
-    "radial-gradient(60% 80% at 10% 0%, rgba(231,63,40,.22) 0%, rgba(231,63,40,0) 55%)," +
-    "radial-gradient(50% 60% at 85% 100%, rgba(251,146,60,.18) 0%, rgba(251,146,60,0) 60%)",
+    "radial-gradient(60% 80% at 10% 0%, rgba(234,179,8,.22) 0%, rgba(234,179,8,0) 55%)," +
+    "radial-gradient(50% 60% at 85% 100%, rgba(250,204,21,.18) 0%, rgba(250,204,21,0) 60%)",
   mixBlendMode: "screen",
 }}
 
@@ -1091,9 +1091,9 @@ function BetfuryLanding() {
         <div className="flex items-center justify-between gap-4 relative">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-              {t.betfury.title}
+              {t.casabet.title}
             </h1>
-            <p className="text-white/70 text-sm">{t.betfury.subtitle}</p>
+            <p className="text-white/70 text-sm">{t.casabet.subtitle}</p>
           </div>
         </div>
 
@@ -1101,44 +1101,44 @@ function BetfuryLanding() {
           {/* passos */}
           <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
             {/* O código foi removido conforme solicitado */}
-            {SHOW_BETFURY_CODE && (
+            {SHOW_CASABET_CODE && (
             <div className="text-lg font-extrabold mb-3">
-              {t.betfury.steps.two_prefix}{" "}
-              <span className="text-orange-400">{t.betfury.steps.two_code}</span>
+              {t.casabet.steps.two_prefix}{" "}
+              <span className="text-yellow-400">{t.casabet.steps.two_code}</span>
             </div>
             )}
 
             <ol className="space-y-3 text-sm text-white/90">
               <li>
-                <span className="font-bold">1.</span> {t.betfury.steps.one}
+                <span className="font-bold">1.</span> {t.casabet.steps.one}
               </li>
               {/* O passo 2 (código) só aparece se a flag for true */}
-              {SHOW_BETFURY_CODE && (
+              {SHOW_CASABET_CODE && (
               <li>
-                <span className="font-bold">2.</span> {t.betfury.steps.two_prefix}{" "}
-                <span className="font-bold">{t.betfury.steps.two_code}</span>{" "}
-                {t.betfury.steps.two_suffix}
+                <span className="font-bold">2.</span> {t.casabet.steps.two_prefix}{" "}
+                <span className="font-bold">{t.casabet.steps.two_code}</span>{" "}
+                {t.casabet.steps.two_suffix}
               </li>
               )}
               {/* Se o passo 2 estiver escondido, este passa a ser o passo 2 */}
               <li>
-                <span className="font-bold">{SHOW_BETFURY_CODE ? "3." : "2."}</span> {t.betfury.steps.three}
+                <span className="font-bold">{SHOW_CASABET_CODE ? "3." : "2."}</span> {t.casabet.steps.three}
               </li>
             </ol>
 
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <a
-                href={BETFURY_SIGNUP_URL}
+                href={CASABET_SIGNUP_URL}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 transition hover:brightness-110"
                 style={{
-  background: `linear-gradient(180deg, ${accent}, #b91c1c)`,
-  boxShadow: "0 10px 26px rgba(220,38,38,.28)",
+  background: `linear-gradient(180deg, ${accent}, #ca8a04)`, // Amarelo
+  boxShadow: "0 10px 26px rgba(234,179,8,.28)",
 }}
 
               >
-                {t.betfury.cta_signup} <ExternalLink className="h-4 w-4" />
+                {t.casabet.cta_signup} <ExternalLink className="h-4 w-4" />
               </a>
 
               <button
@@ -1146,7 +1146,7 @@ function BetfuryLanding() {
                 onClick={scrollToPromos}
                 className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/8 hover:bg-white/12 ring-1 ring-white/15"
               >
-                {t.betfury.cta_promos}
+                {t.casabet.cta_promos}
               </button>
             </div>
           </div>
@@ -1156,7 +1156,7 @@ function BetfuryLanding() {
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
               <img
                 src="https://win.gg/wp-content/uploads/2025/01/betfury-pro-contra-en.jpg.webp"
-                alt="BetFury preview"
+                alt="Casabet preview"
                 className="absolute inset-0 h-full w-full object-cover"
               />
             </div>
@@ -1164,8 +1164,8 @@ function BetfuryLanding() {
         </div>
 
         {/* promos */}
-        <div id="betfury-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
-          {betfuryPromos.map((p) => (
+        <div id="casabet-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
+          {casabetPromos.map((p) => (
             <div
               key={p.id}
               className="rounded-3xl p-5 sm:p-6 ring-1 ring-white/12 text-white/90 bg-white/[.06] backdrop-blur-md shadow-[0_14px_50px_rgba(0,0,0,.35)] relative overflow-hidden"
@@ -1173,7 +1173,7 @@ function BetfuryLanding() {
               <span
                 aria-hidden
                 className="absolute inset-x-4 top-0 h-[3px] rounded-b-xl"
-                style={{ background: "linear-gradient(90deg,#E73F28,transparent)" }}
+                style={{ background: "linear-gradient(90deg,#EAB308,transparent)" }}
 
               />
               <div className="flex items-start gap-3 relative">
@@ -1182,20 +1182,20 @@ function BetfuryLanding() {
                 </span>
                 <div className="flex-1">
                   <div className="text-xs font-semibold text-white/60 uppercase">
-                    {t.betfury.promo_label}
+                    {t.casabet.promo_label}
                   </div>
                   <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">
-                    {t.betfury.promos[p.id].title}
+                    {t.casabet.promos[p.id].title}
                   </h3>
                   <div className="mt-1.5 text-[13px] text-white/75">
-                    {t.betfury.promos[p.id].blurb}
+                    {t.casabet.promos[p.id].blurb}
                   </div>
 
                   <div className="mt-4">
                     <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
                       <Sparkles className="h-4 w-4" />
                       <span className="text-sm font-extrabold text-white whitespace-nowrap">
-                        {t.betfury.promos[p.id].highlight}
+                        {t.casabet.promos[p.id].highlight}
                       </span>
                     </div>
                   </div>
@@ -1207,8 +1207,8 @@ function BetfuryLanding() {
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10"
                       style={{
-  background: "linear-gradient(135deg,#E73F28,#b91c1c)",
-  boxShadow: "0 10px 26px rgba(220,38,38,.25)",
+  background: "linear-gradient(135deg,#EAB308,#ca8a04)",
+  boxShadow: "0 10px 26px rgba(234,179,8,.25)",
 }}
 
                     >
@@ -1740,13 +1740,13 @@ export default function App() {
     const isBetify  = location.pathname.startsWith("/betify");
     const isIgnibet = location.pathname.startsWith("/ignibet");
     const is2up      = location.pathname.startsWith("/2up");
-    const isBetfury = location.pathname.startsWith("/betfury"); // MODIFICADO
+    const isCasabet = location.pathname.startsWith("/casabet"); // MODIFICADO
 
     const selector =
       isBetify  ? "#betify-start"  :
       isIgnibet ? "#ignibet-start" :
       is2up      ? "#zeusbet-start" :
-      isBetfury ? "#betfury-start" : // MODIFICADO
+      isCasabet ? "#casabet-start" : // MODIFICADO
                   "#embeds-start";
 
     const anchor = main.querySelector<HTMLElement>(selector);
@@ -1759,7 +1759,7 @@ export default function App() {
     }
     document.documentElement.style.setProperty("--sidebar-extra-top", `0px`);
 
-    if (isBetify || isIgnibet || is2up || isBetfury) {
+    if (isBetify || isIgnibet || is2up || isCasabet) {
       const section = anchor?.closest("section") as HTMLElement | null;
       if (section) {
         const m = main.getBoundingClientRect();
@@ -1818,8 +1818,8 @@ export default function App() {
       ? "#ignibet-start"
       : location.pathname.startsWith("/2up")
       ? "#zeusbet-start"
-      : location.pathname.startsWith("/betfury") // MODIFICADO
-      ? "#betfury-start"
+      : location.pathname.startsWith("/casabet") // MODIFICADO
+      ? "#casabet-start"
       : null;
 
     const anchor = anchorSel ? main.querySelector<HTMLElement>(anchorSel) : null;
@@ -1844,7 +1844,7 @@ export default function App() {
   const showBetifyNav  = !!navBrands && navBrands.some(b => /betify/i.test(b.name)  && b.enabled !== false);
   const showIgnibetNav = !!navBrands && navBrands.some(b => /ignibet/i.test(b.name) && b.enabled !== false);
   const showZeusbetNav = !!navBrands && navBrands.some(b => /zeusbet/i.test(b.name) && b.enabled !== false);
-  const showBetfuryNav = !!navBrands && navBrands.some(b => /betfury/i.test(b.name) && b.enabled !== false); // MODIFICADO
+  const showCasabetNav = !!navBrands && navBrands.some(b => /casabet/i.test(b.name) && b.enabled !== false); // MODIFICADO
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
@@ -1864,7 +1864,7 @@ export default function App() {
               showBetify={showBetifyNav}
               showIgnibet={showIgnibetNav}
               showZeusbet={showZeusbetNav}
-              showBetfury={showBetfuryNav}
+              showCasabet={showCasabetNav}
             />
 
             <main className="space-y-10" ref={rightColRef}>
@@ -1873,7 +1873,7 @@ export default function App() {
                 <Route path="/betify" element={<BetifyLanding />} />
                 <Route path="/ignibet" element={<IgnibetLanding />} />
                 <Route path="/2up" element={<ZeusbetLanding />} />
-                <Route path="/betfury" element={<BetfuryLanding />} /> {/* MODIFICADO */}
+                <Route path="/casabet" element={<CasabetLanding />} /> {/* MODIFICADO */}
 
                 {/* novo: painel do moderador */}
                 <Route path="/moderator" element={<ModeratorPage />} />
