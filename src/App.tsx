@@ -30,6 +30,15 @@ const ZEUSBET_PROMO_URL  = "https://2up.io/?r=K0MPA";
 const CASABET_SIGNUP_URL = "https://record.joinaff.com/_vJziJ-Kei05AoZgmYAcPQmNd7ZgqdRLk/1/?pg=0"; // TODO: Coloca o teu link real da Casabet
 const CASABET_PROMO_URL  = "https://record.joinaff.com/_vJziJ-Kei05AoZgmYAcPQmNd7ZgqdRLk/1/?pg=0"; // TODO: Coloca o teu link real da Casabet
 
+const MEGARICH_SIGNUP_URL = "https://affifam.com/t9kadkdt4";
+const MEGARICH_PROMO_URL  = "https://affifam.com/t9kadkdt4";
+const SHOW_MEGARICH_CODE = false; 
+
+const megarichPromos: Promo[] = [
+  { id: "every-dep",  icon: Percent,  href: MEGARICH_PROMO_URL },
+  { id: "fs-monthly", icon: Sparkles, href: MEGARICH_PROMO_URL },
+];
+
 const SHOP_URL = "https://streamelements.com/k0mpa/store";
 
 const SHOW_PROMO_CODE = false;
@@ -184,6 +193,15 @@ type Translations = {
       "fs-monthly": { title: string; blurb: string; highlight: string; };
     };
   };
+  megarich: {
+    title: string; subtitle: string;
+    steps: { one: string; two_prefix: string; two_code: string; two_suffix: string; three: string; };
+    cta_signup: string; cta_promos: string; promo_label: string;
+    promos: {
+      "every-dep":  { title: string; blurb: string; highlight: string; };
+      "fs-monthly": { title: string; blurb: string; highlight: string; };
+    };
+  };
 };
 
 const messages: Record<Lang, Translations> = {
@@ -239,6 +257,24 @@ const messages: Record<Lang, Translations> = {
         "fs-monthly": { title: "Bónus de Segundo Depósito", blurb: "Ignibet (Min. depósito €20 Até 750FS)", highlight: "Até 750FS" }
       }
     },
+    megarich: {
+  title: "Megarich",
+  subtitle: "300% até 2500€ + 150 FREESPINS no primeiro depósito",
+  steps: {
+    one: "Cria conta na Megarich pelo link oficial.",
+    two_prefix: "Usa o código",
+    two_code: "K0MPA",
+    two_suffix: "se disponível.",
+    three: "Recebe 300% de bónus + 150 FreeSpins!"
+  },
+  cta_signup: "REGISTAR AGORA",
+  cta_promos: "VER PROMOÇÕES",
+  promo_label: "Promo",
+  promos: {
+    "every-dep":  { title: "Bónus de Boas-Vindas", blurb: "1º Depósito: 300% até 2500€ + 150 FreeSpins.", highlight: "300% + 150FS" },
+    "fs-monthly": { title: "Bónus de Segundo Depósito", blurb: "2º Depósito: 100% de bónus até 500€.", highlight: "100% até 500€" }
+  }
+},
     casabet: {
       title: "Casabet",
       subtitle: "Como jogar na Casabet e aproveitar o bónus de boas-vindas",
@@ -293,6 +329,24 @@ const messages: Record<Lang, Translations> = {
         "fs-monthly": { title: "Campaigns & Free Spins", blurb: "Betify (Deposit €50 — 100FS no wager on Shaolin Panda).",    highlight: "Up to 100FS" }
       }
     },
+    megarich: {
+  title: "Megarich",
+  subtitle: "300% up to 2500€ + 150 FREESPINS on 1st deposit",
+  steps: {
+    one: "Create an account on Megarich via official link.",
+    two_prefix: "Use code",
+    two_code: "K0MPA",
+    two_suffix: "if applicable.",
+    three: "Get 300% bonus + 150 FreeSpins!"
+  },
+  cta_signup: "SIGN UP NOW",
+  cta_promos: "SEE PROMOTIONS",
+  promo_label: "Promo",
+  promos: {
+    "every-dep":  { title: "Welcome Bonus", blurb: "1st Deposit: 300% up to 2500€ + 150 FreeSpins.", highlight: "300% + 150FS" },
+    "fs-monthly": { title: "Second Deposit Bonus", blurb: "2nd Deposit: 100% bonus up to 500€.", highlight: "100% up to 500€" }
+  }
+},
     wazbee: {
       title: "Ignibet",
       subtitle: "How to play on Ignibet and grab the welcome bonus",
@@ -475,14 +529,16 @@ function Sidebar({
   showBetify,
   showIgnibet,
   showZeusbet,
-  showCasabet,          // <--- MODIFICADO
+  showCasabet,
+  showMegarich,          
 }: {
   onOpenStream: () => void;
   onOpenCommunity: () => void;
   showBetify: boolean;
   showIgnibet: boolean;
   showZeusbet: boolean;
-  showCasabet: boolean; // <--- MODIFICADO
+  showCasabet: boolean;
+  showMegarich: boolean; 
 }) {
 
 
@@ -599,7 +655,16 @@ function Sidebar({
                   </Badge>
                 </NavLink>
               )}
-
+// No componente Sidebar, adiciona o link:
+{showMegarich && (
+  <NavLink to="/megarich" className={linkClasses}>
+    <span className="flex items-center gap-2">
+      <span className="inline-block w-4 h-4 rounded-sm opacity-0 ring-1 ring-white/15" aria-hidden />
+      <span className="font-extrabold text-white">Megarich</span>
+    </span>
+    <Badge className="text-white bg-teal-500">NEW</Badge>
+  </NavLink>
+)}
               {showIgnibet && (
                 <NavLink to="/ignibet" className={linkClasses}>
                   <span className="flex items-center gap-2">
@@ -1710,7 +1775,82 @@ function LanguageToggle({ lang, onChange }: { lang: "PT" | "EN"; onChange: (l: "
     </div>
   );
 }
+function MegarichLanding() {
+  const { t } = useLang();
+  const scrollToPromos = () => document.getElementById("megarich-promos")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const accent = "#2dd4bf"; // Cor Ciano/Teal para Megarich
 
+  return (
+    <div className="space-y-8">
+      <section className="rounded-3xl p-6 sm:p-8 ring-1 ring-white/10 text-white shadow-[0_16px_60px_rgba(0,0,0,.35)] relative overflow-hidden bg-[#0f1013]">
+        <div id="megarich-start" />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{
+          background: "radial-gradient(60% 80% at 10% 0%, rgba(45,212,191,.20) 0%, rgba(45,212,191,0) 55%), radial-gradient(50% 60% at 85% 100%, rgba(20,184,166,.16) 0%, rgba(20,184,166,0) 60%)",
+          mixBlendMode: "screen"
+        }} />
+
+        <div className="flex items-center justify-between gap-4 relative">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight">{t.megarich.title}</h1>
+            <p className="text-white/70 text-sm">{t.megarich.subtitle}</p>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-[1.15fr,.85fr]">
+          <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/12 p-5 backdrop-blur-md">
+            <ol className="space-y-3 text-sm text-white/90">
+              <li><span className="font-bold">1.</span> {t.megarich.steps.one}</li>
+              {SHOW_MEGARICH_CODE && (
+                <li><span className="font-bold">2.</span> {t.megarich.steps.two_prefix} <span className="font-bold">{t.megarich.steps.two_code}</span> {t.megarich.steps.two_suffix}</li>
+              )}
+              <li><span className="font-bold">{SHOW_MEGARICH_CODE ? "3." : "2."}</span> {t.megarich.steps.three}</li>
+            </ol>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <a href={MEGARICH_SIGNUP_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10 transition hover:brightness-110" style={{ background: `linear-gradient(180deg, ${accent}, #0d9488)`, boxShadow: "0 10px 26px rgba(45,212,191,.28)" }}>
+                {t.megarich.cta_signup} <ExternalLink className="h-4 w-4" />
+              </a>
+              <button type="button" onClick={scrollToPromos} className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white bg-white/8 hover:bg-white/12 ring-1 ring-white/15">
+                {t.megarich.cta_promos}
+              </button>
+            </div>
+          </div>
+          <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
+            <div className="relative w-full" style={{ paddingTop: "100%" }}>
+              <img src="https://images.unsplash.com/photo-1596838132731-3301c3fd4317?q=80&w=1000&auto=format&fit=crop" alt="Megarich preview" className="absolute inset-0 h-full w-full object-cover" />
+            </div>
+          </div>
+        </div>
+
+        <div id="megarich-promos" className="mt-6 grid gap-4 sm:grid-cols-2">
+          {megarichPromos.map((p) => (
+            <div key={p.id} className="rounded-3xl p-5 sm:p-6 ring-1 ring-white/12 text-white/90 bg-white/[.06] backdrop-blur-md relative overflow-hidden">
+              <span aria-hidden className="absolute inset-x-4 top-0 h-[3px] rounded-b-xl" style={{ background: `linear-gradient(90deg,${accent},transparent)` }} />
+              <div className="flex items-start gap-3 relative">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15"><p.icon className="h-5 w-5 text-white" /></span>
+                <div className="flex-1">
+                  <div className="text-xs font-semibold text-white/60 uppercase">{t.megarich.promo_label}</div>
+                  <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">{t.megarich.promos[p.id].title}</h3>
+                  <div className="mt-1.5 text-[13px] text-white/75">{t.megarich.promos[p.id].blurb}</div>
+                  <div className="mt-4">
+                    <div className="inline-flex items-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/15 px-3 py-2">
+                      <Sparkles className="h-4 w-4" />
+                      <span className="text-sm font-extrabold text-white">{t.megarich.promos[p.id].highlight}</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <a href={p.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/10" style={{ background: `linear-gradient(135deg,${accent},#0d9488)`, boxShadow: "0 10px 26px rgba(45,212,191,.25)" }}>
+                      {t.card.go} <ExternalLink className="h-4 w-4" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+} 
 /* ---------- Root ---------- */
 export default function App() {
   const [lang, setLang] = useState<Lang>(() => {
@@ -1741,12 +1881,14 @@ export default function App() {
     const isIgnibet = location.pathname.startsWith("/ignibet");
     const is2up      = location.pathname.startsWith("/2up");
     const isCasabet = location.pathname.startsWith("/casabet"); // MODIFICADO
+    const isMegarich = location.pathname.startsWith("/megarich");
 
     const selector =
       isBetify  ? "#betify-start"  :
       isIgnibet ? "#ignibet-start" :
       is2up      ? "#zeusbet-start" :
       isCasabet ? "#casabet-start" : // MODIFICADO
+      isMegarich ? "#megarich-start" :
                   "#embeds-start";
 
     const anchor = main.querySelector<HTMLElement>(selector);
@@ -1759,7 +1901,7 @@ export default function App() {
     }
     document.documentElement.style.setProperty("--sidebar-extra-top", `0px`);
 
-    if (isBetify || isIgnibet || is2up || isCasabet) {
+    if (isBetify || isIgnibet || is2up || isCasabet || isMegarich) {
       const section = anchor?.closest("section") as HTMLElement | null;
       if (section) {
         const m = main.getBoundingClientRect();
@@ -1845,6 +1987,7 @@ export default function App() {
   const showIgnibetNav = !!navBrands && navBrands.some(b => /ignibet/i.test(b.name) && b.enabled !== false);
   const showZeusbetNav = !!navBrands && navBrands.some(b => /zeusbet/i.test(b.name) && b.enabled !== false);
   const showCasabetNav = !!navBrands && navBrands.some(b => /casabet/i.test(b.name) && b.enabled !== false); // MODIFICADO
+  const showMegarichNav = !!navBrands && navBrands.some(b => /megarich/i.test(b.name) && b.enabled !== false);
 
   return (
     <LangCtx.Provider value={{ lang, setLang, t }}>
@@ -1865,6 +2008,7 @@ export default function App() {
               showIgnibet={showIgnibetNav}
               showZeusbet={showZeusbetNav}
               showCasabet={showCasabetNav}
+              showMegarich={showMegarichNav}
             />
 
             <main className="space-y-10" ref={rightColRef}>
@@ -1874,6 +2018,7 @@ export default function App() {
                 <Route path="/ignibet" element={<IgnibetLanding />} />
                 <Route path="/2up" element={<ZeusbetLanding />} />
                 <Route path="/casabet" element={<CasabetLanding />} /> {/* MODIFICADO */}
+                <Route path="/megarich" element={<MegarichLanding />} />
 
                 {/* novo: painel do moderador */}
                 <Route path="/moderator" element={<ModeratorPage />} />
