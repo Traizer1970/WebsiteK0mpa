@@ -655,7 +655,6 @@ function Sidebar({
                   </Badge>
                 </NavLink>
               )}
-// No componente Sidebar, adiciona o link:
 {showMegarich && (
   <NavLink to="/megarich" className={linkClasses}>
     <span className="flex items-center gap-2">
@@ -1220,7 +1219,7 @@ function CasabetLanding() {
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
               <img
-                src="https://win.gg/wp-content/uploads/2025/01/betfury-pro-contra-en.jpg.webp"
+                src="https://res.cloudinary.com/casinogrounds/image/upload/v1733393222/casinos/casabet/intro-casino-casabet.png"
                 alt="Casabet preview"
                 className="absolute inset-0 h-full w-full object-cover"
               />
@@ -1816,7 +1815,7 @@ function MegarichLanding() {
           </div>
           <div className="rounded-2xl overflow-hidden ring-1 ring-white/12 bg-black/40">
             <div className="relative w-full" style={{ paddingTop: "100%" }}>
-              <img src="https://images.unsplash.com/photo-1596838132731-3301c3fd4317?q=80&w=1000&auto=format&fit=crop" alt="Megarich preview" className="absolute inset-0 h-full w-full object-cover" />
+              <img src="https://rotativka.com/en/wp-content/uploads/sites/3/2024/07/Megarich-Casino-Promotion.jpg" alt="Megarich preview" className="absolute inset-0 h-full w-full object-cover" />
             </div>
           </div>
         </div>
